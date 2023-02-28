@@ -16,8 +16,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/add",
     name: "Add",
-    // component: import("@/views/AddPage.vue"),
-    component: AddPage,
+    component: import("@/views/AddPage.vue"),
+    // component: AddPage,
   },
 ];
 

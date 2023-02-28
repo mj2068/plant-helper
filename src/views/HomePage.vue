@@ -12,14 +12,14 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" class="ion-padding">
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Blank</ion-title>
         </ion-toolbar>
       </ion-header>
 
-      <div id="container">
+      <div id="container" class="ion-padding">
         <ion-button @click="ionRouterPush">
           <ion-icon slot="icon-only" :icon="addCircleOutline"></ion-icon>
         </ion-button>
@@ -85,13 +85,7 @@ button {
 }
 
 #container {
-  text-align: center;
   background-color: #ddd;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 #container strong {
