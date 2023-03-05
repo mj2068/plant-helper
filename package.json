@@ -7,6 +7,7 @@
     "serve": "npm run dev",
     "ionic:serve": "npm run dev -- --host",
     "build": "vue-tsc --noEmit && vite build",
+    "ionic:build": "npm run build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
@@ -16,6 +17,7 @@
     "@capacitor/app": "4.1.1",
     "@capacitor/camera": "^4.1.4",
     "@capacitor/core": "4.6.3",
+    "@capacitor/filesystem": "^4.1.4",
     "@capacitor/haptics": "4.1.0",
     "@capacitor/keyboard": "4.1.1",
     "@capacitor/status-bar": "4.1.1",

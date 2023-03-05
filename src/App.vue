@@ -7,6 +7,8 @@
 <script lang="ts">
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent } from "vue";
+import { Filesystem, Directory } from "@capacitor/filesystem";
+
 export default defineComponent({
   name: "App",
   components: { IonApp, IonRouterOutlet },

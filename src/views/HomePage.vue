@@ -20,19 +20,21 @@
       </ion-header>
 
       <div id="container" class="ion-padding">
-        <ion-button @click="ionRouterPush">
-          <ion-icon slot="icon-only" :icon="addCircleOutline"></ion-icon>
-        </ion-button>
-        <ion-button @click="routerPush">button 2</ion-button>
-        <div>
-          <ion-button @click="showAlert()">ION BUTTON</ion-button>
-        </div>
+        <ion-button @click="readUserfile">file</ion-button>
       </div>
+      <ion-card class="ion-padding">
+        <ion-textarea v-model="userdata" :rows="textRow">{{
+          userdata
+        }}</ion-textarea>
+
+        <ion-button @click="saveUserdata">save</ion-button>
+      </ion-card>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
+import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import {
   IonContent,
   IonHeader,
@@ -40,19 +42,30 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
+  IonTextarea,
+  IonCard,
   alertController,
   IonIcon,
   onIonViewDidEnter,
   useIonRouter,
 } from "@ionic/vue";
-import { addCircleOutline, rose } from "ionicons/icons";
-import { onMounted } from "vue";
+import { rose } from "ionicons/icons";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const console = window.console;
 
 const ionRouter = useIonRouter();
 const router = useRouter();
+const textRow = 10;
+
+const userdata = ref("metabolism");
+
+onMounted(() => {
+  console.log("HomePage - onMounted");
+});
+
+onIonViewDidEnter(() => console.log("HomePage - onIonViewDidEnter"));
 
 async function showAlert() {
   const alert = await alertController.create({
@@ -64,11 +77,29 @@ async function showAlert() {
   await alert.present();
 }
 
-onMounted(() => {
-  console.log("HomePage - onMounted");
-});
+function readUserfile() {
+  Filesystem.readFile({
+    path: "userdata.json",
+    directory: Directory.Data,
+    encoding: Encoding.UTF8,
+  })
+    .then((value) => {
+      userdata.value = value.data;
+      console.log(userdata);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
 
-onIonViewDidEnter(() => console.log("HomePage - onIonViewDidEnter"));
+function saveUserdata() {
+  Filesystem.writeFile({
+    directory: Directory.Data,
+    path: "userdata.json",
+    data: userdata.value,
+    encoding: Encoding.UTF8,
+  });
+}
 
 function ionRouterPush() {
   ionRouter.push("/add");
