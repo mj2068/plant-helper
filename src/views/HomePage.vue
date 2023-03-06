@@ -12,7 +12,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true" class="ion-padding">
+    <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Blank</ion-title>
@@ -20,7 +20,8 @@
       </ion-header>
 
       <div id="container" class="ion-padding">
-        <ion-button @click="readUserfile">file</ion-button>
+        <ion-button @click="readFile">read</ion-button>
+        <ion-button @click="deleteFile">delete</ion-button>
       </div>
       <ion-card class="ion-padding">
         <ion-textarea v-model="userdata" :rows="textRow">{{
@@ -77,7 +78,7 @@ async function showAlert() {
   await alert.present();
 }
 
-function readUserfile() {
+function readFile() {
   Filesystem.readFile({
     path: "userdata.json",
     directory: Directory.Data,
@@ -85,11 +86,43 @@ function readUserfile() {
   })
     .then((value) => {
       userdata.value = value.data;
-      console.log(userdata);
     })
     .catch((error) => {
       console.error(error);
     });
+}
+
+async function deleteFile() {
+  const ionAlert = await alertController.create({
+    header: "delete",
+    subHeader: "becareful",
+    message: "are you sure?",
+    buttons: [
+      {
+        role: "cancel",
+        text: "no",
+      },
+      {
+        role: "confirm",
+        text: "yes",
+        handler: async () => {
+          try {
+            await Filesystem.deleteFile({
+              path: "userdata.json",
+              directory: Directory.Data,
+            });
+            console.log("HomePage - deleteFile - deleted");
+          } catch (error) {
+            let message;
+            if (error instanceof Error) message = error.message;
+            else message = String(error);
+            console.error(message);
+          }
+        },
+      },
+    ],
+  });
+  await ionAlert.present();
 }
 
 function saveUserdata() {
