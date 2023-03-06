@@ -24,10 +24,8 @@
         <ion-button @click="deleteFile">delete</ion-button>
       </div>
       <ion-card class="ion-padding">
-        <ion-textarea v-model="userdata" :rows="textRow">{{
-          userdata
-        }}</ion-textarea>
-
+        <ion-textarea v-model="userMessage" :rows="textRow"> </ion-textarea>
+        <ion-button @click="console.log(userMessage)">abc</ion-button>
         <ion-button @click="saveUserdata">save</ion-button>
       </ion-card>
     </ion-content>
@@ -59,24 +57,36 @@ const console = window.console;
 const ionRouter = useIonRouter();
 const router = useRouter();
 const textRow = 10;
+let userConfig;
 
-const userdata = ref("metabolism");
+const userMessage = ref<string>();
 
 onMounted(() => {
   console.log("HomePage - onMounted");
+
+  try {
+    Filesystem.readFile({
+      path: "userdata.json",
+      directory: Directory.Data,
+      encoding: Encoding.UTF8,
+    }).then((value) => {
+      console.log(value);
+      console.log(value.data);
+
+      userConfig = JSON.parse(value.data);
+      console.log(userConfig);
+      userMessage.value = userConfig.userMessage;
+      console.log(userMessage.value);
+    });
+  } catch (error) {
+    let eMsg;
+    if (error instanceof Error) eMsg = error.message;
+    else eMsg = String(error);
+    console.error(eMsg);
+  }
 });
 
 onIonViewDidEnter(() => console.log("HomePage - onIonViewDidEnter"));
-
-async function showAlert() {
-  const alert = await alertController.create({
-    header: "header",
-    subHeader: "subHeader",
-    message: "hello world",
-    buttons: ["ok", "cancel"],
-  });
-  await alert.present();
-}
 
 function readFile() {
   Filesystem.readFile({
@@ -85,7 +95,9 @@ function readFile() {
     encoding: Encoding.UTF8,
   })
     .then((value) => {
-      userdata.value = value.data;
+      console.log(JSON.parse(value.data));
+      userConfig = JSON.parse(value.data);
+      userMessage.value = userConfig.userMessage;
     })
     .catch((error) => {
       console.error(error);
@@ -125,11 +137,13 @@ async function deleteFile() {
   await ionAlert.present();
 }
 
-function saveUserdata() {
-  Filesystem.writeFile({
+async function saveUserdata() {
+  console.log(userMessage);
+  console.log(userMessage.value);
+  await Filesystem.writeFile({
     directory: Directory.Data,
     path: "userdata.json",
-    data: userdata.value,
+    data: JSON.stringify({ userMessage: userMessage.value, plants: [] }),
     encoding: Encoding.UTF8,
   });
 }
