@@ -20,14 +20,11 @@
       </ion-header>
 
       <div id="container" class="ion-padding">
-        <ion-button @click="readFile">read</ion-button>
-        <ion-button @click="deleteFile">delete</ion-button>
+        <div v-if="true">
+          <ion-button> hello </ion-button>
+        </div>
+        {{ appConfig.dummyData_string }}
       </div>
-      <ion-card class="ion-padding">
-        <ion-textarea v-model="userMessage" :rows="textRow"> </ion-textarea>
-        <ion-button @click="console.log(userMessage)">abc</ion-button>
-        <ion-button @click="saveUserdata">save</ion-button>
-      </ion-card>
     </ion-content>
   </ion-page>
 </template>
@@ -49,59 +46,67 @@ import {
   useIonRouter,
 } from "@ionic/vue";
 import { rose } from "ionicons/icons";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 
 const console = window.console;
 
 const ionRouter = useIonRouter();
 const router = useRouter();
-const textRow = 10;
-let userConfig;
 
-const userMessage = ref<string>();
+let appConfig = reactive({
+  dummyData_number: 999,
+  dummyData_string: "hello world",
+  plantList: [],
+});
 
 onMounted(() => {
   console.log("HomePage - onMounted");
 
-  try {
-    Filesystem.readFile({
-      path: "userdata.json",
-      directory: Directory.Data,
-      encoding: Encoding.UTF8,
-    }).then((value) => {
-      console.log(value);
-      console.log(value.data);
+  // first check whether the config file exist, if not, create one
+  Filesystem.readdir({
+    path: "",
+    directory: Directory.Data,
+  }).then((result) => {
+    if (result.files.length > 0) {
+      if (
+        result.files.findIndex(
+          (element) => element.name === "appconfig.json"
+        ) === -1
+      ) {
+        console.log("couldn't find appconfig.json, create new one");
 
-      userConfig = JSON.parse(value.data);
-      console.log(userConfig);
-      userMessage.value = userConfig.userMessage;
-      console.log(userMessage.value);
-    });
-  } catch (error) {
-    let eMsg;
-    if (error instanceof Error) eMsg = error.message;
-    else eMsg = String(error);
-    console.error(eMsg);
-  }
+        writeConfig();
+      } else {
+        console.log("found appconfig.json, read it");
+        readConfig();
+      }
+    } else {
+      console.log("empty data directory, create appconfig.json");
+      writeConfig();
+    }
+  });
 });
+
+async function writeConfig() {
+  await Filesystem.writeFile({
+    path: "appconfig.json",
+    directory: Directory.Data,
+    data: JSON.stringify(appConfig),
+    encoding: Encoding.UTF8,
+  });
+}
 
 onIonViewDidEnter(() => console.log("HomePage - onIonViewDidEnter"));
 
-function readFile() {
-  Filesystem.readFile({
-    path: "userdata.json",
+async function readConfig() {
+  const result = await Filesystem.readFile({
+    path: "appconfig.json",
     directory: Directory.Data,
     encoding: Encoding.UTF8,
-  })
-    .then((value) => {
-      console.log(JSON.parse(value.data));
-      userConfig = JSON.parse(value.data);
-      userMessage.value = userConfig.userMessage;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  });
+  appConfig = JSON.parse(result.data);
+  console.log(appConfig);
 }
 
 async function deleteFile() {
@@ -137,17 +142,6 @@ async function deleteFile() {
   await ionAlert.present();
 }
 
-async function saveUserdata() {
-  console.log(userMessage);
-  console.log(userMessage.value);
-  await Filesystem.writeFile({
-    directory: Directory.Data,
-    path: "userdata.json",
-    data: JSON.stringify({ userMessage: userMessage.value, plants: [] }),
-    encoding: Encoding.UTF8,
-  });
-}
-
 function ionRouterPush() {
   ionRouter.push("/add");
 }
@@ -163,7 +157,7 @@ button {
 }
 
 #container {
-  background-color: #ddd;
+  background-color: #eee;
 }
 
 #container strong {
