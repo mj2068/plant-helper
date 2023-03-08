@@ -20,10 +20,14 @@
       </ion-header>
 
       <div id="container" class="ion-padding">
-        <div v-if="true">
-          <ion-button> hello </ion-button>
+        <div style="display: flex; justify-content: center">
+          <ion-button @click="ionRouter.push('/add')" size="large">
+            <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
+          </ion-button>
         </div>
-        {{ appConfig.dummyData_string }}
+        <ion-card v-for="(n, index) in [1, 2, 3]" :key="index">
+          <p>{{ n }}</p>
+        </ion-card>
       </div>
     </ion-content>
   </ion-page>
@@ -40,12 +44,16 @@ import {
   IonButton,
   IonTextarea,
   IonCard,
-  alertController,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
   IonIcon,
   onIonViewDidEnter,
   useIonRouter,
+  alertController,
+  toastController,
 } from "@ionic/vue";
-import { rose } from "ionicons/icons";
+import { rose, add, addCircle, heart } from "ionicons/icons";
 import { onMounted, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 
@@ -87,6 +95,16 @@ onMounted(() => {
     }
   });
 });
+
+async function presentToast(position: "top" | "middle" | "bottom") {
+  const toast = await toastController.create({
+    message: "Hello World!",
+    duration: 500,
+    position: position,
+  });
+
+  await toast.present();
+}
 
 async function writeConfig() {
   await Filesystem.writeFile({

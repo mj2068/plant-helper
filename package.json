@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "serve": "npm run dev",
-    "ionic:serve": "npm run dev",
+    "ionic:serve": "npm run dev -- --host",
     "build": "vue-tsc --noEmit && vite build",
     "ionic:build": "npm run build",
     "test:unit": "vue-cli-service test:unit",

@@ -3,7 +3,15 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button> 111</ion-back-button>
+          <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-button
+          slot="secondary"
+          @click="ionRouter.navigate('/home', 'root', undefined)"
+          >home</ion-button
+        >
+        <ion-buttons slot="primary">
+          <ion-button>保存</ion-button>
         </ion-buttons>
         <ion-title>添加植物</ion-title>
       </ion-toolbar>
@@ -11,11 +19,7 @@
 
     <ion-content>
       <div>
-        <ion-button>添加</ion-button>
-        <p>{{ message }}</p>
-        <p>{{ messageFromSetup }}</p>
-        <span>{{ count }}</span>
-        <ion-button @click="count++">increment</ion-button>
+        <ion-button> 添加 </ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -32,8 +36,12 @@ import {
   IonContent,
   IonButton,
   IonBackButton,
+  IonIcon,
+  useIonRouter,
+  createAnimation,
 } from "@ionic/vue";
-import { alertController } from "@ionic/core";
+import { star } from "ionicons/icons";
+
 export default defineComponent({
   components: {
     IonPage,
@@ -44,15 +52,7 @@ export default defineComponent({
     IonContent,
     IonButton,
     IonBackButton,
-  },
-
-  setup() {
-    const message = ref("hello world");
-    const count = ref(100);
-    return {
-      messageFromSetup: message,
-      count,
-    };
+    IonIcon,
   },
 
   mounted() {
@@ -60,39 +60,13 @@ export default defineComponent({
   },
 
   data() {
-    return {
-      message: "添加一个植物",
-    };
+    return { star, ionRouter: useIonRouter() };
   },
 
   ionViewDidEnter() {
     console.log("AddPage - ionViewDidEnter");
-    this.presentAlert();
   },
 
-  methods: {
-    async presentAlert() {
-      const alert = await alertController.create({
-        //   header?: string;
-        //   subHeader?: string;
-        //   message?: string | IonicSafeString;
-        //   cssClass?: string | string[];
-        //   inputs?: AlertInput[];
-        //   buttons?: (AlertButton | string)[];
-        //   backdropDismiss?: boolean;
-        //   translucent?: boolean;
-        //   animated?: boolean;
-        //   htmlAttributes?: AlertAttributes;
-        //   mode?: Mode;
-        //   keyboardClose?: boolean;
-        //   id?: string;
-        //   enterAnimation?: AnimationBuilder;
-        //   leaveAnimation?: AnimationBuilder;
-      });
-      await alert.present();
-      const result = await alert.onDidDismiss();
-      console.log(result);
-    },
-  },
+  methods: {},
 });
 </script>
