@@ -24,9 +24,15 @@
           <ion-button @click="ionRouter.push('/add')" size="large">
             <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
           </ion-button>
+          <ion-button @click="test">test</ion-button>
         </div>
-        <ion-card v-for="(n, index) in [1, 2, 3]" :key="index">
-          <p>{{ n }}</p>
+        <ion-card v-for="(plant, index) in appConfig.plantList" :key="index">
+          <ion-card-header>
+            <ion-card-title>{{ plant.plantName }}</ion-card-title>
+            <ion-card-content>
+              <p>{{ plant.plantDescription }}</p>
+            </ion-card-content>
+          </ion-card-header>
         </ion-card>
       </div>
     </ion-content>
@@ -41,6 +47,7 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  IonButtons,
   IonButton,
   IonTextarea,
   IonCard,
@@ -62,7 +69,7 @@ const console = window.console;
 const ionRouter = useIonRouter();
 const router = useRouter();
 
-let appConfig = reactive({
+const appConfig = reactive({
   dummyData_number: 999,
   dummyData_string: "hello world",
   plantList: [],
@@ -77,6 +84,7 @@ onMounted(() => {
     directory: Directory.Data,
   }).then((result) => {
     if (result.files.length > 0) {
+      // below deal with directory not empty
       if (
         result.files.findIndex(
           (element) => element.name === "appconfig.json"
@@ -115,7 +123,10 @@ async function writeConfig() {
   });
 }
 
-onIonViewDidEnter(() => console.log("HomePage - onIonViewDidEnter"));
+onIonViewDidEnter(() => {
+  console.log("HomePage - onIonViewDidEnter");
+  readConfig();
+});
 
 async function readConfig() {
   const result = await Filesystem.readFile({
@@ -123,7 +134,12 @@ async function readConfig() {
     directory: Directory.Data,
     encoding: Encoding.UTF8,
   });
-  appConfig = JSON.parse(result.data);
+  console.log(result.data);
+  appConfig.plantList = JSON.parse(result.data).plantList;
+  console.log(appConfig);
+}
+
+function test() {
   console.log(appConfig);
 }
 
