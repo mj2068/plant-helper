@@ -26,7 +26,11 @@
           </ion-button>
           <ion-button @click="test">test</ion-button>
         </div>
-        <ion-card v-for="(plant, index) in appConfig.plantList" :key="index">
+        <ion-card
+          v-for="(plant, index) in appConfig.plantList"
+          :key="index"
+          @click="cardDetail"
+        >
           <ion-card-header>
             <ion-card-title>{{ plant.plantName }}</ion-card-title>
             <ion-card-content>
@@ -63,6 +67,11 @@ import {
 import { rose, add, addCircle, heart } from "ionicons/icons";
 import { onMounted, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
+
+interface Plant {
+  plantName: string;
+  plantDescription: string;
+}
 
 const console = window.console;
 
@@ -182,6 +191,10 @@ function ionRouterPush() {
 
 function routerPush() {
   router.push("/add");
+}
+
+function cardDetail(plant: Plant) {
+  console.log(plant);
 }
 </script>
 
