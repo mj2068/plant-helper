@@ -19,14 +19,22 @@
 
     <ion-content>
       <div id="container" class="ion-padding">
-        <ion-item>
-          <ion-label>名称</ion-label>
-          <ion-input id="plant-name" v-model="plantName"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label>描述</ion-label>
-          <ion-input id="description" v-model="plantDescription"></ion-input>
-        </ion-item>
+        <div id="image-container">
+          <ion-card>
+            <img :src="plantImgUri" alt="植物图片" srcset="" />
+          </ion-card>
+        </div>
+        <ion-list>
+          <ion-item>
+            <ion-label>名称</ion-label>
+            <ion-input id="plant-name" v-model="plantName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>描述</ion-label>
+            <ion-input id="description" v-model="plantDescription"></ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-button @click="openCamera">CAMERA</ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -52,11 +60,13 @@ import {
   IonCardContent,
   IonList,
   IonItem,
+  IonImg,
   useIonRouter,
   createAnimation,
 } from "@ionic/vue";
 import { star } from "ionicons/icons";
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
+import { Camera, CameraResultType } from "@capacitor/camera";
 
 export default defineComponent({
   components: {
@@ -77,6 +87,8 @@ export default defineComponent({
     IonCardContent,
     IonList,
     IonItem,
+    IonImg,
+    Camera,
   },
 
   mounted() {
@@ -89,6 +101,7 @@ export default defineComponent({
       ionRouter: useIonRouter(),
       plantName: "",
       plantDescription: "",
+      plantImgUri: "",
     };
   },
 
@@ -119,6 +132,39 @@ export default defineComponent({
         data: JSON.stringify(appConfig),
       });
     },
+
+    async openCamera() {
+      console.log(await Camera.checkPermissions());
+      const image = await Camera.getPhoto({
+        quality: 80,
+        // allowEditing: true,
+        resultType: CameraResultType.Uri,
+        promptLabelHeader: "图片来源",
+        promptLabelPhoto: "相册",
+        promptLabelPicture: "拍照",
+      });
+
+      console.log(image.webPath);
+      this.plantImgUri = image.webPath || "";
+    },
   },
 });
 </script>
+
+<style scoped>
+#image-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+}
+#image-container ion-card {
+  width: 80%;
+}
+#image-container img {
+  background-color: red;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+</style>

@@ -32,9 +32,9 @@
           @click="cardDetail"
         >
           <ion-card-header>
-            <ion-card-title>{{ plant.plantName }}</ion-card-title>
+            <ion-card-title>{{ plant["plantName"] }}</ion-card-title>
             <ion-card-content>
-              <p>{{ plant.plantDescription }}</p>
+              <p>{{ plant["plantDescription"] }}</p>
             </ion-card-content>
           </ion-card-header>
         </ion-card>
