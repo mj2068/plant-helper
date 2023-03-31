@@ -29,8 +29,9 @@
         <ion-card
           v-for="(plant, index) in appConfig.plantList"
           :key="index"
-          @click="cardDetail"
+          @click="cardDetail(plant)"
         >
+          <ion-img :src="plant['plantImgUri']" />
           <ion-card-header>
             <ion-card-title>{{ plant["plantName"] }}</ion-card-title>
             <ion-card-content>
@@ -59,6 +60,10 @@ import {
   IonCardTitle,
   IonCardContent,
   IonIcon,
+  IonImg,
+  IonGrid,
+  IonRow,
+  IonCol,
   onIonViewDidEnter,
   useIonRouter,
   alertController,
@@ -207,6 +212,11 @@ button {
   background-color: #eee;
 }
 
+#container ion-img {
+  object-fit: contain;
+  background-color: #ccc;
+  height: 100px;
+}
 #container strong {
   font-size: 20px;
   line-height: 26px;
@@ -215,9 +225,7 @@ button {
 #container p {
   font-size: 16px;
   line-height: 22px;
-
   color: #8c8c8c;
-
   margin: 0;
 }
 

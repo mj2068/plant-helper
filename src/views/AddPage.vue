@@ -5,12 +5,14 @@
         <ion-buttons slot="start">
           <ion-back-button></ion-back-button>
         </ion-buttons>
-        <ion-button
-          slot="secondary"
-          @click="ionRouter.navigate('/home', 'root', undefined)"
-          >home</ion-button
-        >
         <ion-buttons slot="primary">
+          <ion-button
+            slot="secondary"
+            @click="ionRouter.navigate('/home', 'root', undefined)"
+          >
+            首页
+          </ion-button>
+
           <ion-button @click="save">保存</ion-button>
         </ion-buttons>
         <ion-title>添加植物</ion-title>
@@ -21,7 +23,7 @@
       <div id="container" class="ion-padding">
         <div id="image-container">
           <ion-card>
-            <img :src="plantImgUri" alt="植物图片" srcset="" />
+            <img :src="plantImgUriWithPlaceholder" alt="植物图片" srcset="" />
           </ion-card>
         </div>
         <ion-list>
@@ -35,6 +37,10 @@
           </ion-item>
         </ion-list>
         <ion-button @click="openCamera">CAMERA</ion-button>
+        <ion-button @click="deleteImage" :disabled="plantImgUri === ''"
+          >DELETE IMAGE</ion-button
+        >
+        <!-- <ion-button @click="test">test</ion-button> -->
       </div>
     </ion-content>
   </ion-page>
@@ -88,7 +94,10 @@ export default defineComponent({
     IonList,
     IonItem,
     IonImg,
-    Camera,
+  },
+
+  ionViewDidEnter() {
+    console.log("AddPage - ionViewDidEnter");
   },
 
   mounted() {
@@ -105,47 +114,97 @@ export default defineComponent({
     };
   },
 
-  ionViewDidEnter() {
-    console.log("AddPage - ionViewDidEnter");
+  computed: {
+    plantImgUriWithPlaceholder() {
+      return this.plantImgUri === "" ? star : this.plantImgUri;
+    },
   },
 
   methods: {
+    // async test() {},
+
     async save() {
       console.log("AddPage - save");
-      const file = await Filesystem.readFile({
+
+      console.log("saving the phtot");
+      let base64Data: string;
+      const response = await fetch(this.plantImgUri);
+      const blob = await response.blob();
+      console.log(blob);
+      base64Data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+          resolve(reader.result as string);
+        };
+        reader.readAsDataURL(blob);
+      });
+      // console.log(base64Data);
+
+      const createdDate = Date.now();
+      const filename = createdDate + ".jpeg";
+      await Filesystem.writeFile({
+        path: "images/" + filename,
+        data: base64Data,
+        directory: Directory.Data,
+        recursive: true,
+      });
+
+      const fileResult = await Filesystem.readFile({
         path: "appconfig.json",
         directory: Directory.Data,
         encoding: Encoding.UTF8,
       });
-      console.log(file);
+      console.log(fileResult);
 
-      const appConfig = JSON.parse(file.data);
-      console.log(appConfig);
-      appConfig.plantList.push({
+      const fileData = JSON.parse(fileResult.data);
+      console.log(fileData);
+      let tempId: number;
+      if (fileData.plantList.length === 0) {
+        tempId = 0;
+      } else {
+        tempId =
+          (fileData.plantList[fileData.plantList.length - 1].plantId || 0) + 1;
+      }
+      fileData.plantList.push({
+        plantId: tempId,
+        plantCreatedDate: createdDate,
         plantName: this.plantName,
         plantDescription: this.plantDescription,
+        plantImgUri: this.plantImgUri,
+        plantImgFilename: filename,
       });
+      console.log(fileData.plantList);
       await Filesystem.writeFile({
         path: "appconfig.json",
         directory: Directory.Data,
         encoding: Encoding.UTF8,
-        data: JSON.stringify(appConfig),
+        data: JSON.stringify(fileData),
       });
+
+      // this.ionRouter.navigate("/home", "root");
     },
 
     async openCamera() {
       console.log(await Camera.checkPermissions());
       const image = await Camera.getPhoto({
         quality: 80,
-        // allowEditing: true,
         resultType: CameraResultType.Uri,
         promptLabelHeader: "图片来源",
         promptLabelPhoto: "相册",
         promptLabelPicture: "拍照",
+        promptLabelCancel: "取消",
+        // allowEditing: true,
+        // saveToGallery: true,
       });
 
-      console.log(image.webPath);
+      console.log(image);
       this.plantImgUri = image.webPath || "";
+    },
+
+    deleteImage() {
+      console.log("AddPage - deleteImage");
+      this.plantImgUri = "";
     },
   },
 });
@@ -160,11 +219,15 @@ export default defineComponent({
 }
 #image-container ion-card {
   width: 80%;
+  background-color: orange;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #image-container img {
-  background-color: red;
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
+  background-color: #ccc;
+  object-fit: contain;
+  width: 90%;
+  height: 90%;
 }
 </style>
