@@ -12,6 +12,9 @@ import { Filesystem, Directory } from "@capacitor/filesystem";
 export default defineComponent({
   name: "App",
   components: { IonApp, IonRouterOutlet },
+  setup() {
+    console.log("App - setup");
+  },
   mounted() {
     console.log("App - mounted");
   },

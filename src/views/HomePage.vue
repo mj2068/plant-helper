@@ -31,7 +31,7 @@
           :key="index"
           @click="cardDetail(plant)"
         >
-          <ion-img :src="plant['plantImgUri']" />
+          <ion-img :src="plant['plantImageDataUrl']" />
           <ion-card-header>
             <ion-card-title>{{ plant["plantName"] }}</ion-card-title>
             <ion-card-content>
@@ -61,24 +61,25 @@ import {
   IonCardContent,
   IonIcon,
   IonImg,
-  IonGrid,
-  IonRow,
-  IonCol,
   onIonViewDidEnter,
   useIonRouter,
   alertController,
   toastController,
 } from "@ionic/vue";
 import { rose, add, addCircle, heart } from "ionicons/icons";
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 
 interface Plant {
   plantName: string;
   plantDescription: string;
+  plantImgFilename: string;
+  plantImageDataUrl: string;
 }
 
 const console = window.console;
+
+console.log("HomePage - setup");
 
 const ionRouter = useIonRouter();
 const router = useRouter();
@@ -89,33 +90,10 @@ const appConfig = reactive({
   plantList: [],
 });
 
+let isInitialized = false;
+
 onMounted(() => {
   console.log("HomePage - onMounted");
-
-  // first check whether the config file exist, if not, create one
-  Filesystem.readdir({
-    path: "",
-    directory: Directory.Data,
-  }).then((result) => {
-    if (result.files.length > 0) {
-      // below deal with directory not empty
-      if (
-        result.files.findIndex(
-          (element) => element.name === "appconfig.json"
-        ) === -1
-      ) {
-        console.log("couldn't find appconfig.json, create new one");
-
-        writeConfig();
-      } else {
-        console.log("found appconfig.json, read it");
-        readConfig();
-      }
-    } else {
-      console.log("empty data directory, create appconfig.json");
-      writeConfig();
-    }
-  });
 });
 
 async function presentToast(position: "top" | "middle" | "bottom") {
@@ -139,18 +117,62 @@ async function writeConfig() {
 
 onIonViewDidEnter(() => {
   console.log("HomePage - onIonViewDidEnter");
-  readConfig();
+  console.log(isInitialized);
+  if (!isInitialized) {
+    // if it's the first time entering, initialize the config file
+    initializeConfig();
+    isInitialized = true;
+  } else {
+    // if not, only update config by read the config file again
+    readConfig();
+  }
 });
 
-async function readConfig() {
-  const result = await Filesystem.readFile({
-    path: "appconfig.json",
+async function initializeConfig() {
+  console.log("HomePage - initializeConfig");
+  // check directory for appconfig.json and deal with different conditions.
+  await Filesystem.readdir({
+    path: "",
     directory: Directory.Data,
-    encoding: Encoding.UTF8,
+  }).then((result) => {
+    if (result.files.length > 0) {
+      // below deal with directory not empty
+      if (
+        result.files.findIndex(
+          (element) => element.name === "appconfig.json"
+        ) === -1
+      ) {
+        console.log("couldn't find appconfig.json, create new one");
+
+        writeConfig();
+      } else {
+        console.log("found appconfig.json, read it");
+        readConfig();
+      }
+    } else {
+      console.log("empty data directory, create appconfig.json");
+      writeConfig();
+    }
   });
-  console.log(result.data);
-  appConfig.plantList = JSON.parse(result.data).plantList;
-  console.log(appConfig);
+}
+
+async function readConfig() {
+  console.log("HomePage - readConfig");
+  try {
+    const result = await Filesystem.readFile({
+      path: "appconfig.json",
+      directory: Directory.Data,
+      encoding: Encoding.UTF8,
+    });
+    console.log(result);
+    appConfig.plantList = JSON.parse(result.data).plantList;
+    console.log(appConfig);
+    appConfig.plantList.forEach((plant) => {
+      console.log(plant);
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function test() {
@@ -188,6 +210,13 @@ async function deleteFile() {
     ],
   });
   await ionAlert.present();
+}
+
+async function readImage(filename: string) {
+  return await Filesystem.readFile({
+    path: "images/" + filename,
+    directory: Directory.Data,
+  });
 }
 
 function ionRouterPush() {

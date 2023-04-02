@@ -8,7 +8,7 @@
         <ion-buttons slot="primary">
           <ion-button
             slot="secondary"
-            @click="ionRouter.navigate('/home', 'root', undefined)"
+            @click="ionRouter.navigate('/home', 'root')"
           >
             首页
           </ion-button>
@@ -126,7 +126,6 @@ export default defineComponent({
     async save() {
       console.log("AddPage - save");
 
-      console.log("saving the phtot");
       let base64Data: string;
       const response = await fetch(this.plantImgUri);
       const blob = await response.blob();
@@ -159,19 +158,19 @@ export default defineComponent({
 
       const fileData = JSON.parse(fileResult.data);
       console.log(fileData);
-      let tempId: number;
+      let plantId: number;
       if (fileData.plantList.length === 0) {
-        tempId = 0;
+        plantId = 0;
       } else {
-        tempId =
+        plantId =
           (fileData.plantList[fileData.plantList.length - 1].plantId || 0) + 1;
       }
       fileData.plantList.push({
-        plantId: tempId,
+        plantId,
         plantCreatedDate: createdDate,
         plantName: this.plantName,
         plantDescription: this.plantDescription,
-        plantImgUri: this.plantImgUri,
+        // plantImgUri: this.plantImgUri,
         plantImgFilename: filename,
       });
       console.log(fileData.plantList);
@@ -182,7 +181,7 @@ export default defineComponent({
         data: JSON.stringify(fileData),
       });
 
-      // this.ionRouter.navigate("/home", "root");
+      this.ionRouter.navigate("/home", "root");
     },
 
     async openCamera() {
