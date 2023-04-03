@@ -20,7 +20,7 @@
       </ion-header>
 
       <div id="container" class="ion-padding">
-        <div style="display: flex; justify-content: center">
+        <div id="control" style="display: flex; justify-content: center">
           <ion-button @click="ionRouter.push('/add')" size="large">
             <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
           </ion-button>
@@ -167,8 +167,11 @@ async function readConfig() {
     console.log(result);
     appConfig.plantList = JSON.parse(result.data).plantList;
     console.log(appConfig);
-    appConfig.plantList.forEach((plant) => {
-      console.log(plant);
+    appConfig.plantList.forEach((plant: Plant) => {
+      console.log(plant.plantImgFilename);
+      readImage(plant.plantImgFilename).then((result) => {
+        plant.plantImageDataUrl = "data:image/jpeg;base64," + result.data;
+      });
     });
   } catch (error) {
     console.error(error);
@@ -241,11 +244,24 @@ button {
   background-color: #eee;
 }
 
+#container ion-card div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: #555; */
+  height: 100px;
+}
+
+#container ion-card div ion-img {
+  height: auto;
+}
+
 #container ion-img {
-  object-fit: contain;
+  object-fit: cover;
   background-color: #ccc;
   height: 100px;
 }
+
 #container strong {
   font-size: 20px;
   line-height: 26px;
