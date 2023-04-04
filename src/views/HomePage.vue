@@ -232,6 +232,8 @@ function routerPush() {
 
 function cardDetail(plant: Plant) {
   console.log(plant);
+  // ionRouter.navigate("/detail", "forward", "push");
+  ionRouter.push("/detail");
 }
 </script>
 
