@@ -70,7 +70,8 @@ import { rose, add, addCircle, heart } from "ionicons/icons";
 import { onMounted, ref, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 
-interface Plant {
+export interface Plant {
+  plantId: number;
   plantName: string;
   plantDescription: string;
   plantImgFilename: string;
@@ -164,7 +165,7 @@ async function readConfig() {
       directory: Directory.Data,
       encoding: Encoding.UTF8,
     });
-    console.log(result);
+    console.log("HomePage - readConfig - result: \n", result);
     appConfig.plantList = JSON.parse(result.data).plantList;
     console.log(appConfig);
     appConfig.plantList.forEach((plant: Plant) => {
@@ -233,7 +234,7 @@ function routerPush() {
 function cardDetail(plant: Plant) {
   console.log(plant);
   // ionRouter.navigate("/detail", "forward", "push");
-  ionRouter.push("/detail");
+  router.push(`/detail/${plant.plantId}`);
 }
 </script>
 

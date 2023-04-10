@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
     // component: AddPage,
   },
   {
-    path: "/detail",
+    path: "/detail/:id",
     name: "Detail",
     component: DetailPage,
   },
