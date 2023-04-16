@@ -118,7 +118,6 @@ async function writeConfig() {
 
 onIonViewDidEnter(() => {
   console.log("HomePage - onIonViewDidEnter");
-  console.log(isInitialized);
   if (!isInitialized) {
     // if it's the first time entering, initialize the config file
     initializeConfig();
