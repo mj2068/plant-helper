@@ -10,12 +10,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref } from "vue";
 import { IonPage, IonContent } from "@ionic/vue";
 import { useRoute } from "vue-router";
 import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import { Capacitor } from "@capacitor/core";
-import { Plant } from "@/views/HomePage.vue";
+import { Plant } from "@/types";
 
 console.log("DetailPage - setup");
 
@@ -38,7 +38,7 @@ onMounted(() => {
     console.log(JSON.parse(result.data).plantList[id as string]);
     plant = JSON.parse(result.data).plantList[id as string] as Plant;
     Filesystem.getUri({
-      path: "images/" + plant.plantImgFilename,
+      path: "images/" + plant.plantImageFilename,
       directory: Directory.Data,
     }).then((result) => {
       console.log(result);

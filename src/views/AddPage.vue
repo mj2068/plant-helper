@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
 import {
   IonPage,
   IonHeader,
@@ -78,6 +78,8 @@ import { star } from "ionicons/icons";
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { getDateTime } from "@/composables/utils";
+import type { AppConf, Plant } from "@/types";
+
 export default defineComponent({
   components: {
     IonPage,
@@ -100,7 +102,14 @@ export default defineComponent({
     IonImg,
   },
 
-  // setup() {},
+  setup() {
+    const { appConf, addPlant } = inject("appConf") as {
+      appConf: AppConf;
+      addPlant: (plant: Plant) => void;
+    };
+
+    return { appConf, addPlant };
+  },
 
   ionViewDidEnter() {
     console.log("AddPage - ionViewDidEnter");
@@ -158,40 +167,22 @@ export default defineComponent({
         });
       }
 
-      // read config file ready to update it for the newly added entry
-      const readResult = await Filesystem.readFile({
-        path: "appconfig.json",
-        directory: Directory.Data,
-        encoding: Encoding.UTF8,
-      });
-      console.log(readResult);
-      const configData = JSON.parse(readResult.data);
-      console.log(configData);
-
       // increment id after the last exist entry, otherwise 0
       let plantId: number;
-      if (configData.plantList.length === 0) {
+      if (this.appConf.plantList.length === 0) {
         plantId = 0;
       } else {
         plantId =
-          (configData.plantList[configData.plantList.length - 1].plantId || 0) +
-          1;
+          this.appConf.plantList[this.appConf.plantList.length - 1].plantId + 1;
       }
-      configData.plantList.push({
-        plantId,
-        plantCreatedDate: datetime.date,
+
+      this.addPlant({
+        plantId: plantId,
         plantName: this.plantName,
         plantDescription: this.plantDescription,
-        plantImgFilename: filename,
+        plantImageFilename: filename,
+        plantCreatedAt: datetime.date,
       });
-      console.log(configData.plantList);
-      await Filesystem.writeFile({
-        path: "appconfig.json",
-        directory: Directory.Data,
-        encoding: Encoding.UTF8,
-        data: JSON.stringify(configData),
-      });
-
       // navigate back to home page
       this.ionRouter.navigate("/home", "root");
     },
@@ -222,15 +213,7 @@ export default defineComponent({
     },
 
     test() {
-      console.log("AddPage - test");
-
-      const d = new Date();
-      Filesystem.writeFile({
-        path: "1.json",
-        directory: Directory.Data,
-        encoding: Encoding.UTF8,
-        data: d.toString(),
-      });
+      console.log(this.appConf);
     },
 
     test2() {

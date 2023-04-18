@@ -27,11 +27,17 @@
           <ion-button @click="test">test</ion-button>
         </div>
         <ion-card
-          v-for="(plant, index) in appConfig.plantList"
+          v-for="(plant, index) in appData.appConf.plantList"
           :key="index"
           @click="cardDetail(plant)"
         >
-          <ion-img :src="plant['plantImageDataUrl']" />
+          <ion-img
+            :src="
+              filenameToDataUrl(plant.plantImageFilename).then(
+                (result) => result
+              )
+            "
+          />
           <ion-card-header>
             <ion-card-title>{{ plant["plantName"] }}</ion-card-title>
             <ion-card-content>
@@ -66,17 +72,10 @@ import {
   alertController,
   toastController,
 } from "@ionic/vue";
-import { rose, add, addCircle, heart } from "ionicons/icons";
-import { onMounted, ref, reactive, computed } from "vue";
+import { rose, addCircle } from "ionicons/icons";
+import { onMounted, computed, inject } from "vue";
 import { useRouter } from "vue-router";
-
-export interface Plant {
-  plantId: number;
-  plantName: string;
-  plantDescription: string;
-  plantImgFilename: string;
-  plantImageDataUrl: string;
-}
+import type { AppConf, Plant } from "@/types";
 
 const console = window.console;
 
@@ -85,17 +84,29 @@ console.log("HomePage - setup");
 const ionRouter = useIonRouter();
 const router = useRouter();
 
-const appConfig = reactive({
-  dummyData_number: 999,
-  dummyData_string: "hello world",
-  plantList: [],
-});
+const { appData, addPlant } = inject("appData") as {
+  appData: {
+    appConf: AppConf;
+  };
+  addPlant: (plant: Plant) => void;
+};
 
-let isInitialized = false;
+const plantImages: { [index: number]: string } = {
+  1: "a",
+  3: "a",
+};
 
 onMounted(() => {
   console.log("HomePage - onMounted");
 });
+
+async function filenameToDataUrl(filename: string) {
+  const result = await Filesystem.readFile({
+    path: `images/${filename}`,
+    directory: Directory.Data,
+  });
+  return "data:image/jpeg;base64," + result.data;
+}
 
 async function presentToast(position: "top" | "middle" | "bottom") {
   const toast = await toastController.create({
@@ -107,79 +118,25 @@ async function presentToast(position: "top" | "middle" | "bottom") {
   await toast.present();
 }
 
-async function writeConfig() {
-  await Filesystem.writeFile({
-    path: "appconfig.json",
-    directory: Directory.Data,
-    data: JSON.stringify(appConfig),
-    encoding: Encoding.UTF8,
-  });
-}
-
 onIonViewDidEnter(() => {
   console.log("HomePage - onIonViewDidEnter");
-  if (!isInitialized) {
-    // if it's the first time entering, initialize the config file
-    initializeConfig();
-    isInitialized = true;
-  } else {
-    // if not, only update config by read the config file again
-    readConfig();
-  }
 });
 
-async function initializeConfig() {
-  console.log("HomePage - initializeConfig");
-  // check directory for appconfig.json and deal with different conditions.
-  await Filesystem.readdir({
-    path: "",
-    directory: Directory.Data,
-  }).then((result) => {
-    if (result.files.length > 0) {
-      // below deal with directory not empty
-      if (
-        result.files.findIndex(
-          (element) => element.name === "appconfig.json"
-        ) === -1
-      ) {
-        console.log("couldn't find appconfig.json, create new one");
-
-        writeConfig();
-      } else {
-        console.log("found appconfig.json, read it");
-        readConfig();
-      }
-    } else {
-      console.log("empty data directory, create appconfig.json");
-      writeConfig();
-    }
-  });
-}
-
-async function readConfig() {
-  console.log("HomePage - readConfig");
-  try {
-    const result = await Filesystem.readFile({
-      path: "appconfig.json",
-      directory: Directory.Data,
-      encoding: Encoding.UTF8,
-    });
-    console.log("HomePage - readConfig - result: \n", result);
-    appConfig.plantList = JSON.parse(result.data).plantList;
-    console.log(appConfig);
-    appConfig.plantList.forEach((plant: Plant) => {
-      console.log(plant.plantImgFilename);
-      readImage(plant.plantImgFilename).then((result) => {
-        plant.plantImageDataUrl = "data:image/jpeg;base64," + result.data;
-      });
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 function test() {
-  console.log(appConfig);
+  // appData.appConf.plantList.push({
+  //   plantId: 1,
+  //   plantCreatedAt: new Date(),
+  //   plantDescription: "hen xiang",
+  //   plantName: "ruixiang",
+  //   plantImageFilename: "",
+  // });
+  addPlant({
+    plantId: 7,
+    plantCreatedAt: new Date(),
+    plantName: "rose",
+    plantDescription: "reminds love ♥",
+    plantImageFilename: "",
+  });
 }
 
 async function deleteFile() {
@@ -213,6 +170,10 @@ async function deleteFile() {
     ],
   });
   await ionAlert.present();
+
+  return {
+    appData,
+  };
 }
 
 async function readImage(filename: string) {
