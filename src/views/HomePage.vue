@@ -31,13 +31,7 @@
           :key="index"
           @click="cardDetail(plant)"
         >
-          <ion-img
-            :src="
-              filenameToDataUrl(plant.plantImageFilename).then(
-                (result) => result
-              )
-            "
-          />
+          <ion-img :src="plantImages[plant.plantId]" />
           <ion-card-header>
             <ion-card-title>{{ plant["plantName"] }}</ion-card-title>
             <ion-card-content>
@@ -73,7 +67,7 @@ import {
   toastController,
 } from "@ionic/vue";
 import { rose, addCircle } from "ionicons/icons";
-import { onMounted, computed, inject } from "vue";
+import { onMounted, computed, inject, watch, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 
@@ -91,10 +85,19 @@ const { appData, addPlant } = inject("appData") as {
   addPlant: (plant: Plant) => void;
 };
 
-const plantImages: { [index: number]: string } = {
-  1: "a",
-  3: "a",
-};
+watchEffect(() => {
+  console.log("changes");
+  appData.appConf.plantList.forEach(async (plant) => {
+    const filename = plant.plantImageFilename;
+    const result = await Filesystem.readFile({
+      path: "images/" + filename,
+      directory: Directory.Data,
+    });
+    plantImages[plant.plantId] = "data:image/jpeg;base64," + result.data;
+  });
+});
+
+const plantImages: { [index: number]: string } = {};
 
 onMounted(() => {
   console.log("HomePage - onMounted");

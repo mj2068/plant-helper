@@ -103,12 +103,14 @@ export default defineComponent({
   },
 
   setup() {
-    const { appConf, addPlant } = inject("appConf") as {
-      appConf: AppConf;
+    const { appData, addPlant } = inject("appData") as {
+      appData: {
+        appConf: AppConf;
+      };
       addPlant: (plant: Plant) => void;
     };
 
-    return { appConf, addPlant };
+    return { appData, addPlant };
   },
 
   ionViewDidEnter() {
@@ -169,11 +171,13 @@ export default defineComponent({
 
       // increment id after the last exist entry, otherwise 0
       let plantId: number;
-      if (this.appConf.plantList.length === 0) {
+      if (this.appData.appConf.plantList.length === 0) {
         plantId = 0;
       } else {
         plantId =
-          this.appConf.plantList[this.appConf.plantList.length - 1].plantId + 1;
+          this.appData.appConf.plantList[
+            this.appData.appConf.plantList.length - 1
+          ].plantId + 1;
       }
 
       this.addPlant({
@@ -213,7 +217,7 @@ export default defineComponent({
     },
 
     test() {
-      console.log(this.appConf);
+      console.log(this.appData.appConf);
     },
 
     test2() {
