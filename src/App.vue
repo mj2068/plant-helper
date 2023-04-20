@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
-import { defineComponent, onMounted, provide, reactive, computed } from "vue";
+import { defineComponent, onMounted, provide, reactive } from "vue";
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
 import type { AppConf, Plant } from "@/types";
 
@@ -32,10 +32,11 @@ export default defineComponent({
       encoding: Encoding.UTF8,
     })
       .then((result) => {
-        console.log(result);
-        console.log(JSON.parse(result.data));
         const appConfData = JSON.parse(result.data) as AppConf;
         appData.appConf = appConfData;
+        console.log(
+          "App - setup - read appconfig.json success, appData.appConf:"
+        );
         console.log(appData.appConf);
       })
       .catch((error: Error) => {

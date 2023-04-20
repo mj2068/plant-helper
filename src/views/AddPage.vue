@@ -23,7 +23,11 @@
       <div id="container" class="ion-padding">
         <div id="image-container">
           <ion-card>
-            <img :src="plantImageWithPlaceholder" alt="植物图片" srcset="" />
+            <ion-img
+              :src="plantImageWithPlaceholder"
+              alt="植物图片"
+              srcset=""
+            />
           </ion-card>
         </div>
         <ion-list>
@@ -64,7 +68,6 @@ import {
   IonContent,
   IonButton,
   IonBackButton,
-  IonIcon,
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -92,10 +95,7 @@ export default defineComponent({
     IonContent,
     IonButton,
     IonBackButton,
-    IonIcon,
     IonCard,
-    IonCardHeader,
-    IonCardTitle,
     IonCardContent,
     IonList,
     IonItem,
@@ -157,16 +157,18 @@ export default defineComponent({
 
       // get the created date time
       const datetime = getDateTime();
-      // gnerate a file name
-      const filename = datetime.dateTime + ".jpeg";
+      // create a variable for image filename, if no image provided, it'll be empty
+      let filename = "";
       // write image data to file
       if (this.plantImageDataUrl) {
-        await Filesystem.writeFile({
+        filename = datetime.dateTime + ".jpeg";
+        const savedFileUri = await Filesystem.writeFile({
           path: "images/" + filename,
           data: this.plantImageDataUrl,
           directory: Directory.Data,
           recursive: true,
         });
+        console.log(savedFileUri.uri);
       }
 
       // increment id after the last exist entry, otherwise 0
@@ -248,15 +250,12 @@ export default defineComponent({
 }
 #image-container ion-card {
   width: 80%;
-  background-color: orange;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
 }
-#image-container img {
-  background-color: #ccc;
-  object-fit: contain;
-  width: 90%;
-  height: 90%;
+#image-container ion-card ion-img {
+  height: 100%;
+  /* object-fit: fill; */
 }
 </style>

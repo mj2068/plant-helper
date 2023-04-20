@@ -24,14 +24,14 @@
           <ion-button @click="ionRouter.push('/add')" size="large">
             <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
           </ion-button>
-          <ion-button @click="test">test</ion-button>
+          <ion-button @click="test" size="large">test</ion-button>
         </div>
         <ion-card
           v-for="(plant, index) in appData.appConf.plantList"
           :key="index"
           @click="cardDetail(plant)"
         >
-          <ion-img :src="plantImages[plant.plantId]" />
+          <ion-img :src="imageWithPlaceholder(plantImages[plant.plantId])" />
           <ion-card-header>
             <ion-card-title>{{ plant["plantName"] }}</ion-card-title>
             <ion-card-content>
@@ -45,16 +45,14 @@
 </template>
 
 <script setup lang="ts">
-import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
+import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
   IonContent,
   IonHeader,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonButtons,
   IonButton,
-  IonTextarea,
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -66,8 +64,8 @@ import {
   alertController,
   toastController,
 } from "@ionic/vue";
-import { rose, addCircle } from "ionicons/icons";
-import { onMounted, computed, inject, watch, watchEffect } from "vue";
+import { rose, addCircle, star } from "ionicons/icons";
+import { onMounted, reactive, inject, watch } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 
@@ -78,43 +76,68 @@ console.log("HomePage - setup");
 const ionRouter = useIonRouter();
 const router = useRouter();
 
-const { appData, addPlant } = inject("appData") as {
+const { appData } = inject("appData") as {
   appData: {
     appConf: AppConf;
   };
   addPlant: (plant: Plant) => void;
 };
 
-watchEffect(() => {
-  console.log("changes");
-  appData.appConf.plantList.forEach(async (plant) => {
-    const filename = plant.plantImageFilename;
-    const result = await Filesystem.readFile({
-      path: "images/" + filename,
-      directory: Directory.Data,
-    });
-    plantImages[plant.plantId] = "data:image/jpeg;base64," + result.data;
-  });
+// 监视appData，其发生改变后
+watch(appData, () => {
+  console.log("HomePage - watch - appData");
+  console.log(appData.appConf.plantList.length);
+  updateImages();
 });
 
-const plantImages: { [index: number]: string } = {};
+function updateImages() {
+  appData.appConf.plantList.forEach(async (plant) => {
+    const filename = plant.plantImageFilename;
+    console.log(filename);
+    // 判断文件名是否为空，如果是将plantImages对象相应id的图像设为空字符串
+    if (filename === "") {
+      plantImages[plant.plantId] = "";
+      return;
+    }
+    // 如果文件名不为空，按文件名读取图像文件，并设为plantImages对象相应id的值
+    try {
+      const readResult = await Filesystem.readFile({
+        path: "images/" + filename,
+        directory: Directory.Data,
+      });
+      plantImages[plant.plantId] = "data:image/jpeg;base64," + readResult.data;
+    } catch (error) {
+      console.log("HomePage - updateImages");
+      console.error(error);
+      plantImages[plant.plantId] = "";
+    }
+  });
+}
+
+// 用于存储plantList数组中每个对象对应的图像数据
+const plantImages: { [index: number]: string } = reactive({});
+
+// 为防止没有添加图片文件的植物记录显示找不到图片，此函数用于返回一个通用占位图
+function imageWithPlaceholder(imageDataUrl: string) {
+  if (imageDataUrl) {
+    return imageDataUrl;
+  }
+  return star;
+}
 
 onMounted(() => {
   console.log("HomePage - onMounted");
+
+  updateImages();
 });
 
-async function filenameToDataUrl(filename: string) {
-  const result = await Filesystem.readFile({
-    path: `images/${filename}`,
-    directory: Directory.Data,
-  });
-  return "data:image/jpeg;base64," + result.data;
-}
-
-async function presentToast(position: "top" | "middle" | "bottom") {
+async function presentToast(
+  message: string,
+  position: "top" | "middle" | "bottom"
+) {
   const toast = await toastController.create({
-    message: "Hello World!",
-    duration: 500,
+    message: message,
+    duration: 1500,
     position: position,
   });
 
@@ -126,20 +149,7 @@ onIonViewDidEnter(() => {
 });
 
 function test() {
-  // appData.appConf.plantList.push({
-  //   plantId: 1,
-  //   plantCreatedAt: new Date(),
-  //   plantDescription: "hen xiang",
-  //   plantName: "ruixiang",
-  //   plantImageFilename: "",
-  // });
-  addPlant({
-    plantId: 7,
-    plantCreatedAt: new Date(),
-    plantName: "rose",
-    plantDescription: "reminds love ♥",
-    plantImageFilename: "",
-  });
+  console.log("test");
 }
 
 async function deleteFile() {
@@ -173,17 +183,6 @@ async function deleteFile() {
     ],
   });
   await ionAlert.present();
-
-  return {
-    appData,
-  };
-}
-
-async function readImage(filename: string) {
-  return await Filesystem.readFile({
-    path: "images/" + filename,
-    directory: Directory.Data,
-  });
 }
 
 function ionRouterPush() {

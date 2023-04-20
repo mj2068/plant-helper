@@ -24,7 +24,6 @@ import { defineCustomElements } from "@ionic/pwa-elements/loader";
 
 /* Theme variables */
 import "./theme/variables.css";
-import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 
 defineCustomElements(window);
 
