@@ -6,10 +6,7 @@
           <ion-back-button></ion-back-button>
         </ion-buttons>
         <ion-buttons slot="primary">
-          <ion-button
-            slot="secondary"
-            @click="ionRouter.navigate('/home', 'root')"
-          >
+          <ion-button @click="ionRouter.navigate('/home', 'root')">
             首页
           </ion-button>
 
@@ -49,7 +46,6 @@
           >DELETE IMAGE</ion-button
         >
         <ion-button @click="test">test</ion-button>
-        <ion-button @click="test2">test2</ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -103,6 +99,8 @@ export default defineComponent({
   },
 
   setup() {
+    console.log("AddPage - setup");
+
     const { appData, addPlant } = inject("appData") as {
       appData: {
         appConf: AppConf;
@@ -219,21 +217,7 @@ export default defineComponent({
     },
 
     test() {
-      console.log(this.appData.appConf);
-    },
-
-    test2() {
-      console.log("AddPage - test2");
-
-      Filesystem.readFile({
-        path: "1.json",
-        directory: Directory.Data,
-        encoding: Encoding.UTF8,
-      }).then((r) => {
-        console.log(r);
-        console.log(r.data);
-        console.log(new Date(r.data).getDate());
-      });
+      console.log("AddPage - test");
     },
 
     getDateTime: getDateTime,

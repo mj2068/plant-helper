@@ -149,7 +149,8 @@ onIonViewDidEnter(() => {
 });
 
 function test() {
-  console.log("test");
+  console.log("HomePage - test");
+
 }
 
 async function deleteFile() {

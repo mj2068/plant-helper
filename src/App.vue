@@ -51,6 +51,20 @@ export default defineComponent({
       updateConfigFile();
     }
 
+    function deletePlant(id: number) {
+      console.log("App - deletePlant");
+
+      console.log(id);
+
+      // 用findIndex方法找到需要删除的元素
+      const indexToDelete = appData.appConf.plantList.findIndex(
+        (p) => p.plantId === id
+      );
+      console.log("found index: " + indexToDelete);
+      appData.appConf.plantList.splice(indexToDelete, 1);
+      updateConfigFile();
+    }
+
     function updateConfigFile() {
       Filesystem.writeFile({
         path: "appconfig.json",
@@ -67,7 +81,7 @@ export default defineComponent({
         });
     }
 
-    provide("appData", { appData, addPlant });
+    provide("appData", { appData, addPlant, deletePlant });
 
     onMounted(() => {
       console.log("App - setup - onMounted");
