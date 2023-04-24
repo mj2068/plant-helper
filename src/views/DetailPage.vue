@@ -1,57 +1,109 @@
 <template>
   <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>{{}}</ion-title>
+      </ion-toolbar>
+    </ion-header>
     <ion-content class="ion-padding">
-      <p>detail page</p>
-      <img :src="imgPath" alt="123" />
-      <p>plant name: {{ plant.plantName }}</p>
-      <p>plant description: {{ plant.plantDescription }}</p>
+      <div id="content-container">
+        <ion-card>
+          <ion-img :src="plantImageSrc" alt="123" />
+        </ion-card>
+        <p>plant name: {{ plant?.plantName }}</p>
+        <p>plant description: {{ plant?.plantDescription }}</p>
+      </div>
+      <ion-button @click="test"> test </ion-button>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import { IonPage, IonContent } from "@ionic/vue";
+import { onMounted, ref, reactive, inject, watch, computed } from "vue";
+import {
+  IonToolbar,
+  IonTitle,
+  IonHeader,
+  IonPage,
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonBackButton,
+  IonCard,
+  IonImg,
+} from "@ionic/vue";
 import { useRoute } from "vue-router";
 import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import { Capacitor } from "@capacitor/core";
-import { Plant } from "@/types";
+import { airplane, star } from "ionicons/icons";
+import { AppConf, Plant } from "@/types";
 
-console.log("DetailPage - setup");
+console.log("DetailPage - <setup>");
 
 const route = useRoute();
 
 const { id } = route.params;
+console.log("DetailPage - <setup> id: ");
 console.log(id);
 
-let plant = {} as Plant;
-const imgPath = ref("");
+const { appData } = inject("appData") as {
+  appData: {
+    appConf: AppConf;
+  };
+  addPlant: (plant: Plant) => void;
+};
 
 onMounted(() => {
   console.log("DetailPage - onMounted");
-  Filesystem.readFile({
-    path: "appconfig.json",
-    directory: Directory.Data,
-    encoding: Encoding.UTF8,
-  }).then((result) => {
-    console.log(result);
-    console.log(JSON.parse(result.data).plantList[id as string]);
-    plant = JSON.parse(result.data).plantList[id as string] as Plant;
-    Filesystem.getUri({
-      path: "images/" + plant.plantImageFilename,
-      directory: Directory.Data,
-    }).then((result) => {
-      console.log(result);
-      imgPath.value = Capacitor.convertFileSrc(result.uri);
-      console.log(imgPath);
-    });
-  });
-  console.log(imgPath);
+
+  updatePlant();
 });
+
+watch(appData, () => {
+  console.log("DetaiPage - watch - appData");
+
+  updatePlant();
+});
+
+const plantImageFileUri = ref("");
+
+const plant = ref<Plant>();
+function updatePlant() {
+  for (const p of appData.appConf.plantList) {
+    if (p.plantId.toString() === id) {
+      plant.value = p;
+      Filesystem.getUri({
+        path: "images/" + p.plantImageFilename,
+        directory: Directory.Data,
+      }).then((r) => {
+        plantImageFileUri.value = r.uri;
+      });
+    }
+  }
+}
+
+const plantImageSrc = computed(() => {
+  if (plantImageFileUri.value === "") {
+    return star;
+  } else {
+    return Capacitor.convertFileSrc(plantImageFileUri.value);
+  }
+});
+
+function test() {
+  console.log("DetailPage - test");
+}
 </script>
 
-<style scoped>
-ion-content img {
-  height: 300px;
+<style scoped lang="scss">
+ion-content ion-card {
+  max-height: 300px;
+
+  ion-img {
+    height: 300px;
+  }
 }
 </style>

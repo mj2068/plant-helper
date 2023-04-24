@@ -194,7 +194,7 @@ function routerPush() {
 }
 
 function cardDetail(plant: Plant) {
-  console.log(plant);
+  // console.log(plant);
   // ionRouter.navigate("/detail", "forward", "push");
   router.push(`/detail/${plant.plantId}`);
 }

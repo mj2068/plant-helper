@@ -25,7 +25,7 @@ import { defineCustomElements } from "@ionic/pwa-elements/loader";
 /* Theme variables */
 import "./theme/variables.css";
 
-defineCustomElements(window);
+// defineCustomElements(window);
 
 const app = createApp(App).use(IonicVue).use(router);
 
