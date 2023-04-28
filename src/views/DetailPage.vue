@@ -9,6 +9,7 @@
           <ion-button @click="ionRouter.navigate('/home', 'root')">
             首页
           </ion-button>
+          <ion-button @click="enterEdit"> 编辑 </ion-button>
           <ion-button v-on:click="console.log(`id:${id}`)">
             <ion-icon slot="icon-only" :icon="ellipsisVerticalSharp"></ion-icon>
           </ion-button>
@@ -23,9 +24,12 @@
         </ion-card>
         <ion-list>
           <ion-item>
-            <p>plant name: {{ plant?.plantName }}</p>
+            <ion-label>植物名称</ion-label>
+            <ion-input :placeholder="plant?.plantName"></ion-input>
           </ion-item>
           <ion-item>
+            <ion-label>植物描述</ion-label>
+            
             <p>plant description: {{ plant?.plantDescription }}</p>
           </ion-item>
           <ion-item>
@@ -34,8 +38,8 @@
         </ion-list>
       </div>
       <div id="controls">
-        <ion-button @click="test"> test </ion-button>
-        <ion-button @click="test"> test </ion-button>
+        <ion-button> test </ion-button>
+        <ion-button> test </ion-button>
         <ion-button
           color="danger"
           v-on:click="deletePlant(parseInt(id as string))"
@@ -64,6 +68,8 @@ import {
   IonIcon,
   IonList,
   IonItem,
+  IonLabel,
+  IonInput,
   useIonRouter,
 } from "@ionic/vue";
 import { useRoute } from "vue-router";
@@ -129,9 +135,10 @@ const plantImageSrc = computed(() => {
   }
 });
 
-function test() {
-  console.log("DetailPage - test");
+function enterEdit() {
+  console.log("DetailPage - enterEdit");
 }
+
 </script>
 
 <style scoped lang="scss">
@@ -147,8 +154,10 @@ ion-content {
   div[id="controls"] {
     display: flex;
     justify-content: space-between;
+    background-color: pink;
 
     ion-button[color="danger"] {
+      // 这里margin-left设为auto配合flex容器的space-between让该元素右对齐
       margin-left: auto;
     }
   }

@@ -57,15 +57,22 @@ export default defineComponent({
       console.log(id);
 
       // 用findIndex方法找到需要删除的元素
-      const indexToDelete = appData.appConf.plantList.findIndex(
-        (p) => p.plantId === id
-      );
-      console.log("found index: " + indexToDelete);
-      appData.appConf.plantList.splice(indexToDelete, 1);
-      updateConfigFile();
+      const indexToDelete = appData.appConf.plantList.findIndex((p) => {
+        if (p.plantId === id) {
+          console.log("found the plant to delete, id: " + id);
+          console.log(p);
+          return true;
+        } else return false;
+      });
+      if (indexToDelete != -1) {
+        appData.appConf.plantList.splice(indexToDelete, 1);
+        updateConfigFile();
+      } else console.log("indexToDelete = " + indexToDelete);
     }
 
     function updateConfigFile() {
+      console.log("App - updateConfigFile");
+      console.log(appData);
       Filesystem.writeFile({
         path: "appconfig.json",
         directory: Directory.Data,
