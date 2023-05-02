@@ -27,7 +27,7 @@
           <ion-button @click="test" size="large">test</ion-button>
         </div>
         <ion-card
-          v-for="(plant, index) in appData.appConf.plantList"
+          v-for="(plant, index) in plants"
           :key="index"
           @click="cardDetail(plant)"
         >
@@ -65,13 +65,13 @@ import {
   toastController,
 } from "@ionic/vue";
 import { rose, addCircle, star } from "ionicons/icons";
-import { onMounted, reactive, inject, watch } from "vue";
+import { onMounted, reactive, inject, watch, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 
 const console = window.console;
 
-console.log("HomePage - setup");
+console.log("HomePage - <setup>");
 
 const ionRouter = useIonRouter();
 const router = useRouter();
@@ -83,17 +83,32 @@ const { appData } = inject("appData") as {
   addPlant: (plant: Plant) => void;
 };
 
-// 监视appData，其发生改变后
-watch(appData, () => {
-  console.log("HomePage - watch - appData");
-  console.log(appData.appConf.plantList.length);
+console.log(appData.appConf);
+onMounted(() => {
+  console.log("HomePage - onMounted");
+
   updateImages();
+});
+
+onIonViewDidEnter(() => {
+  console.log("HomePage - onIonViewDidEnter");
+});
+
+// 监视appData，其发生改变后
+// watch(appData, () => {
+//   console.log("HomePage - watch - appData");
+//   console.log("plantList length: " + appData.appConf.plantList.length);
+//   updateImages();
+// });
+
+const plants = computed(() => {
+  return appData.appConf.plantList;
 });
 
 function updateImages() {
   appData.appConf.plantList.forEach(async (plant) => {
     const filename = plant.plantImageFilename;
-    console.log(filename);
+    console.log("filename: " + filename);
     // 判断文件名是否为空，如果是将plantImages对象相应id的图像设为空字符串
     if (filename === "") {
       plantImages[plant.plantId] = "";
@@ -125,11 +140,17 @@ function imageWithPlaceholder(imageDataUrl: string) {
   return star;
 }
 
-onMounted(() => {
-  console.log("HomePage - onMounted");
+function test() {
+  console.log("HomePage - test");
 
-  updateImages();
-});
+  console.log(plants.value[0]);
+
+  // using computed property returning plantList and change the source, it works
+  appData.appConf.plantList[0].plantName = "haha";
+
+  // computed properties are getter-only by defaule; so next line doesn't work
+  // plants.value[0].plantName = "heihei";
+}
 
 async function presentToast(
   message: string,
@@ -142,15 +163,6 @@ async function presentToast(
   });
 
   await toast.present();
-}
-
-onIonViewDidEnter(() => {
-  console.log("HomePage - onIonViewDidEnter");
-});
-
-function test() {
-  console.log("HomePage - test");
-
 }
 
 async function deleteFile() {

@@ -94,9 +94,5 @@ export default defineComponent({
       console.log("App - setup - onMounted");
     });
   },
-
-  mounted() {
-    console.log("App - mounted");
-  },
 });
 </script>

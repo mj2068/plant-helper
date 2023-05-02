@@ -28,6 +28,8 @@ import "./theme/variables.css";
 // defineCustomElements(window);
 
 const app = createApp(App).use(IonicVue).use(router);
+app.config.globalProperties.$bus = "fast";
+// console.log(app);
 
 router.isReady().then(() => {
   app.mount("#app");

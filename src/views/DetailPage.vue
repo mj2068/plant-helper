@@ -9,12 +9,12 @@
           <ion-button @click="ionRouter.navigate('/home', 'root')">
             首页
           </ion-button>
-          <ion-button @click="enterEdit"> 编辑 </ion-button>
+          <ion-button @click="save">编辑</ion-button>
           <ion-button v-on:click="console.log(`id:${id}`)">
             <ion-icon slot="icon-only" :icon="ellipsisVerticalSharp"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>{{ plant?.plantName }}</ion-title>
+        <ion-title>{{ plant.name }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
@@ -25,21 +25,23 @@
         <ion-list>
           <ion-item>
             <ion-label>植物名称</ion-label>
-            <ion-input :placeholder="plant?.plantName"></ion-input>
+            <ion-input v-model="plant.name"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label>植物描述</ion-label>
-            
-            <p>plant description: {{ plant?.plantDescription }}</p>
+            <ion-input v-model="plant.description"></ion-input>
           </ion-item>
           <ion-item>
-            <p>plant id: {{ plant?.plantId }}</p>
+            <ion-label>植物ID</ion-label>
+            <p>{{ plant.id }}</p>
           </ion-item>
         </ion-list>
       </div>
       <div id="controls">
-        <ion-button> test </ion-button>
-        <ion-button> test </ion-button>
+        <ion-button>test</ion-button>
+        <ion-button v-on:click="test">
+          <ion-icon slot="icon-only" :icon="star"></ion-icon>
+        </ion-button>
         <ion-button
           color="danger"
           v-on:click="deletePlant(parseInt(id as string))"
@@ -53,7 +55,14 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, inject, watch, computed } from "vue";
+import {
+  onMounted,
+  ref,
+  inject,
+  watch,
+  computed,
+  getCurrentInstance,
+} from "vue";
 import {
   IonToolbar,
   IonTitle,
@@ -100,27 +109,36 @@ const { appData, deletePlant } = inject("appData") as {
 onMounted(() => {
   console.log("DetailPage - onMounted");
 
-  updatePlant();
+  reloadPlantFromConfig();
 });
 
 watch(appData, () => {
   console.log("DetailPage - watch - appData");
 
-  updatePlant();
+  reloadPlantFromConfig();
 });
 
-const plantImageFileUri = ref("");
-const plant = ref<Plant>();
-function updatePlant() {
+const plant = ref({
+  name: "",
+  id: -1,
+  description: "",
+  imageFileUri: "",
+});
+
+function reloadPlantFromConfig() {
   for (const p of appData.appConf.plantList) {
     if (p.plantId.toString() === id) {
-      plant.value = p;
+      // 将根据id找到的元素赋给组件ref变量plant
+      plant.value.description = p.plantDescription;
+      plant.value.name = p.plantName;
+      plant.value.id = p.plantId;
+      // 判断此plant元素图片文件名属性是否为空，如否则获取其uri
       if (p.plantImageFilename !== "") {
         Filesystem.getUri({
           path: "images/" + p.plantImageFilename,
           directory: Directory.Data,
-        }).then((r) => {
-          plantImageFileUri.value = r.uri;
+        }).then((result) => {
+          plant.value.imageFileUri = result.uri;
         });
       }
     }
@@ -128,15 +146,21 @@ function updatePlant() {
 }
 
 const plantImageSrc = computed(() => {
-  if (plantImageFileUri.value === "") {
+  if (plant.value.imageFileUri === "") {
     return star;
   } else {
-    return Capacitor.convertFileSrc(plantImageFileUri.value);
+    return Capacitor.convertFileSrc(plant.value.imageFileUri);
   }
 });
 
-function enterEdit() {
+function save() {
   console.log("DetailPage - enterEdit");
+
+  appData.appConf.testNumber = Math.floor(Math.random() * 100);
+}
+
+function test() {
+  console.log(appData.appConf.plantList);
 }
 
 </script>
@@ -154,7 +178,7 @@ ion-content {
   div[id="controls"] {
     display: flex;
     justify-content: space-between;
-    background-color: pink;
+    background-color: moccasin;
 
     ion-button[color="danger"] {
       // 这里margin-left设为auto配合flex容器的space-between让该元素右对齐
