@@ -41,7 +41,11 @@ export default defineComponent({
       })
       .catch((error: Error) => {
         console.error(error);
-        if (error.message === "File does not exist") {
+        console.error(error.message);
+        if (
+          error.message === "File does not exist" ||
+          error.message === "File does not exist."
+        ) {
           updateConfigFile();
         }
       });

@@ -18,22 +18,25 @@
     <ion-content>
       <div id="container" class="ion-padding">
         <div v-if="plantImageDataUrl" id="image-container">
-          <ion-card class="ion-padding">
-            <ion-img
-              :src="plantImageWithPlaceholder"
-              alt="植物图片"
-              srcset=""
-            />
-            <ion-button id="delete-image-button" fill="clear" color="medium">
+          <ion-card class="">
+            <img :src="plantImageWithPlaceholder" alt="植物图片" srcset="" />
+            <ion-button
+              id="delete-image-button"
+              fill="solid"
+              color="light"
+              @click="deleteImage"
+            >
               <ion-icon slot="icon-only" :icon="trashSharp"></ion-icon>
             </ion-button>
           </ion-card>
         </div>
-        <div id="no-image-container" v-else>
-          <ion-button fill="clear"
-            ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
-            添加图片
-          </ion-button>
+        <div v-else id="no-image-container">
+          <ion-card>
+            <ion-button fill="clear" v-on:click="getImage"
+              ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
+              添加图片
+            </ion-button>
+          </ion-card>
         </div>
         <ion-list>
           <ion-item>
@@ -54,11 +57,7 @@
             ></ion-textarea>
           </ion-item>
         </ion-list>
-        <ion-button @click="getImage">CAMERA</ion-button>
-        <ion-button @click="deleteImage" :disabled="plantImageDataUrl === ''"
-          >DELETE IMAGE</ion-button
-        >
-        <ion-button @click="test">test</ion-button>
+        <!-- <ion-button @click="test">test</ion-button> -->
       </div>
     </ion-content>
   </ion-page>
@@ -254,32 +253,47 @@ export default defineComponent({
   // max-height: 300px;
 
   ion-card {
-    // height: auto;
+    // height: 200px;
     max-height: 200px;
-    max-width: 100%;
-    overflow: hidden;
+    // max-width: 100%;
+    // overflow: hidden;
     // width: 80%;
     // display: flex;
     // justify-content: center;
     // align-items: center;
-    background-color: lightblue;
+    background-color: green;
 
-    ion-img {
-      // width: auto;
-      height: auto;
-      // object-fit: contain;
+    img {
+      width: 100%;
+      max-height: 200px;
+      // max-width: 200px;
+      // max-height: 200px;
+      object-fit: cover;
+      // object-position: 33% 50%;
       background-color: pink;
     }
 
     ion-button {
       position: absolute;
-      left: 0;
-      top: 0;
+      right: 0;
+      bottom: 0;
+      margin: 0px 2px 2px 0px;
 
       --border-radius: 50%;
-      width: 60px;
-      height: 60px;
+      --padding-start: 8px;
+      --padding-end: 8px;
+      width: 32px;
+      height: 32px;
     }
+  }
+}
+
+#no-image-container {
+  ion-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
   }
 }
 </style>

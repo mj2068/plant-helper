@@ -83,7 +83,6 @@ const { appData } = inject("appData") as {
   addPlant: (plant: Plant) => void;
 };
 
-console.log(appData.appConf);
 onMounted(() => {
   console.log("HomePage - onMounted");
 
@@ -102,6 +101,7 @@ onIonViewDidEnter(() => {
 // });
 
 const plants = computed(() => {
+  updateImages();
   return appData.appConf.plantList;
 });
 
