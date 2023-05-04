@@ -14,8 +14,8 @@ module.exports = {
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-    "vue/no-deprecated-slot-attribute": "warn",
     "@typescript-eslint/no-explicit-any": "warn",
+    "vue/no-deprecated-slot-attribute": "off",
     "vue/no-unused-components": "warn",
     "prefer-const": "warn",
   },

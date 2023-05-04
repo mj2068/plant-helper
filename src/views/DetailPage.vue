@@ -14,28 +14,36 @@
             <ion-icon slot="icon-only" :icon="ellipsisVerticalSharp"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>{{ plant.name }}</ion-title>
+        <ion-title>{{ plant?.plantName }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
       <div id="content-container">
-        <ion-card>
-          <ion-img :src="plantImageSrc" alt="植物图片" />
-        </ion-card>
-        <ion-list>
-          <ion-item>
-            <ion-label>植物名称</ion-label>
-            <ion-input v-model="plant.name"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label>植物描述</ion-label>
-            <ion-input v-model="plant.description"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label>植物ID</ion-label>
-            <p>{{ plant.id }}</p>
-          </ion-item>
-        </ion-list>
+        <div id="found-plant-container" class="container" v-if="plant != null">
+          <ion-card>
+            <ion-img :src="plantImageSrc" alt="植物图片" />
+          </ion-card>
+          <ion-list>
+            <ion-item>
+              <ion-label>植物名称</ion-label>
+              <ion-input :value="plant?.plantName"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label>植物描述</ion-label>
+              <ion-input :value="plant?.plantDescription"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label>植物ID</ion-label>
+              <p>{{ plant?.plantId }}</p>
+            </ion-item>
+          </ion-list>
+        </div>
+        <div id="plant-null-container" class="container" v-else>
+          <h2>未找到该植物</h2>
+          <h4>
+            <i>(id:{{ id }})</i>
+          </h4>
+        </div>
       </div>
       <div id="controls">
         <ion-button>test</ion-button>
@@ -55,14 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  onMounted,
-  ref,
-  inject,
-  watch,
-  computed,
-  getCurrentInstance,
-} from "vue";
+import { onMounted, ref, inject, computed } from "vue";
 import {
   IonToolbar,
   IonTitle,
@@ -109,49 +110,60 @@ const { appData, deletePlant } = inject("appData") as {
 onMounted(() => {
   console.log("DetailPage - onMounted");
 
-  reloadPlantFromConfig();
+  // reloadPlantFromConfig();
 });
 
-watch(appData, () => {
-  console.log("DetailPage - watch - appData");
+// watch(appData, () => {
+//   console.log("DetailPage - watch - appData");
 
-  reloadPlantFromConfig();
-});
+//   reloadPlantFromConfig();
+// });
 
-const plant = ref({
-  name: "",
-  id: -1,
-  description: "",
-  imageFileUri: "",
-});
+const plantImageSrc = ref(star);
 
-function reloadPlantFromConfig() {
+const plant = computed(() => {
   for (const p of appData.appConf.plantList) {
     if (p.plantId.toString() === id) {
-      // 将根据id找到的元素赋给组件ref变量plant
-      plant.value.description = p.plantDescription;
-      plant.value.name = p.plantName;
-      plant.value.id = p.plantId;
-      // 判断此plant元素图片文件名属性是否为空，如否则获取其uri
-      if (p.plantImageFilename !== "") {
-        Filesystem.getUri({
-          path: "images/" + p.plantImageFilename,
-          directory: Directory.Data,
-        }).then((result) => {
-          plant.value.imageFileUri = result.uri;
-        });
-      }
+      setPlantImageSrc(p.plantImageFilename);
+      return p;
     }
+  }
+  return null;
+});
+
+function setPlantImageSrc(imageFilename: string) {
+  if (imageFilename !== "") {
+    Filesystem.getUri({
+      path: "images/" + imageFilename,
+      directory: Directory.Data,
+    }).then((result) => {
+      console.log(result);
+      plantImageSrc.value = Capacitor.convertFileSrc(result.uri);
+    });
+  } else {
+    plantImageSrc.value = star;
   }
 }
 
-const plantImageSrc = computed(() => {
-  if (plant.value.imageFileUri === "") {
-    return star;
-  } else {
-    return Capacitor.convertFileSrc(plant.value.imageFileUri);
-  }
-});
+// function reloadPlantFromConfig() {
+//   for (const p of appData.appConf.plantList) {
+//     if (p.plantId.toString() === id) {
+//       // 将根据id找到的元素赋给组件ref变量plant
+//       plant.value.description = p.plantDescription;
+//       plant.value.name = p.plantName;
+//       plant.value.id = p.plantId;
+//       // 判断此plant元素图片文件名属性是否为空，如否则获取其uri
+//       if (p.plantImageFilename !== "") {
+//         Filesystem.getUri({
+//           path: "images/" + p.plantImageFilename,
+//           directory: Directory.Data,
+//         }).then((result) => {
+//           plant.value.imageFileUri = result.uri;
+//         });
+//       }
+//     }
+//   }
+// }
 
 function save() {
   console.log("DetailPage - enterEdit");
@@ -162,7 +174,6 @@ function save() {
 function test() {
   console.log(appData.appConf.plantList);
 }
-
 </script>
 
 <style scoped lang="scss">

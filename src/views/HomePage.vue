@@ -65,7 +65,7 @@ import {
   toastController,
 } from "@ionic/vue";
 import { rose, addCircle, star } from "ionicons/icons";
-import { onMounted, reactive, inject, watch, ref, computed } from "vue";
+import { onMounted, reactive, inject, computed } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 

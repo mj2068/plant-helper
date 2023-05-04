@@ -9,7 +9,6 @@
           <ion-button @click="ionRouter.navigate('/home', 'root')">
             首页
           </ion-button>
-
           <ion-button @click="save">保存</ion-button>
         </ion-buttons>
         <ion-title>添加植物</ion-title>
@@ -18,18 +17,27 @@
 
     <ion-content>
       <div id="container" class="ion-padding">
-        <div id="image-container">
-          <ion-card>
+        <div v-if="plantImageDataUrl" id="image-container">
+          <ion-card class="ion-padding">
             <ion-img
               :src="plantImageWithPlaceholder"
               alt="植物图片"
               srcset=""
             />
+            <ion-button id="delete-image-button" fill="clear" color="medium">
+              <ion-icon slot="icon-only" :icon="trashSharp"></ion-icon>
+            </ion-button>
           </ion-card>
+        </div>
+        <div id="no-image-container" v-else>
+          <ion-button fill="clear"
+            ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
+            添加图片
+          </ion-button>
         </div>
         <ion-list>
           <ion-item>
-            <ion-label>名称</ion-label>
+            <ion-label>植物名称</ion-label>
             <ion-input
               id="plant-name"
               placeholder="请输入植物名称"
@@ -37,8 +45,13 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label>描述</ion-label>
-            <ion-input id="description" v-model="plantDescription"></ion-input>
+            <ion-label position="floating">植物描述</ion-label>
+            <ion-textarea
+              id="description"
+              v-model="plantDescription"
+              :auto-grow="true"
+              placeholder="请输入植物的描述信息"
+            ></ion-textarea>
           </ion-item>
         </ion-list>
         <ion-button @click="getImage">CAMERA</ion-button>
@@ -70,11 +83,13 @@ import {
   IonCardContent,
   IonList,
   IonItem,
+  IonTextarea,
   IonImg,
+  IonIcon,
   useIonRouter,
 } from "@ionic/vue";
-import { star } from "ionicons/icons";
-import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
+import { star, addCircleOutline, trashSharp } from "ionicons/icons";
+import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { getDateTime } from "@/composables/utils";
 import type { AppConf, Plant } from "@/types";
@@ -92,10 +107,14 @@ export default defineComponent({
     IonButton,
     IonBackButton,
     IonCard,
+    IonCardHeader,
+    IonCardTitle,
     IonCardContent,
     IonList,
     IonItem,
+    IonTextarea,
     IonImg,
+    IonIcon,
   },
 
   setup() {
@@ -122,6 +141,8 @@ export default defineComponent({
   data() {
     return {
       star,
+      addCircleOutline,
+      trashSharp,
       ionRouter: useIonRouter(),
       plantName: "",
       plantDescription: "",
@@ -225,21 +246,40 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 #image-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 200px;
-}
-#image-container ion-card {
-  width: 80%;
-  /* display: flex; */
-  justify-content: center;
-  align-items: center;
-}
-#image-container ion-card ion-img {
-  height: 100%;
-  /* object-fit: fill; */
+  // display: flex;
+  // justify-content: center;
+  // width: 100%;
+  // max-height: 300px;
+
+  ion-card {
+    // height: auto;
+    max-height: 200px;
+    max-width: 100%;
+    overflow: hidden;
+    // width: 80%;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    background-color: lightblue;
+
+    ion-img {
+      // width: auto;
+      height: auto;
+      // object-fit: contain;
+      background-color: pink;
+    }
+
+    ion-button {
+      position: absolute;
+      left: 0;
+      top: 0;
+
+      --border-radius: 50%;
+      width: 60px;
+      height: 60px;
+    }
+  }
 }
 </style>
