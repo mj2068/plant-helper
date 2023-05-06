@@ -19,7 +19,11 @@
       <div id="container" class="ion-padding">
         <div v-if="plantImageDataUrl" id="image-container">
           <ion-card class="">
-            <img :src="plantImageWithPlaceholder" alt="植物图片" srcset="" />
+            <ion-img
+              :src="plantImageWithPlaceholder"
+              alt="植物图片"
+              srcset=""
+            />
             <ion-button
               id="delete-image-button"
               fill="solid"
@@ -186,6 +190,7 @@ export default defineComponent({
           directory: Directory.Data,
           recursive: true,
         });
+        console.log("AddPage - save - saved uri:");
         console.log(savedFileUri.uri);
       }
 
@@ -215,7 +220,7 @@ export default defineComponent({
     async getImage() {
       try {
         const photo = await Camera.getPhoto({
-          quality: 50,
+          // quality: 100,
           resultType: CameraResultType.DataUrl,
           promptLabelHeader: "图片来源",
           promptLabelPhoto: "相册",
@@ -263,7 +268,8 @@ export default defineComponent({
     // align-items: center;
     background-color: green;
 
-    img {
+    img,
+    ion-img {
       width: 100%;
       max-height: 200px;
       // max-width: 200px;

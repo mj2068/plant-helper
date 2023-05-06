@@ -19,10 +19,10 @@
     </ion-header>
     <ion-content class="ion-padding">
       <div id="content-container">
-        <div id="found-plant-container" class="container" v-if="plant != null">
-          <ion-card>
-            <ion-img :src="plantImageSrc" alt="植物图片" />
-          </ion-card>
+        <div id="plant-found-container" class="container" v-if="plant != null">
+          <div id="plant-image-container">
+            <ion-card><img :src="plantImageSrc" alt="植物图片" /></ion-card>
+          </div>
           <ion-list>
             <ion-item>
               <ion-label>植物名称</ion-label>
@@ -46,13 +46,9 @@
         </div>
       </div>
       <div id="controls">
-        <ion-button>test</ion-button>
-        <ion-button v-on:click="test">
-          <ion-icon slot="icon-only" :icon="star"></ion-icon>
-        </ion-button>
         <ion-button
           color="danger"
-          v-on:click="deletePlant(parseInt(id as string))"
+          v-on:click="prepareDelete(parseInt(id as string))"
         >
           删除
           <ion-icon slot="start" :icon="trashSharp"></ion-icon>
@@ -74,6 +70,8 @@ import {
   IonButton,
   IonBackButton,
   IonCard,
+  IonCardHeader,
+  IonCardTitle,
   IonImg,
   IonIcon,
   IonList,
@@ -171,6 +169,11 @@ function save() {
   appData.appConf.testNumber = Math.floor(Math.random() * 100);
 }
 
+function prepareDelete(idToDelete: number) {
+  deletePlant(idToDelete);
+  ionRouter.navigate("/home", "root");
+}
+
 function test() {
   console.log(appData.appConf.plantList);
 }
@@ -178,18 +181,27 @@ function test() {
 
 <style scoped lang="scss">
 ion-content {
-  ion-card {
-    max-height: 300px;
+  #plant-image-container {
+    display: flex;
+    justify-content: center;
+    ion-card {
+      // max-height: 300px;
+      // width: 200px;
 
-    ion-img {
-      height: 300px;
+      img,
+      ion-img {
+        display: block;
+        width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+      }
     }
   }
 
   div[id="controls"] {
     display: flex;
     justify-content: space-between;
-    background-color: moccasin;
+    // background-color: moccasin;
 
     ion-button[color="danger"] {
       // 这里margin-left设为auto配合flex容器的space-between让该元素右对齐

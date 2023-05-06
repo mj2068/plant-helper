@@ -86,7 +86,7 @@ const { appData } = inject("appData") as {
 onMounted(() => {
   console.log("HomePage - onMounted");
 
-  updateImages();
+  // updateImages();
 });
 
 onIonViewDidEnter(() => {
@@ -101,6 +101,8 @@ onIonViewDidEnter(() => {
 // });
 
 const plants = computed(() => {
+  // plantList发生变化，其每个元素对应的图片，也需要更新；
+  // 借用computed来
   updateImages();
   return appData.appConf.plantList;
 });
@@ -129,7 +131,7 @@ function updateImages() {
   });
 }
 
-// 用于存储plantList数组中每个对象对应的图像数据
+// 这个index signature用于存储plantList数组中每个元素对应的图像数据
 const plantImages: { [index: number]: string } = reactive({});
 
 // 为防止没有添加图片文件的植物记录显示找不到图片，此函数用于返回一个通用占位图
