@@ -9,10 +9,18 @@
           <ion-button @click="ionRouter.navigate('/home', 'root')">
             首页
           </ion-button>
-          <ion-button @click="save">编辑</ion-button>
+
+          <ion-button @click="editMode = true" v-if="!editMode"
+            >编辑</ion-button
+          >
+          <ion-button v-if="editMode">保存</ion-button>
+          <ion-button @click="editMode = false" v-if="editMode"
+            >取消</ion-button
+          >
           <ion-button v-on:click="console.log(`id:${id}`)">
             <ion-icon slot="icon-only" :icon="ellipsisVerticalSharp"></ion-icon>
           </ion-button>
+          <ion-button v-on:click="test">TEST</ion-button>
         </ion-buttons>
         <ion-title>{{ plant?.plantName }}</ion-title>
       </ion-toolbar>
@@ -20,24 +28,41 @@
     <ion-content class="ion-padding">
       <div id="content-container">
         <div id="plant-found-container" class="container" v-if="plant != null">
-          <div id="plant-image-container">
-            <ion-card><img :src="plantImageSrc" alt="植物图片" /></ion-card>
+          <div id="plant-image-container" class="ion-justify-content-center">
+            <ion-card
+              ><img :src="plantImageSrc" alt="植物图片" />
+              <ion-button
+                v-if="editMode && plant.plantImageFilename !== ''"
+                color="light"
+                ><ion-icon :icon="trashSharp"></ion-icon
+              ></ion-button>
+            </ion-card>
           </div>
           <ion-list>
             <ion-item>
-              <ion-label>植物名称</ion-label>
-              <ion-input :value="plant?.plantName"></ion-input>
+              <ion-label position="fixed">植物名称</ion-label>
+              <ion-input
+                :class="{ editing: editMode }"
+                v-model="plantName"
+                placeholder=""
+              ></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label>植物描述</ion-label>
-              <ion-input :value="plant?.plantDescription"></ion-input>
+              <ion-label position="fixed">植物描述</ion-label>
+              <ion-textarea
+                :class="{ editing: editMode }"
+                :auto-grow="true"
+                :value="plant.plantDescription"
+                placeholder=""
+              ></ion-textarea>
             </ion-item>
-            <ion-item>
+            <ion-item color="dark">
               <ion-label>植物ID</ion-label>
-              <p>{{ plant?.plantId }}</p>
+              <ion-input readonly :value="plant.plantId"></ion-input>
             </ion-item>
           </ion-list>
         </div>
+        <!-- 此div用于在找不到该id的plant的这种特殊情况下给用户一个提示 -->
         <div id="plant-null-container" class="container" v-else>
           <h2>未找到该植物</h2>
           <h4>
@@ -48,7 +73,7 @@
       <div id="controls">
         <ion-button
           color="danger"
-          v-on:click="prepareDelete(parseInt(id as string))"
+          v-on:click="doDelete(parseInt(id as string))"
         >
           删除
           <ion-icon slot="start" :icon="trashSharp"></ion-icon>
@@ -70,20 +95,18 @@ import {
   IonButton,
   IonBackButton,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonImg,
   IonIcon,
   IonList,
   IonItem,
   IonLabel,
   IonInput,
+  IonTextarea,
   useIonRouter,
 } from "@ionic/vue";
 import { useRoute } from "vue-router";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import { Capacitor } from "@capacitor/core";
-import { star, ellipsisVerticalSharp, trashSharp } from "ionicons/icons";
+import { star, ellipsisVerticalSharp, trashSharp, image } from "ionicons/icons";
 import { AppConf, Plant } from "@/types";
 
 const console = window.console;
@@ -105,18 +128,6 @@ const { appData, deletePlant } = inject("appData") as {
   deletePlant: (id: number) => void;
 };
 
-onMounted(() => {
-  console.log("DetailPage - onMounted");
-
-  // reloadPlantFromConfig();
-});
-
-// watch(appData, () => {
-//   console.log("DetailPage - watch - appData");
-
-//   reloadPlantFromConfig();
-// });
-
 const plantImageSrc = ref(star);
 
 const plant = computed(() => {
@@ -129,6 +140,29 @@ const plant = computed(() => {
   return null;
 });
 
+const editMode = ref(false);
+let plantNameData = "111";
+const plantName = computed({
+  get() {
+    return plantNameData;
+  },
+  set(value) {
+    plantNameData = value;
+  },
+});
+
+onMounted(() => {
+  console.log("DetailPage - onMounted");
+
+  // reloadPlantFromConfig();
+});
+
+// watch(appData, () => {
+//   console.log("DetailPage - watch - appData");
+
+//   reloadPlantFromConfig();
+// });
+
 function setPlantImageSrc(imageFilename: string) {
   if (imageFilename !== "") {
     Filesystem.getUri({
@@ -139,7 +173,7 @@ function setPlantImageSrc(imageFilename: string) {
       plantImageSrc.value = Capacitor.convertFileSrc(result.uri);
     });
   } else {
-    plantImageSrc.value = star;
+    plantImageSrc.value = image;
   }
 }
 
@@ -166,16 +200,20 @@ function setPlantImageSrc(imageFilename: string) {
 function save() {
   console.log("DetailPage - enterEdit");
 
-  appData.appConf.testNumber = Math.floor(Math.random() * 100);
+  editMode.value = !editMode.value;
 }
 
-function prepareDelete(idToDelete: number) {
-  deletePlant(idToDelete);
+function doDelete(deleteId: number) {
+  deletePlant(deleteId);
   ionRouter.navigate("/home", "root");
 }
 
 function test() {
-  console.log(appData.appConf.plantList);
+  console.log(appData.appConf.plantList[1].plantName);
+
+  if (plant.value != null) {
+    plant.value.plantName = plant.value?.plantName + "yo";
+  }
 }
 </script>
 
@@ -183,21 +221,56 @@ function test() {
 ion-content {
   #plant-image-container {
     display: flex;
-    justify-content: center;
+    // justify-content: center;
+    // height: 200px;
+
     ion-card {
       // max-height: 300px;
-      // width: 200px;
+      // width: 100%;
+      // flex: 1;
 
       img,
       ion-img {
-        display: block;
         width: 100%;
+        display: block;
         max-height: 300px;
         object-fit: contain;
+      }
+
+      ion-button {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 32px;
+        height: 32px;
+
+        margin-right: 4px;
+        --border-radius: 50%;
+        --padding-start: 8px;
+        --padding-end: 8px;
       }
     }
   }
 
+  ion-list {
+    ion-item {
+      ion-input {
+        // text-align: right;
+      }
+
+      ion-input.editing {
+        border-style: groove;
+        border-radius: 4px;
+        border-width: 2px;
+      }
+
+      ion-textarea.editing {
+        border-style: groove;
+        border-radius: 4px;
+        border-width: 2px;
+      }
+    }
+  }
   div[id="controls"] {
     display: flex;
     justify-content: space-between;
