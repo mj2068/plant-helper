@@ -39,22 +39,26 @@
             </ion-card>
           </div>
           <ion-list>
-            <ion-item>
+            <ion-item id="item-plant-name" button detail="true">
               <ion-label position="fixed">植物名称</ion-label>
-              <ion-input
+              <!-- <ion-input
                 :class="{ editing: editMode }"
                 v-model="plantName"
                 placeholder=""
-              ></ion-input>
+              ></ion-input> -->
+              <ion-text slot="end" class="ion-margin-end">{{
+                plant.plantName
+              }}</ion-text>
             </ion-item>
-            <ion-item>
+            <ion-modal trigger="item-plant-name">
+              <ion-header></ion-header>
+              <ion-content></ion-content>
+            </ion-modal>
+            <ion-item button detail="true">
               <ion-label position="fixed">植物描述</ion-label>
-              <ion-textarea
-                :class="{ editing: editMode }"
-                :auto-grow="true"
-                :value="plant.plantDescription"
-                placeholder=""
-              ></ion-textarea>
+              <ion-text slot="end" class="ion-margin-end">{{
+                plant.plantDescription
+              }}</ion-text>
             </ion-item>
             <ion-item color="dark">
               <ion-label>植物ID</ion-label>
@@ -101,6 +105,9 @@ import {
   IonLabel,
   IonInput,
   IonTextarea,
+  IonNote,
+  IonText,
+  IonModal,
   useIonRouter,
 } from "@ionic/vue";
 import { useRoute } from "vue-router";
@@ -141,13 +148,13 @@ const plant = computed(() => {
 });
 
 const editMode = ref(false);
-let plantNameData = "111";
+let plantNameData = "";
 const plantName = computed({
   get() {
-    return plantNameData;
+    return plant.value ? plant.value.plantName : "";
   },
-  set(value) {
-    plantNameData = value;
+  set(newValue) {
+    plantNameData = newValue;
   },
 });
 
@@ -209,11 +216,8 @@ function doDelete(deleteId: number) {
 }
 
 function test() {
-  console.log(appData.appConf.plantList[1].plantName);
-
-  if (plant.value != null) {
-    plant.value.plantName = plant.value?.plantName + "yo";
-  }
+  // console.log(plantNameData);
+  plant.value!.plantName = "hahaha";
 }
 </script>
 
