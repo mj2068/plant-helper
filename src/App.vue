@@ -92,7 +92,7 @@ export default defineComponent({
         });
     }
 
-    provide("appData", { appData, addPlant, deletePlant });
+    provide("appData", { appData, addPlant, deletePlant, updateConfigFile });
 
     onMounted(() => {
       console.log("App - setup - onMounted");

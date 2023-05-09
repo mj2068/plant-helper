@@ -9,14 +9,6 @@
           <ion-button @click="ionRouter.navigate('/home', 'root')">
             首页
           </ion-button>
-
-          <ion-button @click="editMode = true" v-if="!editMode"
-            >编辑</ion-button
-          >
-          <ion-button v-if="editMode">保存</ion-button>
-          <ion-button @click="editMode = false" v-if="editMode"
-            >取消</ion-button
-          >
           <ion-button v-on:click="console.log(`id:${id}`)">
             <ion-icon slot="icon-only" :icon="ellipsisVerticalSharp"></ion-icon>
           </ion-button>
@@ -25,21 +17,15 @@
         <ion-title>{{ plant?.plantName }}</ion-title>
       </ion-toolbar>
     </ion-header>
+
     <ion-content class="ion-padding">
       <div id="content-container">
         <div id="plant-found-container" class="container" v-if="plant != null">
           <div id="plant-image-container" class="ion-justify-content-center">
-            <ion-card
-              ><img :src="plantImageSrc" alt="植物图片" />
-              <ion-button
-                v-if="editMode && plant.plantImageFilename !== ''"
-                color="light"
-                ><ion-icon :icon="trashSharp"></ion-icon
-              ></ion-button>
-            </ion-card>
+            <ion-card><img :src="plantImageSrc" alt="植物图片" /></ion-card>
           </div>
           <ion-list>
-            <ion-item id="item-plant-name" button detail="true">
+            <ion-item id="item-plant-name" button :detail="true">
               <ion-label position="fixed">植物名称</ion-label>
               <!-- <ion-input
                 :class="{ editing: editMode }"
@@ -50,11 +36,36 @@
                 plant.plantName
               }}</ion-text>
             </ion-item>
-            <ion-modal trigger="item-plant-name">
-              <ion-header></ion-header>
-              <ion-content></ion-content>
+            <!-- 修改职务名称modal -->
+            <ion-modal
+              ref="editPlantNameModal"
+              trigger="item-plant-name"
+              @ionModalWillPresent="onEditPlantNameModalWillPresent"
+              v-on:willDismiss="onEditPlantNameModalWillDismiss"
+            >
+              <ion-header>
+                <ion-toolbar>
+                  <ion-buttons slot="start">
+                    <ion-button @click="cancelEditPlantNameModal"
+                      >取消</ion-button
+                    >
+                  </ion-buttons>
+                  <ion-title>修改植物名称</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button :strong="true" @click="saveEditPlantNameModal"
+                      >保存</ion-button
+                    >
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+              <ion-content>
+                <ion-input
+                  style="--background: lightgrey"
+                  v-model="editPlantNameModalPlantName"
+                ></ion-input>
+              </ion-content>
             </ion-modal>
-            <ion-item button detail="true">
+            <ion-item button :detail="true">
               <ion-label position="fixed">植物描述</ion-label>
               <ion-text slot="end" class="ion-margin-end">{{
                 plant.plantDescription
@@ -104,8 +115,6 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonTextarea,
-  IonNote,
   IonText,
   IonModal,
   useIonRouter,
@@ -115,6 +124,7 @@ import { Directory, Filesystem } from "@capacitor/filesystem";
 import { Capacitor } from "@capacitor/core";
 import { star, ellipsisVerticalSharp, trashSharp, image } from "ionicons/icons";
 import { AppConf, Plant } from "@/types";
+import { OverlayEventDetail } from "@ionic/core";
 
 const console = window.console;
 
@@ -127,12 +137,13 @@ const { id } = route.params;
 console.log("DetailPage - <setup> id: ");
 console.log(id);
 
-const { appData, deletePlant } = inject("appData") as {
+const { appData, deletePlant, updateConfigFile } = inject("appData") as {
   appData: {
     appConf: AppConf;
   };
   addPlant: (plant: Plant) => void;
   deletePlant: (id: number) => void;
+  updateConfigfile: () => void;
 };
 
 const plantImageSrc = ref(star);
@@ -147,23 +158,38 @@ const plant = computed(() => {
   return null;
 });
 
-const editMode = ref(false);
-let plantNameData = "";
-const plantName = computed({
-  get() {
-    return plant.value ? plant.value.plantName : "";
-  },
-  set(newValue) {
-    plantNameData = newValue;
-  },
-});
-
 onMounted(() => {
   console.log("DetailPage - onMounted");
 
   // reloadPlantFromConfig();
 });
 
+const editPlantNameModal = ref<any | null>(null);
+function cancelEditPlantNameModal() {
+  // console.log(editPlantNameModal);
+  // console.log(editPlantNameModal.value.$el === editPlantNameModal.value.$el.el);
+  editPlantNameModal.value?.$el.dismiss(null, "cancel");
+}
+
+const editPlantNameModalPlantName = ref("");
+function onEditPlantNameModalWillPresent() {
+  if (plant.value) {
+    editPlantNameModalPlantName.value = plant.value.plantName;
+  }
+}
+
+function saveEditPlantNameModal() {
+  editPlantNameModal.value.$el.dismiss(null, "save");
+}
+
+function onEditPlantNameModalWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
+  console.log(ev.detail.role);
+  if (ev.detail.role === "save" && plant.value) {
+    console.log("new name: " + editPlantNameModalPlantName.value);
+    plant.value.plantName = editPlantNameModalPlantName.value;
+    updateConfigFile();
+  }
+}
 // watch(appData, () => {
 //   console.log("DetailPage - watch - appData");
 
@@ -206,8 +232,6 @@ function setPlantImageSrc(imageFilename: string) {
 
 function save() {
   console.log("DetailPage - enterEdit");
-
-  editMode.value = !editMode.value;
 }
 
 function doDelete(deleteId: number) {
@@ -216,8 +240,7 @@ function doDelete(deleteId: number) {
 }
 
 function test() {
-  // console.log(plantNameData);
-  plant.value!.plantName = "hahaha";
+  return;
 }
 </script>
 
