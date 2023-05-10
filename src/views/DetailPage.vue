@@ -40,8 +40,8 @@
             <ion-modal
               ref="editPlantNameModal"
               trigger="item-plant-name"
-              @ionModalWillPresent="onEditPlantNameModalWillPresent"
               v-on:willDismiss="onEditPlantNameModalWillDismiss"
+              @ionModalDidPresent="onEditPlantNameModalDidPresent"
             >
               <ion-header>
                 <ion-toolbar>
@@ -60,11 +60,13 @@
               </ion-header>
               <ion-content>
                 <ion-input
+                  ref="editPlantNameModalPlantNameInputElement"
                   style="--background: lightgrey"
                   v-model="editPlantNameModalPlantName"
                 ></ion-input>
               </ion-content>
             </ion-modal>
+
             <ion-item button :detail="true">
               <ion-label position="fixed">植物描述</ion-label>
               <ion-text slot="end" class="ion-margin-end">{{
@@ -99,7 +101,9 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, inject, computed } from "vue";
+import { Capacitor } from "@capacitor/core";
+import { Directory, Filesystem } from "@capacitor/filesystem";
+import { OverlayEventDetail } from "@ionic/core";
 import {
   IonToolbar,
   IonTitle,
@@ -119,12 +123,13 @@ import {
   IonModal,
   useIonRouter,
 } from "@ionic/vue";
-import { useRoute } from "vue-router";
-import { Directory, Filesystem } from "@capacitor/filesystem";
-import { Capacitor } from "@capacitor/core";
 import { star, ellipsisVerticalSharp, trashSharp, image } from "ionicons/icons";
-import { AppConf, Plant } from "@/types";
-import { OverlayEventDetail } from "@ionic/core";
+import { onMounted, ref, inject, computed } from "vue";
+import { useRoute } from "vue-router";
+
+import { AppConf } from "@/types";
+import { Modal } from "@ionic/core/dist/types/components/modal/modal";
+import { Input } from "@ionic/core/dist/types/components/input/input";
 
 const console = window.console;
 
@@ -141,9 +146,8 @@ const { appData, deletePlant, updateConfigFile } = inject("appData") as {
   appData: {
     appConf: AppConf;
   };
-  addPlant: (plant: Plant) => void;
   deletePlant: (id: number) => void;
-  updateConfigfile: () => void;
+  updateConfigFile: () => void;
 };
 
 const plantImageSrc = ref(star);
@@ -164,22 +168,41 @@ onMounted(() => {
   // reloadPlantFromConfig();
 });
 
-const editPlantNameModal = ref<any | null>(null);
+// 编辑页面的template ref
+// 此处发现ionic template ref对typescript的支持还是有点迷的，以下的InstanceType是一个
+// 凑合事儿的
+const editPlantNameModal = ref<InstanceType<typeof IonModal> | null>(null);
 function cancelEditPlantNameModal() {
   // console.log(editPlantNameModal);
   // console.log(editPlantNameModal.value.$el === editPlantNameModal.value.$el.el);
-  editPlantNameModal.value?.$el.dismiss(null, "cancel");
-}
-
-const editPlantNameModalPlantName = ref("");
-function onEditPlantNameModalWillPresent() {
-  if (plant.value) {
-    editPlantNameModalPlantName.value = plant.value.plantName;
-  }
+  (editPlantNameModal.value?.$el as Modal).dismiss(null, "cancel");
 }
 
 function saveEditPlantNameModal() {
-  editPlantNameModal.value.$el.dismiss(null, "save");
+  (editPlantNameModal.value?.$el as Modal).dismiss(null, "save");
+}
+
+// 植物名称编辑窗口的input的响应式变量
+const editPlantNameModalPlantName = ref("");
+// 植物名称编辑窗口的input element的template ref
+const editPlantNameModalPlantNameInputElement = ref<InstanceType<
+  typeof IonInput
+> | null>(null);
+function onEditPlantNameModalDidPresent() {
+  // 将编辑窗口的input初始值设为原名称
+  if (plant.value) {
+    editPlantNameModalPlantName.value = plant.value.plantName;
+  }
+
+  const input = editPlantNameModalPlantNameInputElement.value?.$el as Input;
+
+  // 初始自动焦点到input element
+  input.setFocus();
+  // 初始自动全选
+  input.getInputElement().then((result: HTMLInputElement) => {
+    result.setSelectionRange(0, -1);
+    console.log(result);
+  });
 }
 
 function onEditPlantNameModalWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
@@ -190,6 +213,7 @@ function onEditPlantNameModalWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
     updateConfigFile();
   }
 }
+
 // watch(appData, () => {
 //   console.log("DetailPage - watch - appData");
 
