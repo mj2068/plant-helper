@@ -26,15 +26,18 @@
           </div>
           <ion-list>
             <ion-item lines="full" id="item-plant-name" button>
-              <ion-label position="fixed" slot="start">植物名称</ion-label>
-              <ion-text slot="end" class="ion-text-end">{{
-                plant.plantName
-              }}</ion-text>
-              <ion-icon slot="end" class="" :icon="chevronForward"></ion-icon>
+              <ion-text slot="start" class="label-column">植物名称</ion-text>
+              <ion-text
+                slot="end"
+                id="plant-name"
+                class="content-column ion-text-end"
+                >{{ plant.plantName }}</ion-text
+              >
+              <ion-icon slot="end" :icon="chevronForward"></ion-icon>
             </ion-item>
-
             <!-- 编辑植物名称modal -->
             <ion-modal
+              id="edit-plant-name-modal"
               ref="editPlantNameModal"
               trigger="item-plant-name"
               @ionModalWillPresent="onEditPlantNameModalWillPresent"
@@ -57,27 +60,33 @@
                 </ion-toolbar>
               </ion-header>
               <ion-content>
-                <ion-input
-                  ref="editPlantNameModalPlantNameInputElement"
-                  style="--background: lightgrey"
-                  v-model="editPlantNameModalPlantName"
-                ></ion-input>
+                <ion-item
+                  :counter="true"
+                  :counterFormatter="plantNameFormatter"
+                >
+                  <ion-input
+                    ref="editPlantNameModalPlantNameInputElement"
+                    v-model="editPlantNameModalPlantName"
+                    :maxlength="50"
+                  ></ion-input>
+                </ion-item>
               </ion-content>
             </ion-modal>
 
             <ion-item lines="full" id="item-plant-description" button>
-              <ion-label position="fixed" slot="start">植物描述</ion-label>
-              <!-- <ion-note slot="end" class="ion-text-wrap ion-text-end">{{
-                plant.plantDescription
-              }}</ion-note> -->
-              <p slot="end" class="ion-text-end" style="width: 100%">
+              <ion-text slot="start" class="label-column">植物描述</ion-text>
+              <ion-text
+                id="plant-desc"
+                slot="end"
+                class="content-column ion-text-end ion-margin-top ion-margin-bottom"
+              >
                 {{ plant.plantDescription }}
-              </p>
+              </ion-text>
               <ion-icon slot="end" :icon="chevronForward"></ion-icon>
             </ion-item>
-
             <!-- 编辑植物描述modal -->
             <ion-modal
+              id="edit-plant-desc-modal"
               ref="editPlantDescriptionModal"
               trigger="item-plant-description"
               @ionModalWillPresent="onEditPlantDescriptionModalWillPresent"
@@ -93,18 +102,22 @@
                   </ion-buttons>
                   <ion-title>修改植物描述</ion-title>
                   <ion-buttons slot="end">
-                    <ion-button :strong="true" @click="saveEditPlantDescriptionModal"
+                    <ion-button
+                      :strong="true"
+                      @click="saveEditPlantDescriptionModal"
                       >保存</ion-button
                     >
                   </ion-buttons>
                 </ion-toolbar>
               </ion-header>
               <ion-content>
-                <ion-textarea
-                  ref="editPlantDescriptionModalPlantDescriptionInputElement"
-                  style="--background: lightgrey"
-                  v-model="editPlantDescriptionModalPlantDescription"
-                ></ion-textarea>
+                <ion-item>
+                  <ion-textarea
+                    ref="editPlantDescriptionModalPlantDescriptionTextareaEl"
+                    v-model="editPlantDescriptionModalPlantDescription"
+                    :autoGrow="true"
+                  ></ion-textarea>
+                </ion-item>
               </ion-content>
             </ion-modal>
           </ion-list>
@@ -152,7 +165,6 @@ import {
   IonText,
   IonTextarea,
   IonModal,
-  IonNote,
   useIonRouter,
 } from "@ionic/vue";
 import {
@@ -202,7 +214,6 @@ const plant = computed(() => {
 
 onMounted(() => {
   console.log("DetailPage - onMounted");
-
 });
 
 // 植物名称编辑页面的template ref
@@ -251,6 +262,50 @@ function onEditPlantNameModalWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
     plant.value.plantName = editPlantNameModalPlantName.value;
     updateConfigFile();
   }
+}
+
+function plantNameFormatter(cur: number, max: number): string {
+  return `${max - cur}`;
+}
+
+const editPlantDescriptionModal = ref<InstanceType<typeof IonModal> | null>(
+  null
+);
+const editPlantDescriptionModalPlantDescription = ref("");
+const editPlantDescriptionModalPlantDescriptionTextareaEl = ref<InstanceType<
+  typeof IonTextarea
+> | null>(null);
+
+function cancelEditPlantDescriptionModal() {
+  (editPlantDescriptionModal.value?.$el as Modal).dismiss(null, "cancel");
+}
+
+function saveEditPlantDescriptionModal() {
+  (editPlantDescriptionModal.value?.$el as Modal).dismiss(null, "save");
+}
+
+function onEditPlantDescriptionModalWillDismiss(
+  ev: CustomEvent<OverlayEventDetail>
+) {
+  console.log("edit plant desc modal will dismiss");
+  console.log(ev.detail.role);
+  if (plant.value && ev.detail.role === "save") {
+    console.log("new plant desc:");
+    plant.value.plantDescription =
+      editPlantDescriptionModalPlantDescription.value;
+    updateConfigFile();
+  }
+}
+
+function onEditPlantDescriptionModalWillPresent() {
+  if (plant.value) {
+    editPlantDescriptionModalPlantDescription.value =
+      plant.value?.plantDescription;
+  }
+}
+
+function onEditPlantDescriptionModalDidPresent() {
+  console.log("desc did presnet");
 }
 
 function setPlantImageSrc(imageFilename: string) {
@@ -313,25 +368,25 @@ ion-content {
   }
 
   ion-list {
-    // background-color: #444;
-
     ion-item {
-      background-color: red;
-
-      ion-label {
-      }
-
-      ion-text {
-        width: 100%;
+      ion-text.label-column {
+        width: 20%;
       }
 
       // white-space:pre-wrap会使字符串内容保持原始
-      p {
-        width: 100%;
-        white-space: pre-wrap;
+      // 这三行样式主要是应对长于容器的文本，最终总体效果是容器长度不变，显示单行加省略号
+      ion-text#plant-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      ion-icon {
+      ion-text.content-column {
+        width: 80%;
+      }
+
+      ion-text#plant-desc {
+        white-space: pre-wrap;
       }
     }
   }
@@ -344,6 +399,22 @@ ion-content {
     ion-button[color="danger"] {
       // 这里margin-left设为auto配合flex容器的space-between让该元素右对齐
       margin-left: auto;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+:root {
+  ion-modal#edit-plant-name-modal {
+    ion-input {
+      // --background: lightgreen;
+    }
+  }
+
+  ion-modal#edit-plant-desc-modal {
+    ion-textarea {
+      // --background: pink;
     }
   }
 }
