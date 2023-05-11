@@ -25,23 +25,21 @@
             <ion-card><img :src="plantImageSrc" alt="植物图片" /></ion-card>
           </div>
           <ion-list>
-            <ion-item id="item-plant-name" button :detail="true">
-              <ion-label position="fixed">植物名称</ion-label>
-              <!-- <ion-input
-                :class="{ editing: editMode }"
-                v-model="plantName"
-                placeholder=""
-              ></ion-input> -->
-              <ion-text slot="end" class="ion-margin-end">{{
+            <ion-item lines="full" id="item-plant-name" button>
+              <ion-label position="fixed" slot="start">植物名称</ion-label>
+              <ion-text slot="end" class="ion-text-end">{{
                 plant.plantName
               }}</ion-text>
+              <ion-icon slot="end" class="" :icon="chevronForward"></ion-icon>
             </ion-item>
-            <!-- 修改职务名称modal -->
+
+            <!-- 编辑植物名称modal -->
             <ion-modal
               ref="editPlantNameModal"
               trigger="item-plant-name"
-              v-on:willDismiss="onEditPlantNameModalWillDismiss"
+              @ionModalWillPresent="onEditPlantNameModalWillPresent"
               @ionModalDidPresent="onEditPlantNameModalDidPresent"
+              v-on:willDismiss="onEditPlantNameModalWillDismiss"
             >
               <ion-header>
                 <ion-toolbar>
@@ -67,16 +65,48 @@
               </ion-content>
             </ion-modal>
 
-            <ion-item button :detail="true">
-              <ion-label position="fixed">植物描述</ion-label>
-              <ion-text slot="end" class="ion-margin-end">{{
+            <ion-item lines="full" id="item-plant-description" button>
+              <ion-label position="fixed" slot="start">植物描述</ion-label>
+              <!-- <ion-note slot="end" class="ion-text-wrap ion-text-end">{{
                 plant.plantDescription
-              }}</ion-text>
+              }}</ion-note> -->
+              <p slot="end" class="ion-text-end" style="width: 100%">
+                {{ plant.plantDescription }}
+              </p>
+              <ion-icon slot="end" :icon="chevronForward"></ion-icon>
             </ion-item>
-            <ion-item color="dark">
-              <ion-label>植物ID</ion-label>
-              <ion-input readonly :value="plant.plantId"></ion-input>
-            </ion-item>
+
+            <!-- 编辑植物描述modal -->
+            <ion-modal
+              ref="editPlantDescriptionModal"
+              trigger="item-plant-description"
+              @ionModalWillPresent="onEditPlantDescriptionModalWillPresent"
+              @ionModalDidPresent="onEditPlantDescriptionModalDidPresent"
+              v-on:willDismiss="onEditPlantDescriptionModalWillDismiss"
+            >
+              <ion-header>
+                <ion-toolbar>
+                  <ion-buttons slot="start">
+                    <ion-button @click="cancelEditPlantDescriptionModal"
+                      >取消</ion-button
+                    >
+                  </ion-buttons>
+                  <ion-title>修改植物描述</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button :strong="true" @click="saveEditPlantDescriptionModal"
+                      >保存</ion-button
+                    >
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+              <ion-content>
+                <ion-textarea
+                  ref="editPlantDescriptionModalPlantDescriptionInputElement"
+                  style="--background: lightgrey"
+                  v-model="editPlantDescriptionModalPlantDescription"
+                ></ion-textarea>
+              </ion-content>
+            </ion-modal>
           </ion-list>
         </div>
         <!-- 此div用于在找不到该id的plant的这种特殊情况下给用户一个提示 -->
@@ -120,10 +150,18 @@ import {
   IonLabel,
   IonInput,
   IonText,
+  IonTextarea,
   IonModal,
+  IonNote,
   useIonRouter,
 } from "@ionic/vue";
-import { star, ellipsisVerticalSharp, trashSharp, image } from "ionicons/icons";
+import {
+  star,
+  ellipsisVerticalSharp,
+  trashSharp,
+  image,
+  chevronForward,
+} from "ionicons/icons";
 import { onMounted, ref, inject, computed } from "vue";
 import { useRoute } from "vue-router";
 
@@ -165,10 +203,9 @@ const plant = computed(() => {
 onMounted(() => {
   console.log("DetailPage - onMounted");
 
-  // reloadPlantFromConfig();
 });
 
-// 编辑页面的template ref
+// 植物名称编辑页面的template ref
 // 此处发现ionic template ref对typescript的支持还是有点迷的，以下的InstanceType是一个
 // 凑合事儿的
 const editPlantNameModal = ref<InstanceType<typeof IonModal> | null>(null);
@@ -188,12 +225,14 @@ const editPlantNameModalPlantName = ref("");
 const editPlantNameModalPlantNameInputElement = ref<InstanceType<
   typeof IonInput
 > | null>(null);
-function onEditPlantNameModalDidPresent() {
-  // 将编辑窗口的input初始值设为原名称
+
+// 在modal将要出现之前将input初始值设为原名称
+function onEditPlantNameModalWillPresent() {
   if (plant.value) {
     editPlantNameModalPlantName.value = plant.value.plantName;
   }
-
+}
+function onEditPlantNameModalDidPresent() {
   const input = editPlantNameModalPlantNameInputElement.value?.$el as Input;
 
   // 初始自动焦点到input element
@@ -214,12 +253,6 @@ function onEditPlantNameModalWillDismiss(ev: CustomEvent<OverlayEventDetail>) {
   }
 }
 
-// watch(appData, () => {
-//   console.log("DetailPage - watch - appData");
-
-//   reloadPlantFromConfig();
-// });
-
 function setPlantImageSrc(imageFilename: string) {
   if (imageFilename !== "") {
     Filesystem.getUri({
@@ -232,30 +265,6 @@ function setPlantImageSrc(imageFilename: string) {
   } else {
     plantImageSrc.value = image;
   }
-}
-
-// function reloadPlantFromConfig() {
-//   for (const p of appData.appConf.plantList) {
-//     if (p.plantId.toString() === id) {
-//       // 将根据id找到的元素赋给组件ref变量plant
-//       plant.value.description = p.plantDescription;
-//       plant.value.name = p.plantName;
-//       plant.value.id = p.plantId;
-//       // 判断此plant元素图片文件名属性是否为空，如否则获取其uri
-//       if (p.plantImageFilename !== "") {
-//         Filesystem.getUri({
-//           path: "images/" + p.plantImageFilename,
-//           directory: Directory.Data,
-//         }).then((result) => {
-//           plant.value.imageFileUri = result.uri;
-//         });
-//       }
-//     }
-//   }
-// }
-
-function save() {
-  console.log("DetailPage - enterEdit");
 }
 
 function doDelete(deleteId: number) {
@@ -304,24 +313,29 @@ ion-content {
   }
 
   ion-list {
+    // background-color: #444;
+
     ion-item {
-      ion-input {
-        // text-align: right;
+      background-color: red;
+
+      ion-label {
       }
 
-      ion-input.editing {
-        border-style: groove;
-        border-radius: 4px;
-        border-width: 2px;
+      ion-text {
+        width: 100%;
       }
 
-      ion-textarea.editing {
-        border-style: groove;
-        border-radius: 4px;
-        border-width: 2px;
+      // white-space:pre-wrap会使字符串内容保持原始
+      p {
+        width: 100%;
+        white-space: pre-wrap;
+      }
+
+      ion-icon {
       }
     }
   }
+
   div[id="controls"] {
     display: flex;
     justify-content: space-between;
