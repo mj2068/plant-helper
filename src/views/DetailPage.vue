@@ -21,9 +21,32 @@
     <ion-content class="ion-padding">
       <div id="content-container">
         <div id="plant-found-container" class="container" v-if="plant != null">
-          <div id="plant-image-container" class="ion-justify-content-center">
-            <ion-card><img :src="plantImageSrc" alt="植物图片" /></ion-card>
+          <div v-if="plantImageDataUrl" id="image-container">
+            <ion-img :src="plantImageDataUrl" alt="植物图片" srcset="" />
+            <ion-card class="">
+              <ion-button
+                id="delete-image-button"
+                fill="solid"
+                color="light"
+                @click="deleteImage"
+              >
+                <ion-icon slot="icon-only" :icon="trashSharp"></ion-icon>
+              </ion-button>
+            </ion-card>
           </div>
+          <div v-else id="no-image-container">
+            <ion-card>
+              <ion-button fill="clear" v-on:click="getImage"
+                ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
+                添加图片
+              </ion-button>
+            </ion-card>
+          </div>
+
+          <!-- <div id="plant-image-container" class="ion-justify-content-center">
+            <ion-card><img :src="plantImageDataUrl" alt="植物图片" /></ion-card>
+          </div> -->
+
           <ion-list>
             <ion-item lines="full" id="item-plant-name" button>
               <ion-text slot="start" class="label-column">植物名称</ion-text>
@@ -160,7 +183,6 @@ import {
   IonIcon,
   IonList,
   IonItem,
-  IonLabel,
   IonInput,
   IonText,
   IonTextarea,
@@ -168,15 +190,13 @@ import {
   useIonRouter,
 } from "@ionic/vue";
 import {
-  star,
   ellipsisVerticalSharp,
   trashSharp,
-  image,
   chevronForward,
+  addCircleOutline,
 } from "ionicons/icons";
 import { onMounted, ref, inject, computed } from "vue";
 import { useRoute } from "vue-router";
-
 import { AppConf } from "@/types";
 import { Modal } from "@ionic/core/dist/types/components/modal/modal";
 import { Input } from "@ionic/core/dist/types/components/input/input";
@@ -200,7 +220,7 @@ const { appData, deletePlant, updateConfigFile } = inject("appData") as {
   updateConfigFile: () => void;
 };
 
-const plantImageSrc = ref(star);
+const plantImageDataUrl = ref("");
 
 const plant = computed(() => {
   for (const p of appData.appConf.plantList) {
@@ -215,6 +235,34 @@ const plant = computed(() => {
 onMounted(() => {
   console.log("DetailPage - onMounted");
 });
+
+function setPlantImageSrc(imageFilename: string) {
+  if (imageFilename !== "") {
+    Filesystem.getUri({
+      path: "images/" + imageFilename,
+      directory: Directory.Data,
+    }).then((result) => {
+      console.log(result);
+      plantImageDataUrl.value = Capacitor.convertFileSrc(result.uri);
+    });
+  } else {
+    plantImageDataUrl.value = "";
+  }
+}
+
+function doDelete(deleteId: number) {
+  deletePlant(deleteId);
+  ionRouter.navigate("/home", "root");
+}
+
+function deleteImage() {
+  console.log("AddPage - deleteImage");
+  plantImageDataUrl.value = "";
+}
+
+function getImage() {
+  console.log("DetailPage - getImage");
+}
 
 // 植物名称编辑页面的template ref
 // 此处发现ionic template ref对typescript的支持还是有点迷的，以下的InstanceType是一个
@@ -306,25 +354,6 @@ function onEditPlantDescriptionModalWillPresent() {
 
 function onEditPlantDescriptionModalDidPresent() {
   console.log("desc did presnet");
-}
-
-function setPlantImageSrc(imageFilename: string) {
-  if (imageFilename !== "") {
-    Filesystem.getUri({
-      path: "images/" + imageFilename,
-      directory: Directory.Data,
-    }).then((result) => {
-      console.log(result);
-      plantImageSrc.value = Capacitor.convertFileSrc(result.uri);
-    });
-  } else {
-    plantImageSrc.value = image;
-  }
-}
-
-function doDelete(deleteId: number) {
-  deletePlant(deleteId);
-  ionRouter.navigate("/home", "root");
 }
 
 function test() {

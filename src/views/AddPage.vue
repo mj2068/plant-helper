@@ -19,11 +19,7 @@
       <div id="container" class="ion-padding">
         <div v-if="plantImageDataUrl" id="image-container">
           <ion-card class="">
-            <ion-img
-              :src="plantImageWithPlaceholder"
-              alt="植物图片"
-              srcset=""
-            />
+            <ion-img :src="plantImageDataUrl" alt="植物图片" srcset="" />
             <ion-button
               id="delete-image-button"
               fill="solid"
@@ -81,9 +77,6 @@ import {
   IonButton,
   IonBackButton,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
   IonList,
   IonItem,
   IonTextarea,
@@ -110,9 +103,6 @@ export default defineComponent({
     IonButton,
     IonBackButton,
     IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
     IonList,
     IonItem,
     IonTextarea,
@@ -153,11 +143,7 @@ export default defineComponent({
     };
   },
 
-  computed: {
-    plantImageWithPlaceholder() {
-      return this.plantImageDataUrl === "" ? star : this.plantImageDataUrl;
-    },
-  },
+  computed: {},
 
   methods: {
     // convert a path url to base64 data
