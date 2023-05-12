@@ -138,7 +138,9 @@
                   <ion-textarea
                     ref="editPlantDescriptionModalPlantDescriptionTextareaEl"
                     v-model="editPlantDescriptionModalPlantDescription"
-                    :autoGrow="true"
+                    :placeholder="'例：常春藤一种很包容的植物。\n它的抗性很强，耐受能力也很突出，是很不错的室内绿植。'"
+                    :rows="5"
+                    :auto-grow="true"
                   ></ion-textarea>
                 </ion-item>
               </ion-content>
@@ -180,6 +182,7 @@ import {
   IonButton,
   IonBackButton,
   IonCard,
+  IonImg,
   IonIcon,
   IonList,
   IonItem,
