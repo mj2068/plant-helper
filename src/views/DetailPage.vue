@@ -19,142 +19,135 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-      <div id="content-container">
-        <div id="plant-found-container" class="container" v-if="plant != null">
-          <div v-if="plantImageDataUrl" id="image-container">
-            <ion-img :src="plantImageDataUrl" alt="植物图片" srcset="" />
-            <ion-card class="">
-              <ion-button
-                id="delete-image-button"
-                fill="solid"
-                color="light"
-                @click="deleteImage"
-              >
-                <ion-icon slot="icon-only" :icon="trashSharp"></ion-icon>
-              </ion-button>
-            </ion-card>
-          </div>
-          <div v-else id="no-image-container">
-            <ion-card>
-              <ion-button fill="clear" v-on:click="getImage"
-                ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
-                添加图片
-              </ion-button>
-            </ion-card>
-          </div>
-
-          <!-- <div id="plant-image-container" class="ion-justify-content-center">
-            <ion-card><img :src="plantImageDataUrl" alt="植物图片" /></ion-card>
-          </div> -->
-
-          <ion-list>
-            <ion-item lines="full" id="item-plant-name" button>
-              <ion-text slot="start" class="label-column">植物名称</ion-text>
-              <ion-text
-                slot="end"
-                id="plant-name"
-                class="content-column ion-text-end"
-                >{{ plant.plantName }}</ion-text
-              >
-              <ion-icon slot="end" :icon="chevronForward"></ion-icon>
-            </ion-item>
-            <!-- 编辑植物名称modal -->
-            <ion-modal
-              id="edit-plant-name-modal"
-              ref="editPlantNameModal"
-              trigger="item-plant-name"
-              @ionModalWillPresent="onEditPlantNameModalWillPresent"
-              @ionModalDidPresent="onEditPlantNameModalDidPresent"
-              v-on:willDismiss="onEditPlantNameModalWillDismiss"
+      <div id="plant-found-container" class="container" v-if="plant != null">
+        <div v-if="plantImageDataUrl" id="image-container">
+          <ion-card class="">
+            <img :src="plantImageDataUrl" alt="植物图片" srcset="" />
+            <ion-button
+              id="delete-image-button"
+              fill="solid"
+              color="light"
+              @click="deleteImage"
             >
-              <ion-header>
-                <ion-toolbar>
-                  <ion-buttons slot="start">
-                    <ion-button @click="cancelEditPlantNameModal"
-                      >取消</ion-button
-                    >
-                  </ion-buttons>
-                  <ion-title>修改植物名称</ion-title>
-                  <ion-buttons slot="end">
-                    <ion-button :strong="true" @click="saveEditPlantNameModal"
-                      >保存</ion-button
-                    >
-                  </ion-buttons>
-                </ion-toolbar>
-              </ion-header>
-              <ion-content>
-                <ion-item
-                  :counter="true"
-                  :counterFormatter="plantNameFormatter"
-                >
-                  <ion-input
-                    ref="editPlantNameModalPlantNameInputElement"
-                    v-model="editPlantNameModalPlantName"
-                    :maxlength="50"
-                  ></ion-input>
-                </ion-item>
-              </ion-content>
-            </ion-modal>
+              <ion-icon slot="icon-only" :icon="trashSharp"></ion-icon>
+            </ion-button>
+          </ion-card>
+        </div>
+        <div v-else id="no-image-container">
+          <ion-card>
+            <ion-button fill="clear" v-on:click="getImage"
+              ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
+              添加图片
+            </ion-button>
+          </ion-card>
+        </div>
 
-            <ion-item lines="full" id="item-plant-description" button>
-              <ion-text slot="start" class="label-column">植物描述</ion-text>
-              <ion-text
-                id="plant-desc"
-                slot="end"
-                class="content-column ion-text-end ion-margin-top ion-margin-bottom"
-              >
-                {{ plant.plantDescription }}
-              </ion-text>
-              <ion-icon slot="end" :icon="chevronForward"></ion-icon>
-            </ion-item>
-            <!-- 编辑植物描述modal -->
-            <ion-modal
-              id="edit-plant-desc-modal"
-              ref="editPlantDescriptionModal"
-              trigger="item-plant-description"
-              @ionModalWillPresent="onEditPlantDescriptionModalWillPresent"
-              @ionModalDidPresent="onEditPlantDescriptionModalDidPresent"
-              v-on:willDismiss="onEditPlantDescriptionModalWillDismiss"
+        <ion-list>
+          <ion-item lines="full" id="item-plant-name" button>
+            <ion-text slot="start" class="label-column">植物名称</ion-text>
+            <ion-text
+              slot="end"
+              id="plant-name"
+              class="content-column ion-text-end"
+              >{{ plant.plantName }}</ion-text
             >
-              <ion-header>
-                <ion-toolbar>
-                  <ion-buttons slot="start">
-                    <ion-button @click="cancelEditPlantDescriptionModal"
-                      >取消</ion-button
-                    >
-                  </ion-buttons>
-                  <ion-title>修改植物描述</ion-title>
-                  <ion-buttons slot="end">
-                    <ion-button
-                      :strong="true"
-                      @click="saveEditPlantDescriptionModal"
-                      >保存</ion-button
-                    >
-                  </ion-buttons>
-                </ion-toolbar>
-              </ion-header>
-              <ion-content>
-                <ion-item>
-                  <ion-textarea
-                    ref="editPlantDescriptionModalPlantDescriptionTextareaEl"
-                    v-model="editPlantDescriptionModalPlantDescription"
-                    :placeholder="'例：常春藤一种很包容的植物。\n它的抗性很强，耐受能力也很突出，是很不错的室内绿植。'"
-                    :rows="5"
-                    :auto-grow="true"
-                  ></ion-textarea>
-                </ion-item>
-              </ion-content>
-            </ion-modal>
-          </ion-list>
-        </div>
-        <!-- 此div用于在找不到该id的plant的这种特殊情况下给用户一个提示 -->
-        <div id="plant-null-container" class="container" v-else>
-          <h2>未找到该植物</h2>
-          <h4>
-            <i>(id:{{ id }})</i>
-          </h4>
-        </div>
+            <ion-icon slot="end" :icon="chevronForward"></ion-icon>
+          </ion-item>
+          <!-- 编辑植物名称modal -->
+          <ion-modal
+            id="edit-plant-name-modal"
+            ref="editPlantNameModal"
+            trigger="item-plant-name"
+            @ionModalWillPresent="onEditPlantNameModalWillPresent"
+            @ionModalDidPresent="onEditPlantNameModalDidPresent"
+            v-on:willDismiss="onEditPlantNameModalWillDismiss"
+          >
+            <ion-header>
+              <ion-toolbar>
+                <ion-buttons slot="start">
+                  <ion-button @click="cancelEditPlantNameModal"
+                    >取消</ion-button
+                  >
+                </ion-buttons>
+                <ion-title>修改植物名称</ion-title>
+                <ion-buttons slot="end">
+                  <ion-button :strong="true" @click="saveEditPlantNameModal"
+                    >保存</ion-button
+                  >
+                </ion-buttons>
+              </ion-toolbar>
+            </ion-header>
+            <ion-content>
+              <ion-item :counter="true" :counterFormatter="plantNameFormatter">
+                <ion-input
+                  ref="editPlantNameModalPlantNameInputElement"
+                  v-model="editPlantNameModalPlantName"
+                  :maxlength="50"
+                ></ion-input>
+              </ion-item>
+            </ion-content>
+          </ion-modal>
+
+          <ion-item lines="full" id="item-plant-description" button>
+            <ion-text slot="start" class="label-column">植物描述</ion-text>
+            <ion-text
+              id="plant-desc"
+              slot="end"
+              class="content-column ion-text-end ion-margin-top ion-margin-bottom"
+            >
+              {{ plant.plantDescription }}
+            </ion-text>
+            <ion-icon slot="end" :icon="chevronForward"></ion-icon>
+          </ion-item>
+          <!-- 编辑植物描述modal -->
+          <ion-modal
+            id="edit-plant-desc-modal"
+            ref="editPlantDescriptionModal"
+            trigger="item-plant-description"
+            @ionModalWillPresent="onEditPlantDescriptionModalWillPresent"
+            @ionModalDidPresent="onEditPlantDescriptionModalDidPresent"
+            v-on:willDismiss="onEditPlantDescriptionModalWillDismiss"
+          >
+            <ion-header>
+              <ion-toolbar>
+                <ion-buttons slot="start">
+                  <ion-button @click="cancelEditPlantDescriptionModal"
+                    >取消</ion-button
+                  >
+                </ion-buttons>
+                <ion-title>修改植物描述</ion-title>
+                <ion-buttons slot="end">
+                  <ion-button
+                    :strong="true"
+                    @click="saveEditPlantDescriptionModal"
+                    >保存</ion-button
+                  >
+                </ion-buttons>
+              </ion-toolbar>
+            </ion-header>
+            <ion-content>
+              <ion-item>
+                <ion-textarea
+                  ref="editPlantDescriptionModalPlantDescriptionTextareaEl"
+                  v-model="editPlantDescriptionModalPlantDescription"
+                  :placeholder="'例：常春藤是一种很包容的植物。\n它的抗性很强，耐受能力也很突出，是很不错的室内绿植。'"
+                  :rows="5"
+                  :auto-grow="true"
+                ></ion-textarea>
+              </ion-item>
+            </ion-content>
+          </ion-modal>
+        </ion-list>
       </div>
+
+      <!-- 此div用于在找不到该id的plant的这种特殊情况下给用户一个提示 -->
+      <div id="plant-null-container" class="container" v-else>
+        <h2>未找到该植物</h2>
+        <h4>
+          <i>(id:{{ id }})</i>
+        </h4>
+      </div>
+
       <div id="controls">
         <ion-button
           color="danger"
@@ -182,7 +175,6 @@ import {
   IonButton,
   IonBackButton,
   IonCard,
-  IonImg,
   IonIcon,
   IonList,
   IonItem,
@@ -203,6 +195,7 @@ import { useRoute } from "vue-router";
 import { AppConf } from "@/types";
 import { Modal } from "@ionic/core/dist/types/components/modal/modal";
 import { Input } from "@ionic/core/dist/types/components/input/input";
+import { useIonAlert } from "@/composables/ionAlert";
 
 const console = window.console;
 
@@ -215,6 +208,7 @@ const { id } = route.params;
 console.log("DetailPage - <setup> id: ");
 console.log(id);
 
+// inject到本组件App根组件provide好的config和相关管理config的函数
 const { appData, deletePlant, updateConfigFile } = inject("appData") as {
   appData: {
     appConf: AppConf;
@@ -223,8 +217,11 @@ const { appData, deletePlant, updateConfigFile } = inject("appData") as {
   updateConfigFile: () => void;
 };
 
+const { presentAlert } = useIonAlert();
+
 const plantImageDataUrl = ref("");
 
+// url会带着id param，此computed会根据这个id去config数组里找相应id的plant，无则null
 const plant = computed(() => {
   for (const p of appData.appConf.plantList) {
     if (p.plantId.toString() === id) {
@@ -254,8 +251,16 @@ function setPlantImageSrc(imageFilename: string) {
 }
 
 function doDelete(deleteId: number) {
-  deletePlant(deleteId);
-  ionRouter.navigate("/home", "root");
+  presentAlert({
+    header: "❓",
+    message: `确认删除植物：<br>&nbsp;&nbsp;<strong>${plant.value?.plantName}</strong>`,
+  }).then((result) => {
+    console.log(result);
+    if ("confirm" === result.role) {
+      deletePlant(deleteId);
+      ionRouter.navigate("/home", "root");
+    }
+  });
 }
 
 function deleteImage() {
@@ -359,16 +364,16 @@ function onEditPlantDescriptionModalDidPresent() {
   console.log("desc did presnet");
 }
 
-function test() {
+function test(): void {
   return;
 }
 </script>
 
 <style scoped lang="scss">
 ion-content {
-  #plant-image-container {
+  #image-container {
     display: flex;
-    // justify-content: center;
+    justify-content: center;
     // height: 200px;
 
     ion-card {
@@ -376,9 +381,9 @@ ion-content {
       // width: 100%;
       // flex: 1;
 
-      img,
-      ion-img {
-        width: 100%;
+      img {
+        // width: 100%;
+        // height: 100%;
         display: block;
         max-height: 300px;
         object-fit: contain;
@@ -386,16 +391,25 @@ ion-content {
 
       ion-button {
         position: absolute;
-        bottom: 0;
-        right: 0;
         width: 32px;
         height: 32px;
+        right: 0;
+        bottom: 0;
+        margin: 0px 2px 2px 0px;
 
-        margin-right: 4px;
         --border-radius: 50%;
         --padding-start: 8px;
         --padding-end: 8px;
       }
+    }
+  }
+
+  #no-image-container {
+    ion-card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100px;
     }
   }
 
@@ -434,20 +448,29 @@ ion-content {
     }
   }
 }
+
+ion-alert {
+  .cancel-button {
+    color: red;
+  }
+}
 </style>
 
 <style lang="scss">
 :root {
   ion-modal#edit-plant-name-modal {
     ion-input {
-      // --background: lightgreen;
     }
   }
 
   ion-modal#edit-plant-desc-modal {
     ion-textarea {
-      // --background: pink;
     }
+  }
+
+  ion-alert .confirm-button {
+    color: var(--ion-color-danger-contrast, #fff);
+    background: var(--ion-color-danger, #eb445a);
   }
 }
 </style>

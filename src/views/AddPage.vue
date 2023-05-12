@@ -244,29 +244,32 @@ export default defineComponent({
   // max-height: 300px;
 
   ion-card {
+    // width: 80%;
     // height: 200px;
     max-height: 200px;
     // max-width: 100%;
     // overflow: hidden;
-    // width: 80%;
     // display: flex;
     // justify-content: center;
     // align-items: center;
-    background-color: green;
+    // background-color: green;
 
     img,
     ion-img {
-      width: 100%;
-      max-height: 200px;
-      // max-width: 200px;
+      // width: 100%;
+      // height: auto;
       // max-height: 200px;
-      object-fit: cover;
+      // max-width: 200px;
+      display: block;
+      object-fit: contain;
       // object-position: 33% 50%;
-      background-color: pink;
+      // background-color: pink;
     }
 
     ion-button {
       position: absolute;
+      width: 32px;
+      height: 32px;
       right: 0;
       bottom: 0;
       margin: 0px 2px 2px 0px;
@@ -274,8 +277,6 @@ export default defineComponent({
       --border-radius: 50%;
       --padding-start: 8px;
       --padding-end: 8px;
-      width: 32px;
-      height: 32px;
     }
   }
 }
