@@ -141,7 +141,7 @@
           </ion-modal>
         </ion-list>
         <div id="controls">
-          <ion-button color="danger" v-on:click="doDelete">
+          <ion-button color="danger" v-on:click="deletePlant">
             删除
             <ion-icon slot="start" :icon="trashSharp"></ion-icon>
           </ion-button>
@@ -192,7 +192,8 @@ import { AppConf } from "@/types";
 import { Modal } from "@ionic/core/dist/types/components/modal/modal";
 import { Input } from "@ionic/core/dist/types/components/input/input";
 import { useIonAlert } from "@/composables/ionAlert";
-import { useImageManager } from "@/composables/useImageManager";
+import { usePhotoManger } from "@/composables/useImageManager";
+import { Result } from "postcss";
 
 const console = window.console;
 
@@ -214,8 +215,9 @@ const { appData, deletePlantById, updateConfigFile } = inject("appData") as {
 };
 
 const { presentConfirmCancelAlert } = useIonAlert();
-const { getPhoto, loadImageFileToSrc } = useImageManager();
+const { getPhoto, loadImageFileToSrc, savePhoto } = usePhotoManger();
 
+// 用于img的src
 const plantImageDataUrl = ref("");
 
 // url会带着id param，此computed会根据这个id去config数组里找相应id的plant，无则null
@@ -249,7 +251,7 @@ function setPlantImageSrc(imageFilename: string) {
   }
 }
 
-function doDelete() {
+function deletePlant() {
   presentConfirmCancelAlert({
     header: "❓",
     message: `确认删除植物：<br>&nbsp;&nbsp;<strong>${plant.value?.plantName}</strong>`,
@@ -283,9 +285,27 @@ function deleteImage() {
 function addImage() {
   console.log("DetailPage - addPhoto");
 
+  // 选取图片，弹出选项，图册或拍照
   getPhoto()
-    .then((result) => {
-      if (result.dataUrl) plantImageDataUrl.value = result.dataUrl;
+    .then((photoResult) => {
+      // 保存选图结果
+      if (photoResult.dataUrl) {
+        savePhoto(photoResult.dataUrl).then((saveResult) => {
+          console.log(saveResult);
+          // 保存完将返回的文件名存到plant里，并更新配置json
+          if (plant.value) plant.value.plantImageFilename = saveResult.filename;
+          updateConfigFile();
+          // 最后转换保存好的图片为img元素可用的src
+          loadImageFileToSrc(
+            "images/" + saveResult.filename,
+            Directory.Data
+          ).then((loadResult) => {
+            if (loadResult) {
+              plantImageDataUrl.value = loadResult;
+            }
+          });
+        });
+      }
     })
     .catch((error) => {
       console.error(error);
