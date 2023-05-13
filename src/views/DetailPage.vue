@@ -217,7 +217,7 @@ const { appData, deletePlant, updateConfigFile } = inject("appData") as {
   updateConfigFile: () => void;
 };
 
-const { presentAlert } = useIonAlert();
+const { presentConfirmCancelAlert } = useIonAlert();
 
 const plantImageDataUrl = ref("");
 
@@ -251,7 +251,7 @@ function setPlantImageSrc(imageFilename: string) {
 }
 
 function doDelete(deleteId: number) {
-  presentAlert({
+  presentConfirmCancelAlert({
     header: "❓",
     message: `确认删除植物：<br>&nbsp;&nbsp;<strong>${plant.value?.plantName}</strong>`,
   }).then((result) => {
