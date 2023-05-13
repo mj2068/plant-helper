@@ -55,9 +55,8 @@ export default defineComponent({
       updateConfigFile();
     }
 
-    function deletePlant(id: number) {
-      console.log("App - deletePlant");
-
+    function deletePlantById(id: number) {
+      console.log("App - deletePlantById");
       console.log(id);
 
       // 用findIndex方法找到需要删除的元素
@@ -92,7 +91,12 @@ export default defineComponent({
         });
     }
 
-    provide("appData", { appData, addPlant, deletePlant, updateConfigFile });
+    provide("appData", {
+      appData,
+      addPlant,
+      deletePlantById,
+      updateConfigFile,
+    });
 
     onMounted(() => {
       console.log("App - setup - onMounted");

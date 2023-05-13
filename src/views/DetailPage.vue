@@ -22,7 +22,7 @@
       <div id="plant-found-container" class="container" v-if="plant != null">
         <div v-if="plantImageDataUrl" id="image-container">
           <ion-card class="">
-            <img :src="plantImageDataUrl" alt="植物图片" srcset="" />
+            <img :src="plantImageDataUrl" alt="植物图片" />
             <ion-button
               id="delete-image-button"
               fill="solid"
@@ -35,10 +35,12 @@
         </div>
         <div v-else id="no-image-container">
           <ion-card>
-            <ion-button fill="clear" v-on:click="getImage"
-              ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
-              添加图片
-            </ion-button>
+            <div>
+              <ion-button fill="clear" v-on:click="addImage"
+                ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
+                添加图片
+              </ion-button>
+            </div>
           </ion-card>
         </div>
 
@@ -138,32 +140,26 @@
             </ion-content>
           </ion-modal>
         </ion-list>
+        <div id="controls">
+          <ion-button color="danger" v-on:click="doDelete">
+            删除
+            <ion-icon slot="start" :icon="trashSharp"></ion-icon>
+          </ion-button>
+        </div>
       </div>
 
       <!-- 此div用于在找不到该id的plant的这种特殊情况下给用户一个提示 -->
       <div id="plant-null-container" class="container" v-else>
-        <h2>未找到该植物</h2>
-        <h4>
-          <i>(id:{{ id }})</i>
-        </h4>
-      </div>
-
-      <div id="controls">
-        <ion-button
-          color="danger"
-          v-on:click="doDelete(parseInt(id as string))"
-        >
-          删除
-          <ion-icon slot="start" :icon="trashSharp"></ion-icon>
-        </ion-button>
+        <h2>
+          未找到该植物。<i>（id：{{ id }}）</i>
+        </h2>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts" setup>
-import { Capacitor } from "@capacitor/core";
-import { Directory, Filesystem } from "@capacitor/filesystem";
+import { Directory } from "@capacitor/filesystem";
 import { OverlayEventDetail } from "@ionic/core";
 import {
   IonToolbar,
@@ -196,6 +192,7 @@ import { AppConf } from "@/types";
 import { Modal } from "@ionic/core/dist/types/components/modal/modal";
 import { Input } from "@ionic/core/dist/types/components/input/input";
 import { useIonAlert } from "@/composables/ionAlert";
+import { useImageManager } from "@/composables/useImageManager";
 
 const console = window.console;
 
@@ -204,20 +201,20 @@ console.log("DetailPage - <setup>");
 const ionRouter = useIonRouter();
 const route = useRoute();
 
-const { id } = route.params;
-console.log("DetailPage - <setup> id: ");
-console.log(id);
+const { id } = route.params as { id: string };
+console.log("DetailPage - <setup> id: " + id);
 
 // inject到本组件App根组件provide好的config和相关管理config的函数
-const { appData, deletePlant, updateConfigFile } = inject("appData") as {
+const { appData, deletePlantById, updateConfigFile } = inject("appData") as {
   appData: {
     appConf: AppConf;
   };
-  deletePlant: (id: number) => void;
+  deletePlantById: (id: number) => void;
   updateConfigFile: () => void;
 };
 
 const { presentConfirmCancelAlert } = useIonAlert();
+const { getPhoto, loadImageFileToSrc } = useImageManager();
 
 const plantImageDataUrl = ref("");
 
@@ -226,6 +223,8 @@ const plant = computed(() => {
   for (const p of appData.appConf.plantList) {
     if (p.plantId.toString() === id) {
       setPlantImageSrc(p.plantImageFilename);
+      // 此处返回数组中成功找到的那个元素，所有对plant的修改直接修改数组中的那个元素数据
+      // 可能不是best practice
       return p;
     }
   }
@@ -238,26 +237,27 @@ onMounted(() => {
 
 function setPlantImageSrc(imageFilename: string) {
   if (imageFilename !== "") {
-    Filesystem.getUri({
-      path: "images/" + imageFilename,
-      directory: Directory.Data,
-    }).then((result) => {
-      console.log(result);
-      plantImageDataUrl.value = Capacitor.convertFileSrc(result.uri);
-    });
+    loadImageFileToSrc("images/" + imageFilename, Directory.Data)
+      .then((result) => {
+        if (result) {
+          plantImageDataUrl.value = result;
+        }
+      })
+      .catch((error) => console.error(error));
   } else {
     plantImageDataUrl.value = "";
   }
 }
 
-function doDelete(deleteId: number) {
+function doDelete() {
   presentConfirmCancelAlert({
     header: "❓",
     message: `确认删除植物：<br>&nbsp;&nbsp;<strong>${plant.value?.plantName}</strong>`,
+    cssClass: "delete-plant-alert",
   }).then((result) => {
     console.log(result);
     if ("confirm" === result.role) {
-      deletePlant(deleteId);
+      deletePlantById(parseInt(id));
       ionRouter.navigate("/home", "root");
     }
   });
@@ -265,11 +265,31 @@ function doDelete(deleteId: number) {
 
 function deleteImage() {
   console.log("AddPage - deleteImage");
-  plantImageDataUrl.value = "";
+  presentConfirmCancelAlert({
+    cssClass: "delete-image-alert",
+    header: "删除图片？",
+    message: "",
+  }).then((result) => {
+    if ("confirm" === result.role) {
+      plantImageDataUrl.value = "";
+      if (plant.value) {
+        plant.value.plantImageFilename = "";
+        updateConfigFile();
+      }
+    }
+  });
 }
 
-function getImage() {
-  console.log("DetailPage - getImage");
+function addImage() {
+  console.log("DetailPage - addPhoto");
+
+  getPhoto()
+    .then((result) => {
+      if (result.dataUrl) plantImageDataUrl.value = result.dataUrl;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 
 // 植物名称编辑页面的template ref
@@ -307,7 +327,6 @@ function onEditPlantNameModalDidPresent() {
   // 初始自动全选
   input.getInputElement().then((result: HTMLInputElement) => {
     result.setSelectionRange(0, -1);
-    console.log(result);
   });
 }
 
@@ -364,7 +383,7 @@ function onEditPlantDescriptionModalDidPresent() {
   console.log("desc did presnet");
 }
 
-function test(): void {
+function test() {
   return;
 }
 </script>
@@ -385,7 +404,7 @@ ion-content {
         // width: 100%;
         // height: 100%;
         display: block;
-        max-height: 300px;
+        max-height: 500px;
         object-fit: contain;
       }
 
@@ -447,11 +466,10 @@ ion-content {
       margin-left: auto;
     }
   }
-}
 
-ion-alert {
-  .cancel-button {
-    color: red;
+  #plant-null-container {
+    display: flex;
+    justify-content: center;
   }
 }
 </style>
@@ -471,6 +489,14 @@ ion-alert {
   ion-alert .confirm-button {
     color: var(--ion-color-danger-contrast, #fff);
     background: var(--ion-color-danger, #eb445a);
+  }
+
+  // select删除图片的确认串口，并将标题文字剧中
+  ion-alert.delete-image-alert {
+    .alert-head {
+      display: flex;
+      justify-content: center;
+    }
   }
 }
 </style>

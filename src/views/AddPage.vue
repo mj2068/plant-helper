@@ -19,7 +19,12 @@
       <div id="container" class="ion-padding">
         <div v-if="plantImageDataUrl" id="image-container">
           <ion-card class="">
-            <ion-img :src="plantImageDataUrl" alt="植物图片" srcset="" />
+            <img
+              id="plant-image"
+              :src="plantImageDataUrl"
+              alt="植物图片"
+              srcset=""
+            />
             <ion-button
               id="delete-image-button"
               fill="solid"
@@ -106,7 +111,6 @@ export default defineComponent({
     IonList,
     IonItem,
     IonTextarea,
-    IonImg,
     IonIcon,
   },
 
@@ -238,32 +242,19 @@ export default defineComponent({
 
 <style scoped lang="scss">
 #image-container {
-  // display: flex;
-  // justify-content: center;
+  display: flex;
+  justify-content: center;
   // width: 100%;
   // max-height: 300px;
 
   ion-card {
-    // width: 80%;
-    // height: 200px;
-    max-height: 200px;
-    // max-width: 100%;
-    // overflow: hidden;
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
-    // background-color: green;
-
-    img,
-    ion-img {
+    img {
       // width: 100%;
       // height: auto;
-      // max-height: 200px;
+      max-height: 300px;
       // max-width: 200px;
       display: block;
       object-fit: contain;
-      // object-position: 33% 50%;
-      // background-color: pink;
     }
 
     ion-button {
