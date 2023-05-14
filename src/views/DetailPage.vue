@@ -193,7 +193,8 @@ import { Modal } from "@ionic/core/dist/types/components/modal/modal";
 import { Input } from "@ionic/core/dist/types/components/input/input";
 import { useIonAlert } from "@/composables/ionAlert";
 import { usePhotoManger } from "@/composables/useImageManager";
-import { Result } from "postcss";
+import { Capacitor } from "@capacitor/core";
+import { getDateTime } from "@/composables/utils";
 
 const console = window.console;
 
@@ -215,7 +216,7 @@ const { appData, deletePlantById, updateConfigFile } = inject("appData") as {
 };
 
 const { presentConfirmCancelAlert } = useIonAlert();
-const { getPhoto, loadImageFileToSrc, savePhoto } = usePhotoManger();
+const { getPhoto, getSrcFromPath, savePhoto } = usePhotoManger();
 
 // 用于img的src
 const plantImageDataUrl = ref("");
@@ -239,7 +240,7 @@ onMounted(() => {
 
 function setPlantImageSrc(imageFilename: string) {
   if (imageFilename !== "") {
-    loadImageFileToSrc("images/" + imageFilename, Directory.Data)
+    getSrcFromPath("images/" + imageFilename, Directory.Data)
       .then((result) => {
         if (result) {
           plantImageDataUrl.value = result;
@@ -287,23 +288,17 @@ function addImage() {
 
   // 选取图片，弹出选项，图册或拍照
   getPhoto()
+    // 处理选取图片结果，并将其保存成文件，返回保存结果
     .then((photoResult) => {
-      // 保存选图结果
       if (photoResult.dataUrl) {
-        savePhoto(photoResult.dataUrl).then((saveResult) => {
-          console.log(saveResult);
-          // 保存完将返回的文件名存到plant里，并更新配置json
-          if (plant.value) plant.value.plantImageFilename = saveResult.filename;
-          updateConfigFile();
-          // 最后转换保存好的图片为img元素可用的src
-          loadImageFileToSrc(
-            "images/" + saveResult.filename,
-            Directory.Data
-          ).then((loadResult) => {
-            if (loadResult) {
-              plantImageDataUrl.value = loadResult;
-            }
-          });
+        const filename = getDateTime().dateTime + ".jpeg";
+        savePhoto(filename, photoResult.dataUrl).then((uriResult) => {
+          if (plant.value) {
+            // 保存完将返回的文件名存到plant里，并更新配置json
+            plant.value.plantImageFilename = filename;
+            // 最后转换保存好的图片为img元素可用的src
+            plantImageDataUrl.value = Capacitor.convertFileSrc(uriResult.uri);
+          }
         });
       }
     })
@@ -317,8 +312,6 @@ function addImage() {
 // 凑合事儿的
 const editPlantNameModal = ref<InstanceType<typeof IonModal> | null>(null);
 function cancelEditPlantNameModal() {
-  // console.log(editPlantNameModal);
-  // console.log(editPlantNameModal.value.$el === editPlantNameModal.value.$el.el);
   (editPlantNameModal.value?.$el as Modal).dismiss(null, "cancel");
 }
 
@@ -424,7 +417,7 @@ ion-content {
         // width: 100%;
         // height: 100%;
         display: block;
-        max-height: 500px;
+        max-height: 300px;
         object-fit: contain;
       }
 

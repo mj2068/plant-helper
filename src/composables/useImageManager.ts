@@ -1,11 +1,10 @@
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { Capacitor } from "@capacitor/core";
 import { Directory, Filesystem } from "@capacitor/filesystem";
-import { getDateTime } from "./utils";
 
 export function usePhotoManger() {
-  const getPhoto = async () => {
-    return await Camera.getPhoto({
+  const getPhoto = () => {
+    return Camera.getPhoto({
       resultType: CameraResultType.DataUrl,
       quality: 100,
       promptLabelHeader: "图片来源",
@@ -15,19 +14,15 @@ export function usePhotoManger() {
     });
   };
 
-  const savePhoto = async (dataUrl: string) => {
-    const filename = getDateTime().dateTime + ".jpeg";
-    return {
-      filename,
-      writeResult: Filesystem.writeFile({
-        data: dataUrl,
-        path: "images/" + filename,
-        directory: Directory.Data,
-      }),
-    };
+  const savePhoto = (filename: string, dataUrl: string) => {
+    return Filesystem.writeFile({
+      data: dataUrl,
+      path: "images/" + filename,
+      directory: Directory.Data,
+    });
   };
 
-  const loadImageFileToSrc = (path: string, dir: Directory) => {
+  const getSrcFromPath = (path: string, dir: Directory) => {
     return Filesystem.getUri({
       path: path,
       directory: dir,
@@ -36,5 +31,5 @@ export function usePhotoManger() {
       .catch((error) => console.error(error));
   };
 
-  return { getPhoto, loadImageFileToSrc, savePhoto };
+  return { getPhoto, getSrcFromPath, savePhoto };
 }
