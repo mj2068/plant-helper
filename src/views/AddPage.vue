@@ -85,7 +85,6 @@ import {
   IonList,
   IonItem,
   IonTextarea,
-  IonImg,
   IonIcon,
   useIonRouter,
 } from "@ionic/vue";

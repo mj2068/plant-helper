@@ -1,12 +1,11 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
+    <ion-header>
       <ion-toolbar>
         <ion-icon
           slot="start"
           :icon="rose"
-          size="large"
-          color="danger"
+          class="ion-padding-start"
         ></ion-icon>
         <ion-title>养花小助手</ion-title>
       </ion-toolbar>
@@ -31,7 +30,11 @@
           :key="index"
           @click="cardDetail(plant)"
         >
-          <ion-img :src="imageWithPlaceholder(plantImages[plant.plantId])" />
+          <ion-img
+            :src="imageWithPlaceholder(plantImages[plant.plantId])"
+            v-on:ion-img-did-load="imgLoad"
+            v-on:vnode-mounted="imgMounted"
+          />
           <ion-card-header>
             <ion-card-title>{{ plant["plantName"] }}</ion-card-title>
             <ion-card-content>
@@ -213,9 +216,22 @@ function cardDetail(plant: Plant) {
   // ionRouter.navigate("/detail", "forward", "push");
   router.push(`/detail/${plant.plantId}`);
 }
+
+function imgLoad(e: any) {
+  console.log(e);
+}
+
+function imgMounted(e: any) {
+  console.log(e);
+}
 </script>
 
 <style scoped>
+ion-header ion-toolbar ion-icon {
+  color: rgb(214, 32, 144);
+  font-size: 32px;
+}
+
 button {
   font-size: 2rem;
 }

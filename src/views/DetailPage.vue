@@ -296,6 +296,7 @@ function addImage() {
           if (plant.value) {
             // 保存完将返回的文件名存到plant里，并更新配置json
             plant.value.plantImageFilename = filename;
+            updateConfigFile();
             // 最后转换保存好的图片为img元素可用的src
             plantImageDataUrl.value = Capacitor.convertFileSrc(uriResult.uri);
           }
