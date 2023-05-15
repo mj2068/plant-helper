@@ -27,6 +27,7 @@
         </div>
 
         <ion-card
+          button
           v-for="(plant, index) in plants"
           :key="index"
           @click="cardDetail(plant)"

@@ -18,7 +18,7 @@
     <ion-content>
       <div id="container" class="ion-padding">
         <div v-if="plantImageDataUrl" id="image-container">
-          <ion-card class="">
+          <ion-card button class="">
             <img
               id="plant-image"
               :src="plantImageDataUrl"
@@ -36,11 +36,13 @@
           </ion-card>
         </div>
         <div v-else id="no-image-container">
-          <ion-card>
-            <ion-button fill="clear" v-on:click="getImage"
-              ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
-              添加图片
-            </ion-button>
+          <ion-card button @click="getImage">
+            <div>
+              <ion-button fill="clear"
+                ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
+                添加图片
+              </ion-button>
+            </div>
           </ion-card>
         </div>
         <ion-list>
@@ -273,10 +275,24 @@ export default defineComponent({
 
 #no-image-container {
   ion-card {
+    // 使按钮上下居中
     display: flex;
-    justify-content: center;
+    // justify-content: center;
     align-items: center;
     min-height: 100px;
+
+    div {
+      // 使按钮左右居中
+      // height: 100%;
+      display: flex;
+      justify-content: center;
+      // align-items: center;
+      // min-height: 100px;
+
+      ion-button {
+        font-size: 1.2rem;
+      }
+    }
   }
 }
 </style>
