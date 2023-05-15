@@ -143,7 +143,7 @@ function imageWithPlaceholder(imageDataUrl: string) {
   if (imageDataUrl) {
     return imageDataUrl;
   }
-  return star;
+  return "";
 }
 
 function test() {

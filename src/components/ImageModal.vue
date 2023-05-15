@@ -7,10 +7,27 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header> -->
-    <ion-content>
+    <ion-content :scroll-x="false" :scroll-y="false">
       <div id="image-container">
-        <img :src="plantImageDataUrl" alt="" />
-        <ion-button fill="clear" color="dark" @click="goBack"
+        <swiper :modules="modules" :zoom="true">
+          <swiper-slide>
+            <div class="swiper-zoom-container">
+              <img :src="plantImageDataUrl" />
+            </div>
+          </swiper-slide>
+        </swiper>
+
+        <!-- swiper 9 web component implementation
+        has glitches -->
+        <!-- <swiper-container :zoom="true" :modules="modules">
+          <swiper-slide>
+            <div class="swiper-zoom-container">
+              <img :src="plantImageDataUrl" />
+            </div>
+          </swiper-slide>
+        </swiper-container> -->
+
+        <ion-button color="light" @click="goBack"
           ><ion-icon slot="icon-only" :icon="closeCircleOutline"></ion-icon
         ></ion-button>
       </div>
@@ -32,8 +49,20 @@ import {
   modalController,
 } from "@ionic/vue";
 import { closeCircleOutline } from "ionicons/icons";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Zoom } from "swiper";
+
+// swiper 9 web component implementation
+// import { register } from "swiper/element/bundle";
+// register();
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/zoom";
 
 export default defineComponent({
+  // setup() {},
+
   components: {
     IonPage,
     // IonHeader,
@@ -43,12 +72,15 @@ export default defineComponent({
     IonContent,
     IonButton,
     IonIcon,
+    Swiper,
+    SwiperSlide,
   },
 
   props: ["plantImageDataUrl"],
   data() {
     return {
       closeCircleOutline,
+      modules: [Zoom],
     };
   },
 
@@ -73,11 +105,15 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
 
-  // position: relatvie;
-
-  img {
+  // swiper-container {
+  .swiper {
+    width: 100%;
     height: 100%;
-    object-fit: contain;
+
+    img {
+      height: 100%;
+      object-fit: contain;
+    }
   }
 
   ion-button {
@@ -90,6 +126,8 @@ export default defineComponent({
     --border-radius: 50%;
     --padding-start: 0px;
     --padding-end: 0px;
+
+    z-index: 1;
 
     ion-icon {
       font-size: 48px;
