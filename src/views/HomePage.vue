@@ -25,6 +25,7 @@
           </ion-button>
           <ion-button @click="test" size="large">test</ion-button>
         </div>
+
         <ion-card
           v-for="(plant, index) in plants"
           :key="index"
@@ -232,46 +233,9 @@ ion-header ion-toolbar ion-icon {
   font-size: 32px;
 }
 
-button {
-  font-size: 2rem;
-}
-
-#container {
-  background-color: #eee;
-}
-
-#container ion-card div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* background-color: #555; */
-  height: 100px;
-}
-
-#container ion-card div ion-img {
-  height: auto;
-}
-
 #container ion-img {
   object-fit: cover;
-  background-color: #ccc;
-  height: 100px;
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  color: #8c8c8c;
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+  height: 120px;
 }
 
 #container button {

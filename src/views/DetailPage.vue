@@ -21,20 +21,20 @@
     <ion-content class="ion-padding">
       <div id="plant-found-container" class="container" v-if="plant != null">
         <div v-if="plantImageDataUrl" id="image-container">
-          <ion-card class="">
+          <ion-card button @click="openImage" class="">
             <img :src="plantImageDataUrl" alt="植物图片" />
             <ion-button
               id="delete-image-button"
               fill="solid"
               color="light"
-              @click="deleteImage"
+              @click.stop="deleteImage"
             >
               <ion-icon slot="icon-only" :icon="trashSharp"></ion-icon>
             </ion-button>
           </ion-card>
         </div>
         <div v-else id="no-image-container">
-          <ion-card>
+          <ion-card button v-on:click="addImage">
             <div>
               <ion-button fill="clear" v-on:click="addImage"
                 ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
@@ -179,6 +179,7 @@ import {
   IonTextarea,
   IonModal,
   useIonRouter,
+  modalController,
 } from "@ionic/vue";
 import {
   ellipsisVerticalSharp,
@@ -195,6 +196,7 @@ import { useIonAlert } from "@/composables/ionAlert";
 import { usePhotoManger } from "@/composables/useImageManager";
 import { Capacitor } from "@capacitor/core";
 import { getDateTime } from "@/composables/utils";
+import ImageModal from "@/components/ImageModal.vue";
 
 const console = window.console;
 
@@ -254,7 +256,7 @@ function setPlantImageSrc(imageFilename: string) {
 
 function deletePlant() {
   presentConfirmCancelAlert({
-    header: "❓",
+    header: "❗",
     message: `确认删除植物：<br>&nbsp;&nbsp;<strong>${plant.value?.plantName}</strong>`,
     cssClass: "delete-plant-alert",
   }).then((result) => {
@@ -306,6 +308,24 @@ function addImage() {
     .catch((error) => {
       console.error(error);
     });
+}
+
+async function openImage() {
+  console.log("DetailPage - openImage");
+
+  const imageModal = await modalController.create({
+    component: ImageModal,
+    componentProps: { plantImageDataUrl: plantImageDataUrl.value },
+  });
+
+  imageModal.present();
+
+  const { data, role } = await imageModal.onWillDismiss();
+
+  console.log(role);
+  if (role === "confirm") {
+    console.log(data);
+  }
 }
 
 // 植物名称编辑页面的template ref
@@ -376,10 +396,7 @@ function saveEditPlantDescriptionModal() {
 function onEditPlantDescriptionModalWillDismiss(
   ev: CustomEvent<OverlayEventDetail>
 ) {
-  console.log("edit plant desc modal will dismiss");
-  console.log(ev.detail.role);
   if (plant.value && ev.detail.role === "save") {
-    console.log("new plant desc:");
     plant.value.plantDescription =
       editPlantDescriptionModalPlantDescription.value;
     updateConfigFile();
@@ -395,6 +412,7 @@ function onEditPlantDescriptionModalWillPresent() {
 
 function onEditPlantDescriptionModalDidPresent() {
   console.log("desc did presnet");
+  // 可以增加自动焦点
 }
 
 function test() {
@@ -439,10 +457,24 @@ ion-content {
 
   #no-image-container {
     ion-card {
+      // 使按钮上下居中
       display: flex;
-      justify-content: center;
+      // justify-content: center;
       align-items: center;
       min-height: 100px;
+
+      div {
+        // 使按钮左右居中
+        // height: 100%;
+        display: flex;
+        justify-content: center;
+        // align-items: center;
+        // min-height: 100px;
+
+        ion-button {
+          font-size: 1.2rem;
+        }
+      }
     }
   }
 
