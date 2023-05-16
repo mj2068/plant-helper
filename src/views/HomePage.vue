@@ -1,54 +1,3 @@
-<template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-icon
-          slot="start"
-          :icon="rose"
-          class="ion-padding-start"
-        ></ion-icon>
-        <ion-title>养花小助手</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
-      <div id="container" class="ion-padding">
-        <div id="control" style="display: flex; justify-content: center">
-          <ion-button @click="ionRouter.push('/add')" size="large">
-            <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
-          </ion-button>
-          <ion-button @click="test" size="large">test</ion-button>
-        </div>
-
-        <ion-card
-          button
-          v-for="(plant, index) in plants"
-          :key="index"
-          @click="cardDetail(plant)"
-        >
-          <ion-img
-            :src="imageWithPlaceholder(plantImages[plant.plantId])"
-            v-on:ion-img-did-load="imgLoad"
-            v-on:vnode-mounted="imgMounted"
-          />
-          <ion-card-header>
-            <ion-card-title>{{ plant["plantName"] }}</ion-card-title>
-            <ion-card-content>
-              <p>{{ plant["plantDescription"] }}</p>
-            </ion-card-content>
-          </ion-card-header>
-        </ion-card>
-      </div>
-    </ion-content>
-  </ion-page>
-</template>
-
 <script setup lang="ts">
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
@@ -63,13 +12,14 @@ import {
   IonCardTitle,
   IonCardContent,
   IonIcon,
-  IonImg,
+  IonSpinner,
+  IonRippleEffect,
   onIonViewDidEnter,
   useIonRouter,
   alertController,
   toastController,
 } from "@ionic/vue";
-import { rose, addCircle, star } from "ionicons/icons";
+import { rose, addCircle } from "ionicons/icons";
 import { onMounted, reactive, inject, computed } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
@@ -90,8 +40,6 @@ const { appData } = inject("appData") as {
 
 onMounted(() => {
   console.log("HomePage - onMounted");
-
-  // updateImages();
 });
 
 onIonViewDidEnter(() => {
@@ -107,18 +55,23 @@ onIonViewDidEnter(() => {
 
 const plants = computed(() => {
   // plantList发生变化，其每个元素对应的图片，也需要更新；
-  // 借用computed来
+  // 借用computed来执行更新图片url的步骤
   updateImages();
   return appData.appConf.plantList;
 });
 
 function updateImages() {
   appData.appConf.plantList.forEach(async (plant) => {
+    const id = plant.plantId;
+
+    if (!plantImages[id]) plantImages[id] = { dataUrl: "", isLoading: true };
+
     const filename = plant.plantImageFilename;
     console.log("filename: " + filename);
     // 判断文件名是否为空，如果是将plantImages对象相应id的图像设为空字符串
     if (filename === "") {
-      plantImages[plant.plantId] = "";
+      plantImages[id].dataUrl = "";
+      plantImages[id].isLoading = false;
       return;
     }
     // 如果文件名不为空，按文件名读取图像文件，并设为plantImages对象相应id的值
@@ -127,35 +80,42 @@ function updateImages() {
         path: "images/" + filename,
         directory: Directory.Data,
       });
-      plantImages[plant.plantId] = "data:image/jpeg;base64," + readResult.data;
+      plantImages[id].dataUrl = "data:image/jpeg;base64," + readResult.data;
+      plantImages[id].isLoading = true;
     } catch (error) {
       console.log("HomePage - updateImages");
       console.error(error);
-      plantImages[plant.plantId] = "";
+      plantImages[id].dataUrl = "";
+      plantImages[id].isLoading = false;
     }
   });
 }
 
 // 这个index signature用于存储plantList数组中每个元素对应的图像数据
-const plantImages: { [index: number]: string } = reactive({});
+const plantImages: {
+  [index: number]: { dataUrl: string; isLoading: boolean };
+} = reactive({});
 
 // 为防止没有添加图片文件的植物记录显示找不到图片，此函数用于返回一个通用占位图
-function imageWithPlaceholder(imageDataUrl: string) {
-  if (imageDataUrl) {
-    return imageDataUrl;
-  }
-  return "";
-}
+// function imageWithPlaceholder(imageDataUrl: string) {
+//   if (imageDataUrl) {
+//     return imageDataUrl;
+//   }
+//   return "";
+// }
 
 function test() {
   console.log("HomePage - test");
 
-  console.log(plants.value[0]);
+  // console.log(plants.value[0]);
 
   // using computed property returning plantList and change the source, it works
-  appData.appConf.plantList[0].plantName = "haha";
+  // appData.appConf.plantList[0].plantName = "haha";
 
   // computed properties are getter-only by defaule; so next line doesn't work
+  // 2305160835: it actually works. you can't can change plants' value
+  //   directly(e.g. plants.value = [], would give runtime error), but you
+  //   actually can change its properties or elements.
   // plants.value[0].plantName = "heihei";
 }
 
@@ -213,20 +173,88 @@ function routerPush() {
   router.push("/add");
 }
 
-function cardDetail(plant: Plant) {
+function cardDetail(id: number) {
   // console.log(plant);
   // ionRouter.navigate("/detail", "forward", "push");
-  router.push(`/detail/${plant.plantId}`);
+  router.push(`/detail/${id}`);
 }
 
-function imgLoad(e: any) {
-  console.log(e);
+function imgWillLoad(e: Event, id: number) {
+  console.log(e.target);
+  console.log(id);
 }
 
-function imgMounted(e: any) {
+function imgDidLoad(e: Event, id: number) {
   console.log(e);
+  console.log(id);
+  plantImages[id].isLoading = false;
 }
 </script>
+
+<template>
+  <ion-page>
+    <ion-header>
+      <ion-toolbar>
+        <ion-icon
+          slot="start"
+          :icon="rose"
+          class="ion-padding-start"
+        ></ion-icon>
+        <ion-title>养花小助手</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content :fullscreen="true">
+      <ion-header collapse="condense">
+        <ion-toolbar>
+          <ion-title size="large">Blank</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <div id="container" class="ion-padding">
+        <div id="control" style="display: flex; justify-content: center">
+          <ion-button @click="ionRouter.push('/add')" size="large">
+            <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button @click="test" size="large">test</ion-button>
+        </div>
+
+        <div
+          class="plant-container ion-activatable"
+          @click="cardDetail(plant.plantId)"
+          v-for="(plant, index) in plants"
+          :key="index"
+        >
+          <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
+
+          <div class="image-container">
+            <ion-spinner
+              v-if="plantImages[plant.plantId].isLoading"
+            ></ion-spinner>
+            <img
+              :src="plantImages[plant.plantId].dataUrl"
+              @loadstart="imgWillLoad($event, plant.plantId)"
+              @load="imgDidLoad($event, plant.plantId)"
+            />
+          </div>
+
+          <div class="text-container">
+            <h3>{{ plant.plantName }}</h3>
+            <p>{{ plant.plantDescription }}</p>
+          </div>
+          <!-- <ion-card button @click="cardDetail(plant)">
+            <ion-card-header>
+              <ion-card-title>{{ plant.plantName }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p>{{ plant.plantDescription }}</p>
+            </ion-card-content>
+          </ion-card> -->
+        </div>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>
 
 <style scoped>
 ion-header ion-toolbar ion-icon {
@@ -234,18 +262,60 @@ ion-header ion-toolbar ion-icon {
   font-size: 32px;
 }
 
-#container ion-img {
-  object-fit: cover;
-  height: 120px;
-}
-
-#container button {
+#container #controls ion-button {
   padding: 10px;
   border: 1px solid black;
   border-radius: 10px;
 }
 
-#container button:active {
+#container #controls #ion-button:active {
   background-color: pink;
+}
+
+#container .plant-container {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
+    rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+  margin: 20px 5% 20px;
+  overflow: hidden;
+
+  position: relative;
+}
+
+.custom-ripple {
+  color: darkolivegreen;
+}
+
+#container .plant-container:last-of-type {
+  /* margin-bottom: auto; */
+}
+
+#container .plant-container div.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: beige;
+}
+
+#container .plant-container div.image-container ion-spinner {
+  position: absolute;
+}
+
+#container .plant-container div.image-container img {
+  width: 100%;
+  max-height: 120px;
+  display: block;
+  object-fit: cover;
+  padding: 10px;
+}
+
+#container .plant-container div.text-container {
+  margin-left: 20px;
+}
+
+#plant-container ion-card {
 }
 </style>

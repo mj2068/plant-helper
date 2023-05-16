@@ -353,6 +353,7 @@ function onEditPlantNameModalWillPresent() {
     editPlantNameModalPlantName.value = plant.value.plantName;
   }
 }
+
 function onEditPlantNameModalDidPresent() {
   const input = editPlantNameModalPlantNameInputElement.value?.$el as Input;
 
