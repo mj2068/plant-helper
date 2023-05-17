@@ -269,6 +269,7 @@ export default defineComponent({
       --border-radius: 50%;
       --padding-start: 8px;
       --padding-end: 8px;
+      opacity: 0.7;
     }
   }
 }

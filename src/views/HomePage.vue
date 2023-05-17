@@ -19,11 +19,8 @@ import {
   alertController,
   toastController,
 } from "@ionic/vue";
-import {
-  rose,
-  addCircle,
-} from "ionicons/icons";
-import { onMounted, reactive, inject, computed } from "vue";
+import { rose, addCircle } from "ionicons/icons";
+import { onMounted, reactive, inject, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 
@@ -50,54 +47,62 @@ onIonViewDidEnter(() => {
 });
 
 // 监视appData，其发生改变后
-// watch(appData, () => {
-//   console.log("HomePage - watch - appData");
-//   console.log("plantList length: " + appData.appConf.plantList.length);
-//   updateImages();
-// });
+watch(
+  () => appData.appConf.plantList,
+  () => {
+    console.log("HomePage - watch - appData");
+    console.log("plantList length: " + appData.appConf.plantList.length);
+    updateImages();
+  },
+  { deep: true }
+);
 
-const plants = computed(() => {
-  // plantList发生变化，其每个元素对应的图片，也需要更新；
-  // 借用computed来执行更新图片url的步骤
-  updateImages();
-  return appData.appConf.plantList;
-});
+function getPlantById(id: number): Plant | undefined {
+  return appData.appConf.plantList.find((plant) => id === plant.plantId);
+}
 
 function updateImages() {
+  console.log("HomePage - updateImages");
+
   appData.appConf.plantList.forEach(async (plant) => {
     const id = plant.plantId;
-
-    if (!plantImages[id]) plantImages[id] = { dataUrl: "", isLoading: true };
+    if (!plantImagesInfo[id])
+      plantImagesInfo[id] = { dataUrl: "", isLoading: false };
 
     const filename = plant.plantImageFilename;
     console.log("filename: " + filename);
     // 判断文件名是否为空，如果是将plantImages对象相应id的图像设为空字符串
     if (filename === "") {
-      plantImages[id].dataUrl = "";
-      plantImages[id].isLoading = false;
+      plantImagesInfo[id].dataUrl = "";
+      plantImagesInfo[id].isLoading = false;
       return;
     }
     // 如果文件名不为空，按文件名读取图像文件，并设为plantImages对象相应id的值
     try {
+      plantImagesInfo[id].isLoading = true;
       const readResult = await Filesystem.readFile({
         path: "images/" + filename,
         directory: Directory.Data,
       });
-      plantImages[id].dataUrl = "data:image/jpeg;base64," + readResult.data;
-      plantImages[id].isLoading = true;
+      plantImagesInfo[id].dataUrl = "data:image/jpeg;base64," + readResult.data;
+      plantImagesInfo[id].isLoading = false;
     } catch (error) {
       console.log("HomePage - updateImages");
       console.error(error);
-      plantImages[id].dataUrl = "";
-      plantImages[id].isLoading = false;
+      plantImagesInfo[id].dataUrl = "";
+      plantImagesInfo[id].isLoading = false;
     }
   });
 }
 
 // 这个index signature用于存储plantList数组中每个元素对应的图像数据
-const plantImages: {
-  [index: number]: { dataUrl: string; isLoading: boolean };
+const plantImagesInfo: {
+  [index: number]: { dataUrl?: string; isLoading?: boolean };
 } = reactive({});
+
+watch(plantImagesInfo, (n, o) => {
+  // console.log(n, o);
+});
 
 // 为防止没有添加图片文件的植物记录显示找不到图片，此函数用于返回一个通用占位图
 // function imageWithPlaceholder(imageDataUrl: string) {
@@ -185,12 +190,13 @@ function cardDetail(id: number) {
 function imgWillLoad(e: Event, id: number) {
   console.log(e.target);
   console.log(id);
+  plantImagesInfo[id].isLoading = true;
 }
 
 function imgDidLoad(e: Event, id: number) {
-  console.log(e);
-  console.log(id);
-  plantImages[id].isLoading = false;
+  // console.log(e);
+  // console.log(id);
+  // plantImagesInfo[id].isLoading = false;
 }
 </script>
 
@@ -213,7 +219,9 @@ function imgDidLoad(e: Event, id: number) {
           <ion-title size="large">Blank</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-button class="debug test" @click="ionRouter.push('/add')"
+      <ion-button
+        class="debug test ion-no-margin"
+        @click="ionRouter.push('/add')"
         >test</ion-button
       >
 
@@ -227,17 +235,18 @@ function imgDidLoad(e: Event, id: number) {
         <div
           class="plant-container ion-activatable"
           @click="cardDetail(plant.plantId)"
-          v-for="(plant, index) in plants"
+          v-for="(plant, index) in appData.appConf.plantList"
           :key="index"
         >
           <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
 
           <div class="image-container">
             <ion-spinner
-              v-if="plantImages[plant.plantId].isLoading"
+              v-if="plantImagesInfo[plant.plantId]?.isLoading"
             ></ion-spinner>
             <img
-              :src="plantImages[plant.plantId].dataUrl"
+              v-show="plantImagesInfo[plant.plantId]?.dataUrl"
+              :src="plantImagesInfo[plant.plantId]?.dataUrl"
               @loadstart="imgWillLoad($event, plant.plantId)"
               @load="imgDidLoad($event, plant.plantId)"
             />
@@ -263,7 +272,8 @@ function imgDidLoad(e: Event, id: number) {
 
 <style scoped>
 ion-button.debug {
-  position: absolute;
+  position: fixed;
+  z-index: 1;
 }
 
 ion-header ion-toolbar ion-icon {
@@ -311,7 +321,7 @@ ion-header ion-toolbar ion-icon {
   justify-content: center;
   align-items: center;
 
-  background-color: beige;
+  /* background-color: beige; */
 }
 
 #container .plant-container div.image-container ion-spinner {
@@ -320,10 +330,11 @@ ion-header ion-toolbar ion-icon {
 
 #container .plant-container div.image-container img {
   width: 100%;
+  height: 100%;
   max-height: 120px;
   display: block;
   object-fit: cover;
-  padding: 10px;
+  /* padding: 10px; */
 }
 
 #container .plant-container div.text-container {
