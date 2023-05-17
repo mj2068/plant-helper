@@ -19,7 +19,10 @@ import {
   alertController,
   toastController,
 } from "@ionic/vue";
-import { rose, addCircle } from "ionicons/icons";
+import {
+  rose,
+  addCircle,
+} from "ionicons/icons";
 import { onMounted, reactive, inject, computed } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
@@ -210,13 +213,15 @@ function imgDidLoad(e: Event, id: number) {
           <ion-title size="large">Blank</ion-title>
         </ion-toolbar>
       </ion-header>
+      <ion-button class="debug test" @click="ionRouter.push('/add')"
+        >test</ion-button
+      >
 
       <div id="container" class="ion-padding">
-        <div id="control" style="display: flex; justify-content: center">
-          <ion-button @click="ionRouter.push('/add')" size="large">
+        <div class="control">
+          <ion-button @click="ionRouter.push('/add')" fill="clear">
             <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
           </ion-button>
-          <ion-button @click="test" size="large">test</ion-button>
         </div>
 
         <div
@@ -257,19 +262,32 @@ function imgDidLoad(e: Event, id: number) {
 </template>
 
 <style scoped>
+ion-button.debug {
+  position: absolute;
+}
+
 ion-header ion-toolbar ion-icon {
   color: rgb(214, 32, 144);
   font-size: 32px;
 }
 
-#container #controls ion-button {
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 10px;
+#container .control {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
+#container .control ion-button {
+  /* position: absolute; */
+  width: 80px;
+  height: 80px;
+  /* margin: 0px 2px 2px 0px; */
 
-#container #controls #ion-button:active {
-  background-color: pink;
+  --border-radius: 50%;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+#container .control ion-button ion-icon {
+  font-size: 80px;
 }
 
 #container .plant-container {
@@ -284,12 +302,8 @@ ion-header ion-toolbar ion-icon {
   position: relative;
 }
 
-.custom-ripple {
+#container .plant-container .custom-ripple {
   color: darkolivegreen;
-}
-
-#container .plant-container:last-of-type {
-  /* margin-bottom: auto; */
 }
 
 #container .plant-container div.image-container {
@@ -314,8 +328,5 @@ ion-header ion-toolbar ion-icon {
 
 #container .plant-container div.text-container {
   margin-left: 20px;
-}
-
-#plant-container ion-card {
 }
 </style>

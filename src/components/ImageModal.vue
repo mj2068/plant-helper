@@ -27,8 +27,8 @@
           </swiper-slide>
         </swiper-container> -->
 
-        <ion-button color="light" @click="goBack"
-          ><ion-icon slot="icon-only" :icon="closeCircleOutline"></ion-icon
+        <ion-button fill="solid" color="dark" @click="goBack"
+          ><ion-icon slot="icon-only" :icon="closeCircle"></ion-icon
         ></ion-button>
       </div>
     </ion-content>
@@ -48,7 +48,7 @@ import {
   IonIcon,
   modalController,
 } from "@ionic/vue";
-import { closeCircleOutline } from "ionicons/icons";
+import { closeCircle } from "ionicons/icons";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Zoom } from "swiper";
 
@@ -79,7 +79,7 @@ export default defineComponent({
   props: ["plantImageDataUrl"],
   data() {
     return {
-      closeCircleOutline,
+      closeCircle,
       modules: [Zoom],
     };
   },
@@ -117,9 +117,9 @@ export default defineComponent({
 
   ion-button {
     position: absolute;
-    width: 48px;
-    height: 48px;
-    bottom: 12%;
+    width: 56px;
+    height: 56px;
+    bottom: 15%;
     margin: 0px 0px 0px 0px;
 
     --border-radius: 50%;
@@ -128,8 +128,9 @@ export default defineComponent({
 
     z-index: 1;
 
+    opacity: 0.5;
     ion-icon {
-      font-size: 48px;
+      font-size: 56px;
     }
   }
 }

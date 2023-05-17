@@ -39,7 +39,7 @@
           <ion-card button @click="getImage">
             <div>
               <ion-button fill="clear"
-                ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
+                ><ion-icon slot="start" :icon="addCircle"></ion-icon>
                 添加图片
               </ion-button>
             </div>
@@ -90,7 +90,7 @@ import {
   IonIcon,
   useIonRouter,
 } from "@ionic/vue";
-import { star, addCircleOutline, trashSharp } from "ionicons/icons";
+import { star, addCircle, trashSharp } from "ionicons/icons";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { getDateTime } from "@/composables/utils";
@@ -139,7 +139,7 @@ export default defineComponent({
   data() {
     return {
       star,
-      addCircleOutline,
+      addCircle,
       trashSharp,
       ionRouter: useIonRouter(),
       plantName: "",
