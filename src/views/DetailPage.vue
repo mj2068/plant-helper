@@ -139,6 +139,13 @@
               </ion-item>
             </ion-content>
           </ion-modal>
+
+          <ion-item lines="full">
+            <ion-text slot="start" class="">创建于</ion-text>
+            <ion-text slot="end" class="" color="medium">{{
+              normalDateTime
+            }}</ion-text>
+          </ion-item>
         </ion-list>
         <div id="controls">
           <ion-button color="danger" v-on:click="deletePlant">
@@ -197,6 +204,7 @@ import { usePhotoManger } from "@/composables/useImageManager";
 import { Capacitor } from "@capacitor/core";
 import { getDateTime } from "@/composables/utils";
 import ImageModal from "@/components/ImageModal.vue";
+import { useDateTime } from "@/composables/utils";
 
 const console = window.console;
 
@@ -204,6 +212,7 @@ console.log("DetailPage - <setup>");
 
 const ionRouter = useIonRouter();
 const route = useRoute();
+const { getNormal } = useDateTime();
 
 const { id } = route.params as { id: string };
 console.log("DetailPage - <setup> id: " + id);
@@ -235,6 +244,8 @@ const plant = computed(() => {
   }
   return null;
 });
+
+const normalDateTime = computed(() => getNormal(plant.value!.plantCreatedAt));
 
 onMounted(() => {
   console.log("DetailPage - onMounted");
@@ -417,6 +428,8 @@ function onEditPlantDescriptionModalDidPresent() {
 }
 
 function test() {
+  const { getNormal } = useDateTime();
+  console.log(getNormal(plant.value!.plantCreatedAt));
   return;
 }
 </script>
@@ -452,7 +465,7 @@ ion-content {
         --border-radius: 50%;
         --padding-start: 8px;
         --padding-end: 8px;
-        
+
         opacity: 0.7;
       }
     }

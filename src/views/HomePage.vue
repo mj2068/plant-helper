@@ -44,6 +44,7 @@ onMounted(() => {
 
 onIonViewDidEnter(() => {
   console.log("HomePage - onIonViewDidEnter");
+  console.log(appData.appConf);
 });
 
 // 监视appData，其发生改变后
@@ -245,7 +246,6 @@ function imgDidLoad(e: Event, id: number) {
               v-if="plantImagesInfo[plant.plantId]?.isLoading"
             ></ion-spinner>
             <img
-              v-show="plantImagesInfo[plant.plantId]?.dataUrl"
               :src="plantImagesInfo[plant.plantId]?.dataUrl"
               @loadstart="imgWillLoad($event, plant.plantId)"
               @load="imgDidLoad($event, plant.plantId)"
