@@ -36,7 +36,7 @@
         <div v-else id="no-image-container">
           <ion-card button v-on:click="addImage">
             <div>
-              <ion-button fill="clear" v-on:click="addImage"
+              <ion-button fill="clear" v-on:click.stop="addImage"
                 ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
                 添加图片
               </ion-button>
@@ -249,6 +249,11 @@ const normalDateTime = computed(() => getNormal(plant.value!.plantCreatedAt));
 
 onMounted(() => {
   console.log("DetailPage - onMounted");
+});
+
+onMounted(() => {
+  console.log("DetailPage - onUnmounted");
+  console.log(id);
 });
 
 function setPlantImageSrc(imageFilename: string) {

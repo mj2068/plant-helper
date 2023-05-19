@@ -21,6 +21,8 @@ export default defineComponent({
     const appData: { appConf: AppConf } = reactive({
       appConf: {
         plantList: [],
+        version: "0.0.1",
+        new_card_random_color: false,
         testNumber: -1,
         testString: "",
       },

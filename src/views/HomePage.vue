@@ -20,7 +20,7 @@ import {
   toastController,
 } from "@ionic/vue";
 import { rose, addCircle } from "ionicons/icons";
-import { onMounted, reactive, inject, computed, watch } from "vue";
+import { onMounted, reactive, inject, computed, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 
@@ -40,11 +40,16 @@ const { appData } = inject("appData") as {
 
 onMounted(() => {
   console.log("HomePage - onMounted");
+
+  updateImages();
+});
+
+onUnmounted(() => {
+  console.log("HomePage - onUnmounted");
 });
 
 onIonViewDidEnter(() => {
   console.log("HomePage - onIonViewDidEnter");
-  console.log(appData.appConf);
 });
 
 // 监视appData，其发生改变后
@@ -68,7 +73,16 @@ function updateImages() {
   appData.appConf.plantList.forEach(async (plant) => {
     const id = plant.plantId;
     if (!plantImagesInfo[id])
-      plantImagesInfo[id] = { dataUrl: "", isLoading: false };
+      plantImagesInfo[id] = { dataUrl: "", isLoading: false, cardColor: "" };
+
+    const r = Math.random() * 3;
+    if (r < 1) {
+      plantImagesInfo[id].cardColor = "red";
+    } else if (r >= 1 && r < 2) {
+      plantImagesInfo[id].cardColor = "green";
+    } else {
+      plantImagesInfo[id].cardColor = "blue";
+    }
 
     const filename = plant.plantImageFilename;
     console.log("filename: " + filename);
@@ -98,12 +112,8 @@ function updateImages() {
 
 // 这个index signature用于存储plantList数组中每个元素对应的图像数据
 const plantImagesInfo: {
-  [index: number]: { dataUrl?: string; isLoading?: boolean };
+  [index: number]: { dataUrl?: string; isLoading?: boolean; cardColor: string };
 } = reactive({});
-
-watch(plantImagesInfo, (n, o) => {
-  // console.log(n, o);
-});
 
 // 为防止没有添加图片文件的植物记录显示找不到图片，此函数用于返回一个通用占位图
 // function imageWithPlaceholder(imageDataUrl: string) {
@@ -116,7 +126,7 @@ watch(plantImagesInfo, (n, o) => {
 function test() {
   console.log("HomePage - test");
 
-  // console.log(plants.value[0]);
+  updateImages();
 
   // using computed property returning plantList and change the source, it works
   // appData.appConf.plantList[0].plantName = "haha";
@@ -188,12 +198,6 @@ function cardDetail(id: number) {
   router.push(`/detail/${id}`);
 }
 
-function imgWillLoad(e: Event, id: number) {
-  console.log(e.target);
-  console.log(id);
-  plantImagesInfo[id].isLoading = true;
-}
-
 function imgDidLoad(e: Event, id: number) {
   // console.log(e);
   // console.log(id);
@@ -220,11 +224,25 @@ function imgDidLoad(e: Event, id: number) {
           <ion-title size="large">Blank</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-button
-        class="debug test ion-no-margin"
-        @click="ionRouter.push('/add')"
-        >test</ion-button
-      >
+      <div id="debug-control-container" class="debug test ion-no-margin">
+        <ion-button
+          size="small"
+          color="danger"
+          class="debug test"
+          @click="console.log(plantImagesInfo)"
+          >plnatImage</ion-button
+        >
+        <br />
+        <ion-button
+          size="small"
+          color="danger"
+          class="debug test"
+          @click="console.log(appData)"
+          >appData</ion-button
+        >
+        <br />
+        <ion-button @click.stop="test">test</ion-button>
+      </div>
 
       <div id="container" class="ion-padding">
         <div class="control">
@@ -235,9 +253,10 @@ function imgDidLoad(e: Event, id: number) {
 
         <div
           class="plant-container ion-activatable"
-          @click="cardDetail(plant.plantId)"
           v-for="(plant, index) in appData.appConf.plantList"
           :key="index"
+          :class="plantImagesInfo[plant.plantId]?.cardColor"
+          @click="cardDetail(plant.plantId)"
         >
           <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
 
@@ -246,8 +265,8 @@ function imgDidLoad(e: Event, id: number) {
               v-if="plantImagesInfo[plant.plantId]?.isLoading"
             ></ion-spinner>
             <img
+              v-if="plantImagesInfo[plant.plantId]?.dataUrl"
               :src="plantImagesInfo[plant.plantId]?.dataUrl"
-              @loadstart="imgWillLoad($event, plant.plantId)"
               @load="imgDidLoad($event, plant.plantId)"
             />
           </div>
@@ -271,9 +290,14 @@ function imgDidLoad(e: Event, id: number) {
 </template>
 
 <style scoped>
-ion-button.debug {
+div.debug {
   position: fixed;
   z-index: 1;
+  opacity: 0.6;
+}
+
+div.debug ion-button {
+  text-transform: none;
 }
 
 ion-header ion-toolbar ion-icon {
@@ -286,6 +310,7 @@ ion-header ion-toolbar ion-icon {
   justify-content: center;
   width: 100%;
 }
+
 #container .control ion-button {
   /* position: absolute; */
   width: 80px;
@@ -296,6 +321,7 @@ ion-header ion-toolbar ion-icon {
   --padding-start: 0;
   --padding-end: 0;
 }
+
 #container .control ion-button ion-icon {
   font-size: 80px;
 }
@@ -310,6 +336,18 @@ ion-header ion-toolbar ion-icon {
   overflow: hidden;
 
   position: relative;
+}
+
+#container .plant-container.green {
+  background-color: green;
+}
+
+#container .plant-container.red {
+  background-color: red;
+}
+
+#container .plant-container.blue {
+  background-color: blue;
 }
 
 #container .plant-container .custom-ripple {
