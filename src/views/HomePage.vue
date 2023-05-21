@@ -77,11 +77,11 @@ function updateImages() {
 
     const r = Math.random() * 3;
     if (r < 1) {
-      plantImagesInfo[id].cardColor = "red";
+      plantImagesInfo[id].cardColor = "color1";
     } else if (r >= 1 && r < 2) {
-      plantImagesInfo[id].cardColor = "green";
+      plantImagesInfo[id].cardColor = "color2";
     } else {
-      plantImagesInfo[id].cardColor = "blue";
+      plantImagesInfo[id].cardColor = "color3";
     }
 
     const filename = plant.plantImageFilename;
@@ -261,20 +261,19 @@ function imgDidLoad(e: Event, id: number) {
           <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
 
           <div class="image-container">
-            <ion-spinner
-              v-if="plantImagesInfo[plant.plantId]?.isLoading"
-            ></ion-spinner>
+            <ion-spinner v-if="plantImagesInfo[plant.plantId]?.isLoading">
+            </ion-spinner>
             <img
               v-if="plantImagesInfo[plant.plantId]?.dataUrl"
               :src="plantImagesInfo[plant.plantId]?.dataUrl"
               @load="imgDidLoad($event, plant.plantId)"
             />
           </div>
-
-          <div class="text-container">
+          <div class="text-container ion-padding">
             <h3>{{ plant.plantName }}</h3>
             <p>{{ plant.plantDescription }}</p>
           </div>
+
           <!-- <ion-card button @click="cardDetail(plant)">
             <ion-card-header>
               <ion-card-title>{{ plant.plantName }}</ion-card-title>
@@ -327,27 +326,31 @@ ion-header ion-toolbar ion-icon {
 }
 
 #container .plant-container {
-  display: grid;
-  grid-template-columns: 30% 70%;
+  display: flex;
+  /* grid-template-columns: 30% 70%; */
+  /* grid-auto-rows: 1fr; */
+  /* flex: 1; */
+  /* flex-direction: row; */
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
     rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
   margin: 20px 5% 20px;
   overflow: hidden;
-
+  /* height: 200px; */
+  /* max-height: 150px; */
   position: relative;
 }
 
-#container .plant-container.green {
-  background-color: green;
+#container .plant-container.color1 {
+  background-color: lightgreen;
 }
 
-#container .plant-container.red {
-  background-color: red;
+#container .plant-container.color2 {
+  background-color: lightpink;
 }
 
-#container .plant-container.blue {
-  background-color: blue;
+#container .plant-container.color3 {
+  background-color: lightblue;
 }
 
 #container .plant-container .custom-ripple {
@@ -355,11 +358,20 @@ ion-header ion-toolbar ion-icon {
 }
 
 #container .plant-container div.image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 30%;
+  /* height: 100%; */
+  /* display: flex; */
+  /* flex: 1 1 auto; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  background-color: beige;
+  /* max-height: 100%; */
 
-  /* background-color: beige; */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  /* align-self: center; */
 }
 
 #container .plant-container div.image-container ion-spinner {
@@ -369,13 +381,16 @@ ion-header ion-toolbar ion-icon {
 #container .plant-container div.image-container img {
   width: 100%;
   height: 100%;
-  max-height: 120px;
+  /* max-width: 100%; */
+  /* max-height: 100%; */
   display: block;
   object-fit: cover;
   /* padding: 10px; */
 }
 
 #container .plant-container div.text-container {
-  margin-left: 20px;
+  /* width: 70%; */
+  margin-left: 30%;
+  /* margin-right: 5%; */
 }
 </style>

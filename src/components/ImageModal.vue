@@ -105,6 +105,7 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
 
+  background-color: lightgrey;
   // swiper-container {
   .swiper {
     width: 100%;
