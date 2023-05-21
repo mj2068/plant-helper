@@ -28,7 +28,7 @@ export function getDateTime(): HumanReadableDateTime {
 
 export function useDateTime() {
   const getNormal = (d: Date): string => {
-    return moment(d).format("YYYY-MM-DD hh:mm:ss");
+    return moment(d).format("YYYY-MM-DD HH:mm:ss");
   };
 
   return { getNormal };

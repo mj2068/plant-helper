@@ -45,6 +45,7 @@
         </div>
 
         <ion-list>
+          <!-- 植物名称 -->
           <ion-item lines="full" id="item-plant-name" button>
             <ion-text slot="start" class="label-column">植物名称</ion-text>
             <ion-text
@@ -90,6 +91,7 @@
             </ion-content>
           </ion-modal>
 
+          <!-- 植物描述 -->
           <ion-item lines="full" id="item-plant-description" button>
             <ion-text slot="start" class="label-column">植物描述</ion-text>
             <ion-text
@@ -137,16 +139,46 @@
                   :auto-grow="true"
                 ></ion-textarea>
               </ion-item>
+              <ion-button @click="cancelEditPlantDescriptionModal"
+                >取消</ion-button
+              >
+              <ion-button @click="saveEditPlantDescriptionModal"
+                >保存</ion-button
+              >
             </ion-content>
           </ion-modal>
 
+          <!-- 创建日期 -->
           <ion-item lines="full">
             <ion-text slot="start" class="">创建于</ion-text>
             <ion-text slot="end" class="" color="medium">{{
               normalDateTime
             }}</ion-text>
           </ion-item>
+
+          <!-- 颜色选项 -->
+          <ion-item
+            id="item-plant-color"
+            lines="full"
+            button
+            @click="openColorModal"
+          >
+            <ion-text slot="start" class="">卡片颜色</ion-text>
+            <ion-icon
+              slot="end"
+              :icon="ellipse"
+              :style="{ color: 'blue' }"
+              style="
+                border-width: 2px;
+                border-color: black;
+                border-style: solid;
+                border-radius: 50%;
+              "
+            ></ion-icon>
+            <ion-icon slot="end" :icon="chevronForward"></ion-icon>
+          </ion-item>
         </ion-list>
+
         <div id="controls">
           <ion-button color="danger" v-on:click="deletePlant">
             删除
@@ -193,6 +225,7 @@ import {
   trashSharp,
   chevronForward,
   addCircleOutline,
+  ellipse,
 } from "ionicons/icons";
 import { onMounted, ref, inject, computed } from "vue";
 import { useRoute } from "vue-router";
@@ -205,6 +238,7 @@ import { Capacitor } from "@capacitor/core";
 import { getDateTime } from "@/composables/utils";
 import ImageModal from "@/components/ImageModal.vue";
 import { useDateTime } from "@/composables/utils";
+import ColorModal from "@/components/ColorModal.vue";
 
 const console = window.console;
 
@@ -434,8 +468,19 @@ function onEditPlantDescriptionModalDidPresent() {
 
 function test() {
   const { getNormal } = useDateTime();
+
+  console.log(plant.value?.plantCreatedAt);
   console.log(getNormal(plant.value!.plantCreatedAt));
   return;
+}
+
+async function openColorModal() {
+  const colorModal = await modalController.create({
+    component: ColorModal,
+    id: "color-modal",
+  });
+
+  colorModal.present();
 }
 </script>
 
@@ -551,6 +596,11 @@ ion-content {
   ion-modal#edit-plant-desc-modal {
     ion-textarea {
     }
+  }
+
+  ion-modal#color-modal {
+    --width: 60%;
+    --height: 40%;
   }
 
   ion-alert .confirm-button {
