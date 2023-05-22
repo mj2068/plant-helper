@@ -4,6 +4,7 @@ export interface Plant {
   plantName: string;
   plantDescription: string;
   plantImageFilename: string;
+  plantColor?: string;
 }
 
 export interface AppConf {

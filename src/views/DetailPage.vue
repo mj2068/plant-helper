@@ -167,13 +167,7 @@
             <ion-icon
               slot="end"
               :icon="ellipse"
-              :style="{ color: 'blue' }"
-              style="
-                border-width: 2px;
-                border-color: black;
-                border-style: solid;
-                border-radius: 50%;
-              "
+              :style="{ color: plantColor }"
             ></ion-icon>
             <ion-icon slot="end" :icon="chevronForward"></ion-icon>
           </ion-item>
@@ -246,6 +240,7 @@ console.log("DetailPage - <setup>");
 
 const ionRouter = useIonRouter();
 const route = useRoute();
+
 const { getNormal } = useDateTime();
 
 const { id } = route.params as { id: string };
@@ -280,6 +275,8 @@ const plant = computed(() => {
 });
 
 const normalDateTime = computed(() => getNormal(plant.value!.plantCreatedAt));
+
+const plantColor = computed(() => plant.value?.plantColor || "#CB40B7");
 
 onMounted(() => {
   console.log("DetailPage - onMounted");
@@ -477,10 +474,22 @@ function test() {
 async function openColorModal() {
   const colorModal = await modalController.create({
     component: ColorModal,
+    componentProps: { color: plantColor.value },
     id: "color-modal",
   });
 
   colorModal.present();
+
+  const { data, role } = await colorModal.onDidDismiss();
+
+  if (data && "confirm" === role) {
+    if (plant.value) {
+      if (data !== plant.value.plantColor) {
+        plant.value.plantColor = data;
+        updateConfigFile();
+      }
+    }
+  }
 }
 </script>
 
@@ -599,8 +608,6 @@ ion-content {
   }
 
   ion-modal#color-modal {
-    --width: 60%;
-    --height: 40%;
   }
 
   ion-alert .confirm-button {
