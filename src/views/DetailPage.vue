@@ -9,8 +9,11 @@
           <ion-button @click="ionRouter.navigate('/home', 'root')">
             首页
           </ion-button>
-          <ion-button v-on:click="console.log(`id:${id}`)">
-            <ion-icon slot="icon-only" :icon="ellipsisVerticalSharp"></ion-icon>
+          <ion-button id="more-menu-button" v-on:click="openMoreMenu">
+            <ion-icon slot="icon-only" :icon="ellipsisVertical"></ion-icon>
+            <ion-popover trigger="more-menu-button">
+              <PopoverMenu></PopoverMenu>
+            </ion-popover>
           </ion-button>
           <ion-button v-on:click="test">TEST</ion-button>
         </ion-buttons>
@@ -213,9 +216,10 @@ import {
   IonModal,
   useIonRouter,
   modalController,
+  IonPopover,
 } from "@ionic/vue";
 import {
-  ellipsisVerticalSharp,
+  ellipsisVertical,
   trashSharp,
   chevronForward,
   addCircleOutline,
@@ -233,6 +237,7 @@ import { getDateTime } from "@/composables/utils";
 import ImageModal from "@/components/ImageModal.vue";
 import { useDateTime } from "@/composables/utils";
 import ColorModal from "@/components/ColorModal.vue";
+import PopoverMenu from "@/components/PopoverMenu.vue";
 
 const console = window.console;
 
@@ -276,14 +281,10 @@ const plant = computed(() => {
 
 const normalDateTime = computed(() => getNormal(plant.value!.plantCreatedAt));
 
-const plantColor = computed(() => plant.value?.plantColor || "#CB40B7");
+const plantColor = computed(() => plant.value?.plantColor || "");
 
 onMounted(() => {
   console.log("DetailPage - onMounted");
-});
-
-onMounted(() => {
-  console.log("DetailPage - onUnmounted");
   console.log(id);
 });
 
@@ -464,10 +465,6 @@ function onEditPlantDescriptionModalDidPresent() {
 }
 
 function test() {
-  const { getNormal } = useDateTime();
-
-  console.log(plant.value?.plantCreatedAt);
-  console.log(getNormal(plant.value!.plantCreatedAt));
   return;
 }
 
@@ -490,6 +487,10 @@ async function openColorModal() {
       }
     }
   }
+}
+
+function openMoreMenu() {
+  return;
 }
 </script>
 
@@ -605,9 +606,6 @@ ion-content {
   ion-modal#edit-plant-desc-modal {
     ion-textarea {
     }
-  }
-
-  ion-modal#color-modal {
   }
 
   ion-alert .confirm-button {

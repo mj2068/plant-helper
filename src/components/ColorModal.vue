@@ -24,6 +24,7 @@ const console = window.console;
 const props = defineProps(["color"]);
 
 const currentColor = ref("");
+
 // 预设和自定义选择颜色选项卡变量
 const colorMode = ref("preset");
 

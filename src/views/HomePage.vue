@@ -53,6 +53,7 @@ onIonViewDidEnter(() => {
 });
 
 // 监视appData，其发生改变后
+// 此处的第一个实参是个函数，是有讲究的。原因参考vue文档
 watch(
   () => appData.appConf.plantList,
   () => {
@@ -73,16 +74,7 @@ function updateImages() {
   appData.appConf.plantList.forEach(async (plant) => {
     const id = plant.plantId;
     if (!plantImagesInfo[id])
-      plantImagesInfo[id] = { dataUrl: "", isLoading: false, cardColor: "" };
-
-    const r = Math.random() * 3;
-    if (r < 1) {
-      plantImagesInfo[id].cardColor = "color1";
-    } else if (r >= 1 && r < 2) {
-      plantImagesInfo[id].cardColor = "color2";
-    } else {
-      plantImagesInfo[id].cardColor = "color3";
-    }
+      plantImagesInfo[id] = { dataUrl: "", isLoading: false };
 
     const filename = plant.plantImageFilename;
     console.log("filename: " + filename);
@@ -112,7 +104,7 @@ function updateImages() {
 
 // 这个index signature用于存储plantList数组中每个元素对应的图像数据
 const plantImagesInfo: {
-  [index: number]: { dataUrl?: string; isLoading?: boolean; cardColor: string };
+  [index: number]: { dataUrl?: string; isLoading?: boolean };
 } = reactive({});
 
 // 为防止没有添加图片文件的植物记录显示找不到图片，此函数用于返回一个通用占位图
@@ -255,7 +247,7 @@ function imgDidLoad(e: Event, id: number) {
           class="plant-container ion-activatable"
           v-for="(plant, index) in appData.appConf.plantList"
           :key="index"
-          :class="plantImagesInfo[plant.plantId]?.cardColor"
+          :style="{ backgroundColor: plant.plantColor }"
           @click="cardDetail(plant.plantId)"
         >
           <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
@@ -341,18 +333,6 @@ ion-header ion-toolbar ion-icon {
   position: relative;
 }
 
-#container .plant-container.color1 {
-  background-color: lightgreen;
-}
-
-#container .plant-container.color2 {
-  background-color: lightpink;
-}
-
-#container .plant-container.color3 {
-  background-color: lightblue;
-}
-
 #container .plant-container .custom-ripple {
   color: darkolivegreen;
 }
@@ -360,11 +340,11 @@ ion-header ion-toolbar ion-icon {
 #container .plant-container div.image-container {
   width: 30%;
   /* height: 100%; */
-  /* display: flex; */
+  display: flex;
   /* flex: 1 1 auto; */
-  /* justify-content: center; */
-  /* align-items: center; */
-  background-color: beige;
+  justify-content: center;
+  align-items: center;
+  /* background-color: beige; */
   /* max-height: 100%; */
 
   position: absolute;
