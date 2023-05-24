@@ -9,10 +9,16 @@
           <ion-button @click="ionRouter.navigate('/home', 'root')">
             首页
           </ion-button>
-          <ion-button id="more-menu-button" v-on:click="openMoreMenu">
+          <ion-button id="more-menu-button">
             <ion-icon slot="icon-only" :icon="ellipsisVertical"></ion-icon>
-            <ion-popover trigger="more-menu-button">
-              <PopoverMenu></PopoverMenu>
+            <ion-popover
+              id="detail-more-menu-popover"
+              trigger="more-menu-button"
+              show-backdrop="false"
+              size="auto"
+              @ionPopoverWillDismiss="onMoreMenuDeleteWillDismiss"
+            >
+              <MoreMenuPopover></MoreMenuPopover>
             </ion-popover>
           </ion-button>
           <ion-button v-on:click="test">TEST</ion-button>
@@ -177,10 +183,10 @@
         </ion-list>
 
         <div id="controls">
-          <ion-button color="danger" v-on:click="deletePlant">
+          <!-- <ion-button color="danger" v-on:click="deletePlant">
             删除
             <ion-icon slot="start" :icon="trashSharp"></ion-icon>
-          </ion-button>
+          </ion-button> -->
         </div>
       </div>
 
@@ -196,7 +202,7 @@
 
 <script lang="ts" setup>
 import { Directory } from "@capacitor/filesystem";
-import { OverlayEventDetail } from "@ionic/core";
+import { OverlayEventDetail, IonPopoverCustomEvent } from "@ionic/core";
 import {
   IonToolbar,
   IonTitle,
@@ -226,18 +232,18 @@ import {
   ellipse,
 } from "ionicons/icons";
 import { onMounted, ref, inject, computed } from "vue";
+import { Capacitor } from "@capacitor/core";
 import { useRoute } from "vue-router";
 import { AppConf } from "@/types";
 import { Modal } from "@ionic/core/dist/types/components/modal/modal";
 import { Input } from "@ionic/core/dist/types/components/input/input";
+import { getDateTime } from "@/composables/utils";
 import { useIonAlert } from "@/composables/ionAlert";
 import { usePhotoManger } from "@/composables/useImageManager";
-import { Capacitor } from "@capacitor/core";
-import { getDateTime } from "@/composables/utils";
-import ImageModal from "@/components/ImageModal.vue";
 import { useDateTime } from "@/composables/utils";
+import ImageModal from "@/components/ImageModal.vue";
 import ColorModal from "@/components/ColorModal.vue";
-import PopoverMenu from "@/components/PopoverMenu.vue";
+import MoreMenuPopover from "@/components/MoreMenuPopover.vue";
 
 const console = window.console;
 
@@ -464,10 +470,6 @@ function onEditPlantDescriptionModalDidPresent() {
   // 可以增加自动焦点
 }
 
-function test() {
-  return;
-}
-
 async function openColorModal() {
   const colorModal = await modalController.create({
     component: ColorModal,
@@ -489,8 +491,16 @@ async function openColorModal() {
   }
 }
 
-function openMoreMenu() {
-  return;
+function onMoreMenuDeleteWillDismiss(
+  event: IonPopoverCustomEvent<OverlayEventDetail>
+) {
+  if ("delete" === event.detail.role) {
+    deletePlant();
+  }
+}
+
+function test() {
+  console.log("DetailPage - test");
 }
 </script>
 
