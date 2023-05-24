@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted, reactive, inject, computed, watch, onUnmounted } from "vue";
+import { appDataKey } from "@/App.vue";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
   IonContent,
@@ -20,7 +22,6 @@ import {
   toastController,
 } from "@ionic/vue";
 import { rose, addCircle } from "ionicons/icons";
-import { onMounted, reactive, inject, computed, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 
@@ -31,12 +32,10 @@ console.log("HomePage - <setup>");
 const ionRouter = useIonRouter();
 const router = useRouter();
 
-const { appData } = inject("appData") as {
-  appData: {
-    appConf: AppConf;
-  };
-  addPlant: (plant: Plant) => void;
-};
+// 引用vue文档：
+// If you are sure that the value is always provided, you can also force cast
+// the value: const foo = inject('foo') as string
+const appData = inject(appDataKey) as { appConf: AppConf };
 
 onMounted(() => {
   console.log("HomePage - onMounted");

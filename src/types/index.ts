@@ -8,7 +8,7 @@ export interface Plant {
 }
 
 export interface AppConf {
-  testNumber: number;
-  testString: string;
+  configVersion: string;
+  firstRun: boolean;
   plantList: Plant[];
 }

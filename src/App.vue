@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent, onMounted, provide, reactive } from "vue";
+import type { InjectionKey } from "vue";
+import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
 import type { AppConf, Plant } from "@/types";
 
@@ -21,10 +22,8 @@ export default defineComponent({
     const appData: { appConf: AppConf } = reactive({
       appConf: {
         plantList: [],
-        version: "0.0.1",
-        new_card_random_color: false,
-        testNumber: -1,
-        testString: "",
+        configVersion: "0.0.1",
+        firstRun: true,
       },
     });
 
@@ -39,7 +38,7 @@ export default defineComponent({
         console.log(
           "App - setup - read appconfig.json success, appData.appConf:"
         );
-        console.log(appData.appConf);
+        console.log(appData);
       })
       .catch((error: Error) => {
         console.error(error);
@@ -93,16 +92,17 @@ export default defineComponent({
         });
     }
 
-    provide("appData", {
-      appData,
-      addPlant,
-      deletePlantById,
-      updateConfigFile,
-    });
+    provide(appDataKey, appData);
+
+    //   addPlant,
+    //   deletePlantById,
+    //   updateConfigFile,
+    // });
 
     onMounted(() => {
       console.log("App - setup - onMounted");
     });
   },
 });
+export const appDataKey = Symbol() as InjectionKey<{ appConf: AppConf }>;
 </script>
