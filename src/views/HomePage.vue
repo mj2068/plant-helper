@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, inject, computed, watch, onUnmounted } from "vue";
+import { onMounted, reactive, inject, watch, onUnmounted } from "vue";
 import { appDataKey } from "@/App.vue";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
@@ -9,10 +9,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
   IonIcon,
   IonSpinner,
   IonRippleEffect,

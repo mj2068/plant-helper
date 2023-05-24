@@ -244,6 +244,7 @@ import { useDateTime } from "@/composables/utils";
 import ImageModal from "@/components/ImageModal.vue";
 import ColorModal from "@/components/ColorModal.vue";
 import MoreMenuPopover from "@/components/MoreMenuPopover.vue";
+import { appDataKey, appConfigUtilsKey } from "@/App.vue";
 
 const console = window.console;
 
@@ -258,13 +259,17 @@ const { id } = route.params as { id: string };
 console.log("DetailPage - <setup> id: " + id);
 
 // inject到本组件App根组件provide好的config和相关管理config的函数
-const { appData, deletePlantById, updateConfigFile } = inject("appData") as {
-  appData: {
-    appConf: AppConf;
-  };
-  deletePlantById: (id: number) => void;
-  updateConfigFile: () => void;
-};
+// const { appData, deletePlantById, updateConfigFile } = inject("appData") as {
+//   appData: {
+//     appConf: AppConf;
+//   };
+//   deletePlantById: (id: number) => void;
+//   updateConfigFile: () => void;
+// };
+
+const appData = inject(appDataKey) as { appConf: AppConf };
+// force non-null assertion, or using 'as' casting
+const { deletePlantById, updateConfigFile } = inject(appConfigUtilsKey)!;
 
 const { presentConfirmCancelAlert } = useIonAlert();
 const { getPhoto, getSrcFromPath, savePhoto } = usePhotoManger();

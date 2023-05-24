@@ -94,10 +94,7 @@ export default defineComponent({
 
     provide(appDataKey, appData);
 
-    //   addPlant,
-    //   deletePlantById,
-    //   updateConfigFile,
-    // });
+    provide(appConfigUtilsKey, { addPlant, deletePlantById, updateConfigFile });
 
     onMounted(() => {
       console.log("App - setup - onMounted");
@@ -105,4 +102,9 @@ export default defineComponent({
   },
 });
 export const appDataKey = Symbol() as InjectionKey<{ appConf: AppConf }>;
+export const appConfigUtilsKey = Symbol() as InjectionKey<{
+  addPlant: () => void;
+  deletePlantById: (id: number) => void;
+  updateConfigFile: () => void;
+}>;
 </script>
