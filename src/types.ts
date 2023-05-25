@@ -12,3 +12,6 @@ export interface AppConf {
   firstRun: boolean;
   plantList: Plant[];
 }
+
+export type addPlant = (plant: Plant) => void;
+export type deletePlantById = (id: number) => void;

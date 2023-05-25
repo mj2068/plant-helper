@@ -244,7 +244,7 @@ import { useDateTime } from "@/composables/utils";
 import ImageModal from "@/components/ImageModal.vue";
 import ColorModal from "@/components/ColorModal.vue";
 import MoreMenuPopover from "@/components/MoreMenuPopover.vue";
-import { appDataKey, appConfigUtilsKey } from "@/App.vue";
+import { appDataKey, appConfigUtilsKey } from "@/injectionKeys";
 
 const console = window.console;
 

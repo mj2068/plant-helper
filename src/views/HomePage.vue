@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, reactive, inject, watch, onUnmounted } from "vue";
-import { appDataKey } from "@/App.vue";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
   IonContent,
@@ -20,6 +19,7 @@ import {
 import { rose, addCircle } from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
+import { appDataKey } from "@/injectionKeys";
 
 const console = window.console;
 

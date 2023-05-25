@@ -53,6 +53,7 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { Zoom } from "swiper";
 
 // swiper 9 web component implementation
+// but, i found double click zooming is buggy
 // import { register } from "swiper/element/bundle";
 // register();
 

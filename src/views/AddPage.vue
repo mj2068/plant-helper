@@ -94,7 +94,7 @@ import { star, addCircle, trashSharp } from "ionicons/icons";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { getDateTime } from "@/composables/utils";
-import type { AppConf, Plant } from "@/types";
+import { appDataKey, appConfigUtilsKey } from "@/injectionKeys";
 
 export default defineComponent({
   components: {
@@ -118,12 +118,8 @@ export default defineComponent({
   setup() {
     console.log("AddPage - setup");
 
-    const { appData, addPlant } = inject("appData") as {
-      appData: {
-        appConf: AppConf;
-      };
-      addPlant: (plant: Plant) => void;
-    };
+    const appData = inject(appDataKey)!;
+    const { addPlant } = inject(appConfigUtilsKey)!;
 
     return { appData, addPlant };
   },
