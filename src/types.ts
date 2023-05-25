@@ -13,5 +13,11 @@ export interface AppConf {
   plantList: Plant[];
 }
 
-export type addPlant = (plant: Plant) => void;
+// export type addPlant = (plant: Plant) => void;
 export type deletePlantById = (id: number) => void;
+export interface addPlant {
+  (plant: Plant): void;
+}
+export interface updateConfigFile {
+  (): void;
+}

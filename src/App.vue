@@ -8,7 +8,13 @@
 import { defineComponent, onMounted, provide, reactive } from "vue";
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
-import type { addPlant, AppConf, deletePlantById } from "@/types";
+import type {
+  Plant,
+  addPlant,
+  AppConf,
+  deletePlantById,
+  updateConfigFile,
+} from "@/types";
 import { appDataKey, appConfigUtilsKey } from "@/injectionKeys";
 
 export default defineComponent({
@@ -92,7 +98,7 @@ export default defineComponent({
     //   } else console.log("indexToDelete = " + indexToDelete);
     // }
 
-    function updateConfigFile() {
+    const updateConfigFile: updateConfigFile = function () {
       console.log("App - updateConfigFile");
       console.log(appData);
       Filesystem.writeFile({
@@ -108,7 +114,7 @@ export default defineComponent({
         .catch((error: Error) => {
           console.error(error);
         });
-    }
+    };
 
     provide(appDataKey, appData);
 

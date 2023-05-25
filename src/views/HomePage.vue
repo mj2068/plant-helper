@@ -2,11 +2,11 @@
 import { onMounted, reactive, inject, watch, onUnmounted } from "vue";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
-  IonContent,
-  IonHeader,
   IonPage,
-  IonTitle,
+  IonHeader,
   IonToolbar,
+  IonTitle,
+  IonContent,
   IonButton,
   IonIcon,
   IonSpinner,
@@ -205,7 +205,7 @@ function imgDidLoad(e: Event, id: number) {
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" class="">
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Blank</ion-title>
@@ -217,7 +217,7 @@ function imgDidLoad(e: Event, id: number) {
           color="danger"
           class="debug test"
           @click="console.log(plantImagesInfo)"
-          >plnatImage</ion-button
+          >plantImage</ion-button
         >
         <br />
         <ion-button
@@ -228,7 +228,9 @@ function imgDidLoad(e: Event, id: number) {
           >appData</ion-button
         >
         <br />
-        <ion-button @click.stop="test">test</ion-button>
+        <ion-button size="small" color="success" @click.stop="test"
+          >test</ion-button
+        >
       </div>
 
       <div id="container" class="ion-padding">
@@ -291,6 +293,11 @@ ion-header ion-toolbar ion-icon {
   font-size: 32px;
 }
 
+ion-content {
+  --background: url(@/../resources/7652324.jpg) 0% 0% / contain;
+
+  /* background: url(@/../resources/7652324.jpg); */
+}
 #container .control {
   display: flex;
   justify-content: center;
