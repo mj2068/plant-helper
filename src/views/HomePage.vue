@@ -205,7 +205,7 @@ function imgDidLoad(e: Event, id: number) {
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true" class="">
+    <ion-content class="">
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Blank</ion-title>
@@ -294,10 +294,28 @@ ion-header ion-toolbar ion-icon {
 }
 
 ion-content {
-  --background: url(@/../resources/7652324.jpg) 0% 0% / contain;
-
-  /* background: url(@/../resources/7652324.jpg); */
 }
+
+#container {
+  position: relative;
+}
+
+#container::before {
+  /* background: url(@/../resources/7652324.jpg) 0% 0% / cover rgba(0, 0, 0, 0.3); */
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.2;
+  background-image: url(@/../resources/7652324.jpg);
+  background-repeat: repeat-y;
+  /* background-position: 50%; */
+  background-size: contain;
+}
+
 #container .control {
   display: flex;
   justify-content: center;
@@ -305,10 +323,8 @@ ion-content {
 }
 
 #container .control ion-button {
-  /* position: absolute; */
   width: 80px;
   height: 80px;
-  /* margin: 0px 2px 2px 0px; */
 
   --border-radius: 50%;
   --padding-start: 0;
