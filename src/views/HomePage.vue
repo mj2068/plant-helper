@@ -232,38 +232,41 @@ function imgDidLoad(e: Event, id: number) {
           >test</ion-button
         >
       </div>
-
-      <div id="container" class="ion-padding">
-        <div class="control">
-          <ion-button @click="ionRouter.push('/add')" fill="clear">
-            <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
-          </ion-button>
+      <div id="content-container">
+        <div id="decor-container" class="">
+          <img class="right" src="@/../resources/group-decor2.png" alt="" />
         </div>
-
-        <div
-          class="plant-container ion-activatable"
-          v-for="(plant, index) in appData.appConf.plantList"
-          :key="index"
-          :style="{ backgroundColor: plant.plantColor }"
-          @click="cardDetail(plant.plantId)"
-        >
-          <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
-
-          <div class="image-container">
-            <ion-spinner v-if="plantImagesInfo[plant.plantId]?.isLoading">
-            </ion-spinner>
-            <img
-              v-if="plantImagesInfo[plant.plantId]?.dataUrl"
-              :src="plantImagesInfo[plant.plantId]?.dataUrl"
-              @load="imgDidLoad($event, plant.plantId)"
-            />
-          </div>
-          <div class="text-container ion-padding">
-            <h3>{{ plant.plantName }}</h3>
-            <p>{{ plant.plantDescription }}</p>
+        <div id="plants-container" class="ion-padding">
+          <div class="control">
+            <ion-button @click="ionRouter.push('/add')" fill="clear">
+              <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
+            </ion-button>
           </div>
 
-          <!-- <ion-card button @click="cardDetail(plant)">
+          <div
+            class="plant-container ion-activatable"
+            v-for="(plant, index) in appData.appConf.plantList"
+            :key="index"
+            :style="{ backgroundColor: plant.plantColor }"
+            @click="cardDetail(plant.plantId)"
+          >
+            <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
+
+            <div class="image-container">
+              <ion-spinner v-if="plantImagesInfo[plant.plantId]?.isLoading">
+              </ion-spinner>
+              <img
+                v-if="plantImagesInfo[plant.plantId]?.dataUrl"
+                :src="plantImagesInfo[plant.plantId]?.dataUrl"
+                @load="imgDidLoad($event, plant.plantId)"
+              />
+            </div>
+            <div class="text-container ion-padding">
+              <h3>{{ plant.plantName }}</h3>
+              <p>{{ plant.plantDescription }}</p>
+            </div>
+
+            <!-- <ion-card button @click="cardDetail(plant)">
             <ion-card-header>
               <ion-card-title>{{ plant.plantName }}</ion-card-title>
             </ion-card-header>
@@ -271,6 +274,7 @@ function imgDidLoad(e: Event, id: number) {
               <p>{{ plant.plantDescription }}</p>
             </ion-card-content>
           </ion-card> -->
+          </div>
         </div>
       </div>
     </ion-content>
@@ -282,6 +286,8 @@ div.debug {
   position: fixed;
   z-index: 1;
   opacity: 0.6;
+
+  display: none;
 }
 
 div.debug ion-button {
@@ -293,14 +299,11 @@ ion-header ion-toolbar ion-icon {
   font-size: 32px;
 }
 
-ion-content {
-}
-
-#container {
+#content-container {
   position: relative;
 }
 
-#container::before {
+#content-container::before {
   /* background: url(@/../resources/7652324.jpg) 0% 0% / cover rgba(0, 0, 0, 0.3); */
   content: " ";
   display: block;
@@ -309,20 +312,36 @@ ion-content {
   top: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.2;
+  opacity: 0.15;
   background-image: url(@/../resources/7652324.jpg);
   background-repeat: repeat-y;
   /* background-position: 50%; */
   background-size: contain;
 }
 
-#container .control {
+#content-container #decor-container {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  /* overflow: hidden; */
+}
+
+#content-container #decor-container img.right {
+  margin-top: 8px;
+  height: 160%;
+  position: absolute;
+  left: 2%;
+  top: 0;
+  opacity: 0.8;
+}
+
+#plants-container .control {
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
-#container .control ion-button {
+#plants-container .control ion-button {
   width: 80px;
   height: 80px;
 
@@ -331,11 +350,11 @@ ion-content {
   --padding-end: 0;
 }
 
-#container .control ion-button ion-icon {
+#plants-container .control ion-button ion-icon {
   font-size: 80px;
 }
 
-#container .plant-container {
+#plants-container .plant-container {
   display: flex;
   /* grid-template-columns: 30% 70%; */
   /* grid-auto-rows: 1fr; */
@@ -348,14 +367,18 @@ ion-content {
   overflow: hidden;
   /* height: 200px; */
   /* max-height: 150px; */
+
+  background-color: white;
+
+  /* ion-ripple用absolute来定位ripple效果位置，所以需要容器relative */
   position: relative;
 }
 
-#container .plant-container .custom-ripple {
+#plants-container .plant-container .custom-ripple {
   color: darkolivegreen;
 }
 
-#container .plant-container div.image-container {
+#plants-container .plant-container div.image-container {
   width: 30%;
   /* height: 100%; */
   display: flex;
@@ -372,11 +395,11 @@ ion-content {
   /* align-self: center; */
 }
 
-#container .plant-container div.image-container ion-spinner {
+#plants-container .plant-container div.image-container ion-spinner {
   position: absolute;
 }
 
-#container .plant-container div.image-container img {
+#plants-container .plant-container div.image-container img {
   width: 100%;
   height: 100%;
   /* max-width: 100%; */
@@ -386,7 +409,7 @@ ion-content {
   /* padding: 10px; */
 }
 
-#container .plant-container div.text-container {
+#plants-container .plant-container div.text-container {
   /* width: 70%; */
   margin-left: 30%;
   /* margin-right: 5%; */

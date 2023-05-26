@@ -173,11 +173,14 @@
             @click="openColorModal"
           >
             <ion-text slot="start" class="">卡片颜色</ion-text>
-            <ion-icon
-              slot="end"
-              :icon="ellipse"
-              :style="{ color: plantColor }"
-            ></ion-icon>
+            <ion-button class="button-plant-color" fill="outline" slot="end">
+              <ion-icon
+                class="icon-color"
+                slot="icon-only"
+                :icon="plantColor ? ellipse : ban"
+                :style="{ color: plantColor }"
+              ></ion-icon>
+            </ion-button>
             <ion-icon slot="end" :icon="chevronForward"></ion-icon>
           </ion-item>
         </ion-list>
@@ -230,6 +233,7 @@ import {
   chevronForward,
   addCircleOutline,
   ellipse,
+  ban,
 } from "ionicons/icons";
 import { onMounted, ref, inject, computed } from "vue";
 import { Capacitor } from "@capacitor/core";
@@ -590,6 +594,17 @@ ion-content {
       ion-text#plant-desc {
         white-space: pre-wrap;
       }
+    }
+
+    ion-item#item-plant-color ion-button.button-plant-color {
+      width: 32px;
+      height: 32px;
+      --border-radius: 50%;
+      --padding-start: 0;
+      --padding-end: 0;
+    }
+    ion-item#item-plant-color ion-button.button-plant-color ion-icon {
+      font-size: 32px;
     }
   }
 
