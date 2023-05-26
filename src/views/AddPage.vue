@@ -16,55 +16,60 @@
     </ion-header>
 
     <ion-content>
-      <div id="container" class="ion-padding">
-        <div v-if="plantImageDataUrl" id="image-container">
-          <ion-card button class="">
-            <img
-              id="plant-image"
-              :src="plantImageDataUrl"
-              alt="植物图片"
-              srcset=""
-            />
-            <ion-button
-              id="delete-image-button"
-              fill="solid"
-              color="light"
-              @click="deleteImage"
-            >
-              <ion-icon slot="icon-only" :icon="trashSharp"></ion-icon>
-            </ion-button>
-          </ion-card>
-        </div>
-        <div v-else id="no-image-container">
-          <ion-card button @click="getImage">
-            <div>
-              <ion-button fill="clear"
-                ><ion-icon slot="start" :icon="addCircle"></ion-icon>
-                添加图片
+      <div id="content-container">
+        <div id="container" class="ion-padding">
+          <div v-if="plantImageDataUrl" id="image-container">
+            <ion-card button class="">
+              <img
+                id="plant-image"
+                :src="plantImageDataUrl"
+                alt="植物图片"
+                srcset=""
+              />
+              <ion-button
+                id="delete-image-button"
+                fill="solid"
+                color="light"
+                @click="deleteImage"
+              >
+                <ion-icon slot="icon-only" :icon="trashSharp"></ion-icon>
               </ion-button>
-            </div>
-          </ion-card>
+            </ion-card>
+          </div>
+          <div v-else id="no-image-container">
+            <ion-card button @click="getImage">
+              <div>
+                <ion-button fill="clear"
+                  ><ion-icon slot="start" :icon="addCircle"></ion-icon>
+                  添加图片
+                </ion-button>
+              </div>
+            </ion-card>
+          </div>
+          <ion-list :inset="true">
+            <ion-item>
+              <ion-label>植物名称</ion-label>
+              <ion-input
+                id="plant-name"
+                placeholder="请输入植物名称"
+                v-model="plantName"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">植物描述</ion-label>
+              <ion-textarea
+                id="description"
+                v-model="plantDescription"
+                :auto-grow="true"
+                placeholder="请输入植物的描述信息"
+              ></ion-textarea>
+            </ion-item>
+          </ion-list>
+          <!-- <ion-button @click="test">test</ion-button> -->
         </div>
-        <ion-list>
-          <ion-item>
-            <ion-label>植物名称</ion-label>
-            <ion-input
-              id="plant-name"
-              placeholder="请输入植物名称"
-              v-model="plantName"
-            ></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">植物描述</ion-label>
-            <ion-textarea
-              id="description"
-              v-model="plantDescription"
-              :auto-grow="true"
-              placeholder="请输入植物的描述信息"
-            ></ion-textarea>
-          </ion-item>
-        </ion-list>
-        <!-- <ion-button @click="test">test</ion-button> -->
+        <div id="decor-container">
+          <img class="left" src="@/../resources/group1.png" alt="" />
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -238,6 +243,22 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+#content-container::before {
+  /* background: url(@/../resources/7652324.jpg) 0% 0% / cover rgba(0, 0, 0, 0.3); */
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.15;
+  background-image: url(@/../resources/7652324.jpg);
+  background-repeat: repeat-y;
+  /* background-position: 50%; */
+  background-size: contain;
+}
+
 #image-container {
   display: flex;
   justify-content: center;
@@ -271,6 +292,8 @@ export default defineComponent({
 }
 
 #no-image-container {
+  opacity: 1;
+
   ion-card {
     // 使按钮上下居中
     display: flex;
@@ -290,6 +313,33 @@ export default defineComponent({
         font-size: 1.2rem;
       }
     }
+  }
+}
+
+#content-container {
+  // background-color: green;
+}
+
+#content-container #container {
+  ion-list {
+    opacity: 1;
+  }
+}
+
+#content-container #decor-container {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  bottom: 0;
+  // background-color: #8883;
+
+
+  img.left {
+    height: 160%;
+    position: absolute;
+    left: 4%;
+    bottom: 0;
+    opacity: 0.8;
   }
 }
 </style>

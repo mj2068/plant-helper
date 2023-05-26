@@ -330,7 +330,7 @@ ion-header ion-toolbar ion-icon {
   margin-top: 8px;
   height: 160%;
   position: absolute;
-  left: 2%;
+  right: 2%;
   top: 0;
   opacity: 0.8;
 }
