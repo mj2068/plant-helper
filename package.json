@@ -30,7 +30,8 @@
     "moment": "^2.29.4",
     "swiper": "^9.3.1",
     "vue": "^3.2.21",
-    "vue-router": "^4.0.12"
+    "vue-router": "^4.0.12",
+    "vue3-popper": "^1.5.0"
   },
   "devDependencies": {
     "@capacitor/cli": "4.6.3",

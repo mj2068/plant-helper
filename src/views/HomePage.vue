@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, inject, watch, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref, reactive, inject, watch } from "vue";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
   IonPage,
@@ -21,6 +21,7 @@ import { rose, addCircle } from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 import { appDataKey } from "@/injectionKeys";
+import Popper from "vue3-popper";
 
 const console = window.console;
 
@@ -33,6 +34,8 @@ const router = useRouter();
 // If you are sure that the value is always provided, you can also force cast
 // the value: const foo = inject('foo') as string
 const appData = inject(appDataKey) as { appConf: AppConf };
+
+const showPopper = ref(true);
 
 onMounted(() => {
   console.log("HomePage - onMounted");
@@ -252,13 +255,24 @@ function imgDidLoad(e: Event, id: number) {
         </div>
         <div id="plants-container" class="ion-padding">
           <div class="control">
-            <ion-button
-              @click="ionRouter.push('/add')"
-              fill="clear"
-              color="soil"
+            <Popper
+              content="添加一个新植物🌼"
+              :show="showPopper"
+              :locked="true"
+              arrow
+              placement="top-start"
+              offset-skid="-15"
+              offset-distance="6"
+              arrow-padding="12"
             >
-              <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
-            </ion-button>
+              <ion-button
+                @click="ionRouter.push('/add')"
+                fill="clear"
+                color="soil"
+              >
+                <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
+              </ion-button>
+            </Popper>
           </div>
 
           <div
@@ -399,6 +413,17 @@ ion-header ion-toolbar ion-icon {
   display: flex;
   justify-content: center;
   width: 100%;
+}
+
+#plants-container .control :deep(.popper) {
+  --popper-theme-background-color: #333333;
+  --popper-theme-background-color-hover: #333333;
+  --popper-theme-text-color: #ffffff;
+  --popper-theme-border-width: 0px;
+  --popper-theme-border-style: solid;
+  --popper-theme-border-radius: 4px;
+  --popper-theme-padding: 16px;
+  --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
 }
 
 #plants-container .control ion-button {
