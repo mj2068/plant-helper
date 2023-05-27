@@ -17,6 +17,7 @@
 
     <ion-content>
       <div id="content-container">
+        <div id="top-decor-container" style="height: 60px"></div>
         <div id="container" class="ion-padding">
           <div v-if="plantImageDataUrl" id="image-container">
             <ion-card button class="">
@@ -67,7 +68,7 @@
           </ion-list>
           <!-- <ion-button @click="test">test</ion-button> -->
         </div>
-        <div id="decor-container">
+        <div id="bottom-decor-container">
           <img class="left" src="@/../resources/group1.png" alt="" />
         </div>
       </div>
@@ -243,103 +244,111 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-#content-container::before {
-  /* background: url(@/../resources/7652324.jpg) 0% 0% / cover rgba(0, 0, 0, 0.3); */
-  content: " ";
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.15;
-  background-image: url(@/../resources/7652324.jpg);
-  background-repeat: repeat-y;
-  /* background-position: 50%; */
-  background-size: contain;
-}
-
-#image-container {
-  display: flex;
-  justify-content: center;
-  // width: 100%;
-  // max-height: 300px;
-
-  ion-card {
-    img {
-      // width: 100%;
-      // height: auto;
-      max-height: 300px;
-      // max-width: 200px;
-      display: block;
-      object-fit: contain;
-    }
-
-    ion-button {
-      position: absolute;
-      width: 32px;
-      height: 32px;
-      right: 0;
-      bottom: 0;
-      margin: 0px 2px 2px 0px;
-
-      --border-radius: 50%;
-      --padding-start: 8px;
-      --padding-end: 8px;
-      opacity: 0.7;
-    }
-  }
-}
-
-#no-image-container {
-  opacity: 1;
-
-  ion-card {
-    // 使按钮上下居中
-    display: flex;
-    // justify-content: center;
-    align-items: center;
-    min-height: 100px;
-
-    div {
-      // 使按钮左右居中
-      // height: 100%;
-      display: flex;
-      justify-content: center;
-      // align-items: center;
-      // min-height: 100px;
-
-      ion-button {
-        font-size: 1.2rem;
-      }
-    }
-  }
+ion-content {
 }
 
 #content-container {
-  // background-color: green;
-}
-
-#content-container #container {
-  ion-list {
-    opacity: 1;
-  }
-}
-
-#content-container #decor-container {
+  // background-color: lightblue;
+  height: 100%;
   position: relative;
-  width: 100%;
-  height: 80px;
-  bottom: 0;
-  // background-color: #8883;
 
-
-  img.left {
-    height: 160%;
+  &::before {
+    /* background: url(@/../resources/7652324.jpg) 0% 0% / cover rgba(0, 0, 0, 0.3); */
+    content: " ";
+    display: block;
     position: absolute;
-    left: 4%;
-    bottom: 0;
-    opacity: 0.8;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.15;
+    background-image: url(@/../resources/7652324.jpg);
+    background-repeat: repeat-y;
+    /* background-position: 50%; */
+    background-size: contain;
+  }
+
+  #container {
+    position: relative;
+    z-index: 1;
+
+    #image-container {
+      display: flex;
+      justify-content: center;
+      // width: 100%;
+      // max-height: 300px;
+
+      ion-card {
+        img {
+          // width: 100%;
+          // height: auto;
+          max-height: 300px;
+          // max-width: 200px;
+          display: block;
+          object-fit: contain;
+        }
+
+        ion-button {
+          position: absolute;
+          width: 32px;
+          height: 32px;
+          right: 0;
+          bottom: 0;
+          margin: 0px 2px 2px 0px;
+
+          --border-radius: 50%;
+          --padding-start: 8px;
+          --padding-end: 8px;
+          opacity: 0.7;
+        }
+      }
+
+      ion-list {
+        opacity: 1;
+      }
+    }
+
+    #no-image-container {
+      opacity: 1;
+
+      ion-card {
+        // 使按钮上下居中
+        display: flex;
+        // justify-content: center;
+        align-items: center;
+        min-height: 100px;
+
+        div {
+          // 使按钮左右居中
+          // height: 100%;
+          display: flex;
+          justify-content: center;
+          // align-items: center;
+          // min-height: 100px;
+
+          ion-button {
+            font-size: 1.2rem;
+          }
+        }
+      }
+    }
+  }
+
+  #bottom-decor-container {
+    position: absolute;
+    width: 100%;
+    height: 120px;
+    top: 400px;
+    // background-color: #8883;
+    z-index: 0;
+
+    img.left {
+      height: 100%;
+      position: absolute;
+      left: 2%;
+      opacity: 0.8;
+      object-fit: contain;
+    }
   }
 }
 </style>
