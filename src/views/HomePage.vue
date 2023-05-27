@@ -11,7 +11,6 @@ import {
   IonIcon,
   IonSpinner,
   IonRippleEffect,
-  IonText,
   IonNote,
   onIonViewDidEnter,
   useIonRouter,
@@ -253,7 +252,11 @@ function imgDidLoad(e: Event, id: number) {
         </div>
         <div id="plants-container" class="ion-padding">
           <div class="control">
-            <ion-button @click="ionRouter.push('/add')" fill="clear">
+            <ion-button
+              @click="ionRouter.push('/add')"
+              fill="clear"
+              color="soil"
+            >
               <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
             </ion-button>
           </div>
@@ -265,8 +268,6 @@ function imgDidLoad(e: Event, id: number) {
             :style="{ backgroundColor: plant.plantColor }"
             @click="cardDetail(plant.plantId)"
           >
-            <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
-
             <div class="image-container">
               <ion-spinner v-if="plantImagesInfo[plant.plantId]?.isLoading">
               </ion-spinner>
@@ -280,6 +281,7 @@ function imgDidLoad(e: Event, id: number) {
               <h3>{{ plant.plantName }}</h3>
               <p>{{ plant.plantDescription }}</p>
             </div>
+            <ion-ripple-effect class="custom-ripple"></ion-ripple-effect>
 
             <!-- <ion-card button @click="cardDetail(plant)">
             <ion-card-header>
@@ -410,7 +412,7 @@ ion-header ion-toolbar ion-icon {
 
 #plants-container .control ion-button ion-icon {
   font-size: 80px;
-  color: indianred;
+  /* color: indianred; */
 }
 
 #plants-container .plant-container {

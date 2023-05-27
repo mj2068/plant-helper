@@ -1,0 +1,35 @@
+:root {
+  // color: deepblue
+  --ion-color-deepblue: #132b52;
+  --ion-color-deepblue-rgb: 19, 43, 82;
+  --ion-color-deepblue-contrast: #ffffff;
+  --ion-color-deepblue-contrast-rgb: 255, 255, 255;
+  --ion-color-deepblue-shade: #112648;
+  --ion-color-deepblue-tint: #2b4063;
+
+  // color: soil
+  --ion-color-soil: #a4540a;
+  --ion-color-soil-rgb: 164, 84, 10;
+  --ion-color-soil-contrast: #ffffff;
+  --ion-color-soil-contrast-rgb: 255, 255, 255;
+  --ion-color-soil-shade: #904a09;
+  --ion-color-soil-tint: #ad6523;
+}
+
+.ion-color-deepblue {
+  --ion-color-base: var(--ion-color-deepblue);
+  --ion-color-base-rgb: var(--ion-color-deepblue-rgb);
+  --ion-color-contrast: var(--ion-color-deepblue-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-deepblue-contrast-rgb);
+  --ion-color-shade: var(--ion-color-deepblue-shade);
+  --ion-color-tint: var(--ion-color-deepblue-tint);
+}
+
+.ion-color-soil {
+  --ion-color-base: var(--ion-color-soil);
+  --ion-color-base-rgb: var(--ion-color-soil-rgb);
+  --ion-color-contrast: var(--ion-color-soil-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-soil-contrast-rgb);
+  --ion-color-shade: var(--ion-color-soil-shade);
+  --ion-color-tint: var(--ion-color-soil-tint);
+}
