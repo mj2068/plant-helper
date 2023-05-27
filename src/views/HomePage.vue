@@ -11,6 +11,8 @@ import {
   IonIcon,
   IonSpinner,
   IonRippleEffect,
+  IonText,
+  IonNote,
   onIonViewDidEnter,
   useIonRouter,
   alertController,
@@ -232,8 +234,21 @@ function imgDidLoad(e: Event, id: number) {
           >test</ion-button
         >
       </div>
+
       <div id="content-container">
         <div id="decor-container" class="">
+          <div class="left">
+            <img
+              class="left"
+              src="@/../resources/hang-yellow-pot-vine.svg"
+              alt=""
+            />
+            <img
+              class="left2"
+              src="@/../resources/hang-pink-pot-vine.svg"
+              alt=""
+            />
+          </div>
           <img class="right" src="@/../resources/group-decor2.png" alt="" />
         </div>
         <div id="plants-container" class="ion-padding">
@@ -276,6 +291,14 @@ function imgDidLoad(e: Event, id: number) {
           </ion-card> -->
           </div>
         </div>
+
+        <div
+          id="footer-container"
+          class="ion-padding"
+          style="justify-content: center; display: flex"
+        >
+          <ion-note style="align-self: flex-end">zizaimai.space</ion-note>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -312,10 +335,10 @@ ion-header ion-toolbar ion-icon {
   top: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.15;
+  opacity: 0.2;
   background-image: url(@/../resources/7652324.jpg);
   background-repeat: repeat-y;
-  /* background-position: 50%; */
+  background-position: 50% 0%;
   background-size: contain;
 }
 
@@ -326,6 +349,37 @@ ion-header ion-toolbar ion-icon {
   /* overflow: hidden; */
 }
 
+@keyframes sway {
+  0% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(5deg);
+  }
+}
+
+#content-container #decor-container img.left {
+  position: absolute;
+  height: 150%;
+  left: 65px;
+  transform: rotate(5deg);
+  animation: sway 4.5s ease-in-out infinite;
+  transform-origin: 30% 0;
+}
+
+#content-container #decor-container img.left2 {
+  position: absolute;
+  height: 150%;
+  left: 15px;
+  scale: 1.1;
+  transform: rotate(5deg);
+  animation: sway 6s ease-in-out infinite;
+  transform-origin: 50% 0;
+}
+
 #content-container #decor-container img.right {
   margin-top: 8px;
   height: 160%;
@@ -333,6 +387,10 @@ ion-header ion-toolbar ion-icon {
   right: 2%;
   top: 0;
   opacity: 0.8;
+}
+
+#plants-container {
+  position: relative;
 }
 
 #plants-container .control {
@@ -352,6 +410,7 @@ ion-header ion-toolbar ion-icon {
 
 #plants-container .control ion-button ion-icon {
   font-size: 80px;
+  color: indianred;
 }
 
 #plants-container .plant-container {
@@ -413,5 +472,12 @@ ion-header ion-toolbar ion-icon {
   /* width: 70%; */
   margin-left: 30%;
   /* margin-right: 5%; */
+}
+
+#footer-container {
+  height: 50px;
+  background-color: antiquewhite;
+  position: relative;
+  margin-top: 40px;
 }
 </style>
