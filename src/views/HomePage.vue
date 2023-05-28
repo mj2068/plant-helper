@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, reactive, inject, watch } from "vue";
+import { reactive, ref, onMounted, onUnmounted, inject, watch } from "vue";
+import type { ComponentPublicInstance } from "vue";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
   IonPage,
@@ -7,6 +8,7 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
+  IonButtons,
   IonButton,
   IonIcon,
   IonSpinner,
@@ -21,7 +23,13 @@ import { rose, addCircle } from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 import { appDataKey } from "@/injectionKeys";
-import Popper from "vue3-popper";
+import tippy, { sticky, roundArrow } from "tippy.js";
+import "tippy.js/dist/tippy.css";
+import "tippy.js/themes/light.css";
+import "tippy.js/themes/light-border.css";
+import "tippy.js/themes/material.css";
+import "tippy.js/dist/svg-arrow.css";
+// import "tippy.sj/themes/translucent.css";
 
 const console = window.console;
 
@@ -35,12 +43,31 @@ const router = useRouter();
 // the value: const foo = inject('foo') as string
 const appData = inject(appDataKey) as { appConf: AppConf };
 
-const showPopper = ref(true);
+const addButton = ref<HTMLDivElement | null>(null);
 
 onMounted(() => {
   console.log("HomePage - onMounted");
 
   updateImages();
+
+  console.log(addButton);
+
+  const t = tippy(addButton.value as HTMLDivElement, {
+    content: "按这里添加一个植物🌼",
+    theme: "planthelper",
+    showOnCreate: true,
+    trigger: "manual",
+    hideOnClick: false,
+    appendTo: "parent",
+    arrow: roundArrow,
+    // placement: 'bottom',
+    popperOptions: { modifiers: [{ name: "flip", enabled: false }] },
+    // for some reason, 如果初始时让提示显示，它的定位会出现问题，用以下两个可以解决
+    sticky: true,
+    plugins: [sticky],
+  });
+  console.log(t);
+  // t.show();
 });
 
 onUnmounted(() => {
@@ -206,6 +233,11 @@ function imgDidLoad(e: Event, id: number) {
           class="ion-padding-start"
         ></ion-icon>
         <ion-title>养花小助手</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="ionRouter.navigate('home', 'root')"
+            >refresh</ion-button
+          >
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -255,24 +287,19 @@ function imgDidLoad(e: Event, id: number) {
         </div>
         <div id="plants-container" class="ion-padding">
           <div class="control">
-            <Popper
-              content="添加一个新植物🌼"
-              :show="showPopper"
-              :locked="true"
-              arrow
-              placement="top-start"
-              offset-skid="-15"
-              offset-distance="6"
-              arrow-padding="12"
+            <div
+              class="add-button-container"
+              :ref="(el) => (addButton = el as HTMLDivElement)"
             >
               <ion-button
+                id="add-button"
                 @click="ionRouter.push('/add')"
                 fill="clear"
                 color="soil"
               >
                 <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
               </ion-button>
-            </Popper>
+            </div>
           </div>
 
           <div
@@ -313,20 +340,43 @@ function imgDidLoad(e: Event, id: number) {
           class="ion-padding"
           style="justify-content: center; display: flex"
         >
-          <ion-note style="align-self: flex-end">zizaimai.space</ion-note>
+          <ion-note style="align-self: flex-end"
+            ><a href="http://zizaimai.space" target="_blank"
+              >zizaimai.space</a
+            ></ion-note
+          >
         </div>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
+<style lang="sass"></style>
+
 <style scoped>
+:deep(.tippy-box[data-theme~="planthelper"]) {
+  background-color: tomato;
+  color: yellow;
+}
+
+:deep(.tippy-box[data-theme~="planthelper"][data-placement^="top"])
+  > .tippy-arrow::before {
+  border-top-color: tomato;
+}
+
+:deep(.tippy-box[data-theme~="planthelper"]) > .tippy-svg-arrow {
+  fill: tomato;
+}
+
 div.debug {
   position: fixed;
+  position: fixed;
+  right: 0;
   z-index: 1;
   opacity: 0.6;
+  text-align: right;
 
-  display: none;
+  /* display: none; */
 }
 
 div.debug ion-button {
