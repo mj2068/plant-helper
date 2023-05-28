@@ -283,7 +283,9 @@ function imgDidLoad(e: Event, id: number) {
               alt=""
             />
           </div>
-          <img class="right" src="@/../resources/group-decor2.png" alt="" />
+          <div class="right">
+            <img class="right" src="@/../resources/group-decor2.png" alt="" />
+          </div>
         </div>
         <div id="plants-container" class="ion-padding">
           <div class="control">
@@ -357,6 +359,13 @@ function imgDidLoad(e: Event, id: number) {
 :deep(.tippy-box[data-theme~="planthelper"]) {
   background-color: tomato;
   color: yellow;
+  height: 40px;
+}
+
+:deep(.tippy-box) > .tippy-content {
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 :deep(.tippy-box[data-theme~="planthelper"][data-placement^="top"])
@@ -376,7 +385,7 @@ div.debug {
   opacity: 0.6;
   text-align: right;
 
-  /* display: none; */
+  display: none;
 }
 
 div.debug ion-button {
@@ -411,7 +420,7 @@ ion-header ion-toolbar ion-icon {
 #content-container #decor-container {
   position: relative;
   width: 100%;
-  height: 80px;
+  height: 100px;
   /* overflow: hidden; */
 }
 
@@ -427,32 +436,49 @@ ion-header ion-toolbar ion-icon {
   }
 }
 
-#content-container #decor-container img.left {
+#content-container #decor-container div.left {
   position: absolute;
-  height: 150%;
+  height: 100%;
+  width: 100%;
+  left: 0;
+}
+
+#content-container #decor-container div.left img.left {
+  position: absolute;
+  height: 130%;
   left: 65px;
   transform: rotate(5deg);
-  animation: sway 4.5s ease-in-out infinite;
+  animation: sway 4s ease-in-out infinite;
   transform-origin: 30% 0;
 }
 
-#content-container #decor-container img.left2 {
+#content-container #decor-container div.left img.left2 {
   position: absolute;
-  height: 150%;
+  height: 130%;
   left: 15px;
-  scale: 1.1;
   transform: rotate(5deg);
+  /* animation-delay: 5s; */
   animation: sway 6s ease-in-out infinite;
   transform-origin: 50% 0;
 }
 
-#content-container #decor-container img.right {
-  margin-top: 8px;
-  height: 160%;
+#content-container #decor-container div.right {
   position: absolute;
-  right: 2%;
+  right: 6px;
+  width: 38%;
+  height: 100%;
+  margin-top: 12px;
+  box-shadow: 0px 12px 24px -24px #7a5122;
+}
+
+#content-container #decor-container div.right img.right {
+  /* margin-top: 8px; */
+  height: 100%;
+  right: 40px;
+  position: absolute;
   top: 0;
   opacity: 0.8;
+  object-fit: contain;
 }
 
 #plants-container {
@@ -463,17 +489,6 @@ ion-header ion-toolbar ion-icon {
   display: flex;
   justify-content: center;
   width: 100%;
-}
-
-#plants-container .control :deep(.popper) {
-  --popper-theme-background-color: #333333;
-  --popper-theme-background-color-hover: #333333;
-  --popper-theme-text-color: #ffffff;
-  --popper-theme-border-width: 0px;
-  --popper-theme-border-style: solid;
-  --popper-theme-border-radius: 4px;
-  --popper-theme-padding: 16px;
-  --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
 }
 
 #plants-container .control ion-button {
