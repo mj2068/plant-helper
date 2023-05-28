@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, onUnmounted, inject, watch } from "vue";
-import type { ComponentPublicInstance } from "vue";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
   IonPage,
@@ -19,7 +18,7 @@ import {
   alertController,
   toastController,
 } from "@ionic/vue";
-import { rose, addCircle } from "ionicons/icons";
+import { rose, addCircle, add } from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 import { appDataKey } from "@/injectionKeys";
@@ -30,6 +29,7 @@ import "tippy.js/themes/light-border.css";
 import "tippy.js/themes/material.css";
 import "tippy.js/dist/svg-arrow.css";
 // import "tippy.sj/themes/translucent.css";
+import GlowButton from "@/components/GlowButton.vue";
 
 const console = window.console;
 
@@ -296,12 +296,18 @@ function imgDidLoad(e: Event, id: number) {
               <ion-button
                 id="add-button"
                 @click="ionRouter.push('/add')"
-                fill="clear"
                 color="soil"
+                fill="clear"
               >
                 <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
               </ion-button>
             </div>
+            <glow-button
+              :icon="add"
+              size="64"
+              color="white"
+              bgcolor="orange"
+            ></glow-button>
           </div>
 
           <div
@@ -457,16 +463,16 @@ ion-header ion-toolbar ion-icon {
   height: 130%;
   left: 15px;
   transform: rotate(5deg);
-  /* animation-delay: 5s; */
-  animation: sway 6s ease-in-out infinite;
+  animation: sway 6s ease-in-out forwards infinite;
+  animation-delay: 5s;
   transform-origin: 50% 0;
 }
 
 #content-container #decor-container div.right {
   position: absolute;
-  right: 6px;
+  right: -16px;
   width: 38%;
-  height: 100%;
+  height: 105%;
   margin-top: 12px;
   box-shadow: 0px 12px 24px -24px #7a5122;
 }
@@ -474,7 +480,7 @@ ion-header ion-toolbar ion-icon {
 #content-container #decor-container div.right img.right {
   /* margin-top: 8px; */
   height: 100%;
-  right: 40px;
+  right: 48px;
   position: absolute;
   top: 0;
   opacity: 0.8;
@@ -487,7 +493,8 @@ ion-header ion-toolbar ion-icon {
 
 #plants-container .control {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
 }
 
@@ -571,5 +578,6 @@ ion-header ion-toolbar ion-icon {
   background-color: antiquewhite;
   position: relative;
   margin-top: 40px;
+  opacity: 0.6;
 }
 </style>
