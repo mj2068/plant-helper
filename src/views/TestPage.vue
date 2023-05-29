@@ -17,7 +17,12 @@ import { appDataKey } from "@/injectionKeys";
 const ionRouter = useIonRouter();
 
 const appData = inject(appDataKey);
-console.log(appData);
+
+fetch(
+  "https://restapi.amap.com/v3/weather/weatherInfo?city=371602&key=dff8898c0b532e2ff314425eebd02ee3"
+).then((r) => {
+  console.log(r);
+});
 </script>
 
 <template lang="pug">
