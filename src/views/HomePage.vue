@@ -18,7 +18,7 @@ import {
   alertController,
   toastController,
 } from "@ionic/vue";
-import { rose, addCircle, add } from "ionicons/icons";
+import { rose, add } from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 import { appDataKey } from "@/injectionKeys";
@@ -50,9 +50,7 @@ onMounted(() => {
 
   updateImages();
 
-  console.log(addButton);
-
-  const t = tippy(addButton.value as HTMLDivElement, {
+  const addButtonTippy = tippy(addButton.value as HTMLDivElement, {
     content: "按这里添加一个植物🌼",
     theme: "planthelper",
     showOnCreate: true,
@@ -66,8 +64,6 @@ onMounted(() => {
     sticky: true,
     plugins: [sticky],
   });
-  console.log(t);
-  // t.show();
 });
 
 onUnmounted(() => {
@@ -293,23 +289,15 @@ function imgDidLoad(e: Event, id: number) {
               class="add-button-container"
               :ref="(el) => (addButton = el as HTMLDivElement)"
             >
-              <ion-button
+              <GlowButton
                 id="add-button"
                 @click="ionRouter.push('/add')"
-                color="soil"
-                fill="clear"
-              >
-                <ion-icon :icon="addCircle" slot="icon-only"></ion-icon>
-              </ion-button>
+                :icon="add"
+                color="white"
+                bgcolor="orange"
+              ></GlowButton>
             </div>
-            <glow-button
-              :icon="add"
-              size="64"
-              color="white"
-              bgcolor="orange"
-            ></glow-button>
           </div>
-
           <div
             class="plant-container ion-activatable"
             v-for="(plant, index) in appData.appConf.plantList"

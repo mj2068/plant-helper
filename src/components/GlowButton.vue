@@ -1,22 +1,57 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { IonButton, IonIcon } from "@ionic/vue";
+import { extensionPuzzle } from "ionicons/icons";
 export default defineComponent({
-  props: ["color", "bgcolor", "icon", "size"],
+  props: {
+    color: {
+      type: String,
+      default: "black",
+    },
+    bgcolor: {
+      type: String,
+      default: "white",
+    },
+    icon: {
+      type: String,
+      default: extensionPuzzle,
+    },
+    size: {
+      type: Number,
+      default: 64,
+      validator: (v: number) => v >= 32 && v <= 128,
+    },
+  },
+
+  setup(a, b) {
+    console.log(a, b);
+  },
+
+  components: { IonButton, IonIcon },
+
   data() {
     return {
+      button: ref<Element | null>(null),
       IonButton,
       IonIcon,
     };
   },
+
   mounted() {
-    console.log(this.icon, this.size);
+    console.log("GlowButton - mounted");
   },
 });
 </script>
+
+<!-- 
+  ******************************************************************************
+  *****************************         TEMPLATE       *************************
+  ******************************************************************************
+-->
 <template>
   <div>
     <ion-button
+      :ref="(el) => (button = el as Element)"
       :style="{
         width: size + 'px',
         height: size + 'px',
@@ -33,8 +68,8 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-$color-primary: #3a2802;
-$color-primary-light: #000000;
+$color-primary: gold;
+$color-primary-light: gold;
 
 ion-button {
   // animation: glow 1s infinite;
@@ -46,8 +81,8 @@ ion-button {
   align-items: center;
 
   --border-radius: 50%;
-  --padding-start: 8px;
-  --padding-end: 8px;
+  // --padding-start: 12px;
+  // --padding-end: 12px;
 
   &:hover {
     // animation: glow 1s ease-in infinite;
@@ -61,7 +96,7 @@ ion-button {
     filter: blur(8px);
     opacity: 0.8;
     position: absolute;
-    transition: all 0.3s ease-in-out;
+    transition: all 1s ease-in-out;
     width: 120%;
     height: 120%;
     // translate: -50%;
@@ -71,7 +106,8 @@ ion-button {
   }
 
   &:hover::before {
-    filter: blur(12px);
+    scale: 1.2;
+    filter: blur(16px);
     opacity: 1;
   }
 
@@ -82,13 +118,15 @@ ion-button {
 
 @keyframes glow {
   0% {
-    background: var(--background);
+    background: gold;
   }
   50% {
-    background: $color-primary-light;
+    scale: 0.8;
+    // background: var(--background);
+    // translate: 50px 50px;
   }
   100% {
-    background: var(--background);
+    background: gold;
   }
 }
 </style>
