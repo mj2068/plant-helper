@@ -3,6 +3,8 @@ import { defineComponent, ref } from "vue";
 import { IonButton, IonIcon } from "@ionic/vue";
 import { extensionPuzzle } from "ionicons/icons";
 export default defineComponent({
+  components: { IonButton, IonIcon },
+
   props: {
     color: {
       type: String,
@@ -26,8 +28,6 @@ export default defineComponent({
   setup(a, b) {
     console.log(a, b);
   },
-
-  components: { IonButton, IonIcon },
 
   data() {
     return {

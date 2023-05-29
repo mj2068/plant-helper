@@ -13,6 +13,8 @@ import {
   IonSpinner,
   IonRippleEffect,
   IonNote,
+  IonLabel,
+  IonToggle,
   onIonViewDidEnter,
   useIonRouter,
   alertController,
@@ -44,6 +46,8 @@ const router = useRouter();
 const appData = inject(appDataKey) as { appConf: AppConf };
 
 const addButton = ref<HTMLDivElement | null>(null);
+
+const isShowDebugDiv = ref(true);
 
 onMounted(() => {
   console.log("HomePage - onMounted");
@@ -140,7 +144,9 @@ const plantImagesInfo: {
 function test() {
   console.log("HomePage - test");
 
-  updateImages();
+  // updateImages();
+
+  ionRouter.navigate("/test", "forward");
 
   // using computed property returning plantList and change the source, it works
   // appData.appConf.plantList[0].plantName = "haha";
@@ -244,25 +250,18 @@ function imgDidLoad(e: Event, id: number) {
         </ion-toolbar>
       </ion-header>
       <div id="debug-control-container" class="debug test ion-no-margin">
-        <ion-button
-          size="small"
-          color="danger"
-          class="debug test"
-          @click="console.log(plantImagesInfo)"
-          >plantImage</ion-button
+        <ion-toggle v-model="isShowDebugDiv" class="ion-margin-end"
+          >hahaha</ion-toggle
         >
-        <br />
-        <ion-button
-          size="small"
-          color="danger"
-          class="debug test"
-          @click="console.log(appData)"
-          >appData</ion-button
-        >
-        <br />
-        <ion-button size="small" color="success" @click.stop="test"
-          >test</ion-button
-        >
+        <div v-if="isShowDebugDiv" class="debug test controls-container">
+          <ion-button class="debug test" @click="console.log(plantImagesInfo)"
+            >plantImage</ion-button
+          >
+          <ion-button class="debug test" @click="console.log(appData)"
+            >appData</ion-button
+          >
+          <ion-button color="warning" @click.stop="test">test</ion-button>
+        </div>
       </div>
 
       <div id="content-container">
@@ -286,22 +285,22 @@ function imgDidLoad(e: Event, id: number) {
         <div id="plants-container" class="ion-padding">
           <div class="control">
             <div
-              class="add-button-container"
               :ref="(el) => (addButton = el as HTMLDivElement)"
+              class="add-button-container"
             >
               <GlowButton
                 id="add-button"
-                @click="ionRouter.push('/add')"
                 :icon="add"
                 color="white"
                 bgcolor="orange"
+                @click="ionRouter.push('/add')"
               ></GlowButton>
             </div>
           </div>
           <div
-            class="plant-container ion-activatable"
             v-for="(plant, index) in appData.appConf.plantList"
             :key="index"
+            class="plant-container ion-activatable"
             :style="{ backgroundColor: plant.plantColor }"
             @click="cardDetail(plant.plantId)"
           >
@@ -347,8 +346,6 @@ function imgDidLoad(e: Event, id: number) {
   </ion-page>
 </template>
 
-<style lang="sass"></style>
-
 <style scoped>
 :deep(.tippy-box[data-theme~="planthelper"]) {
   background-color: tomato;
@@ -371,18 +368,30 @@ function imgDidLoad(e: Event, id: number) {
   fill: tomato;
 }
 
-div.debug {
+div#debug-control-container {
   position: fixed;
-  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+
   right: 0;
-  z-index: 1;
   opacity: 0.6;
   text-align: right;
 
-  display: none;
+  /* background-color: red; */
+
+  z-index: 1;
+
+  /* display: none; */
 }
 
-div.debug ion-button {
+div#debug-control-container div.controls-container {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+
+div#debug-control-container div.controls-container ion-button {
   text-transform: none;
 }
 

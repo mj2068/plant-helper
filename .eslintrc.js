@@ -3,10 +3,15 @@ module.exports = {
   env: {
     node: true,
   },
+  plugins: ["prettier"],
   extends: [
-    "plugin:vue/vue3-essential",
     "eslint:recommended",
     "@vue/typescript/recommended",
+    // "plugin:vue/vue3-essential",
+    "plugin:vue/vue3-recommended",
+    "plugin:vue-pug/vue3-recommended",
+    // "plugin:prettier/recommended",
+    "prettier",
     // "@ionic/eslint-config/recommended",
   ],
   parserOptions: {
@@ -19,6 +24,7 @@ module.exports = {
     "vue/no-deprecated-slot-attribute": "off",
     "vue/no-unused-components": "warn",
     "prefer-const": "warn",
+    // "prettier/prettier": "error",
   },
   overrides: [
     {

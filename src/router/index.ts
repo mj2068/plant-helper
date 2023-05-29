@@ -1,6 +1,6 @@
-import AddPage from "../views/AddPage.vue";
-import { createRouter, createWebHistory } from "@ionic/vue-router";
 import { RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory } from "@ionic/vue-router";
+import AddPage from "../views/AddPage.vue";
 import HomePage from "../views/HomePage.vue";
 import DetailPage from "@/views/DetailPage.vue";
 
@@ -24,6 +24,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/detail/:id",
     name: "Detail",
     component: DetailPage,
+  },
+  {
+    path: "/test",
+    name: "Test",
+    component: () => import("@/views/TestPage.vue"),
   },
 ];
 
