@@ -12,6 +12,8 @@ module.exports = {
     "plugin:vue-pug/vue3-recommended",
     // "plugin:prettier/recommended",
     "prettier",
+    // "prettier/vue",
+    // "@vue/eslint-config-prettier",
     // "@ionic/eslint-config/recommended",
   ],
   parserOptions: {

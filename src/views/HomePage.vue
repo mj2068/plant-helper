@@ -13,14 +13,12 @@ import {
   IonSpinner,
   IonRippleEffect,
   IonNote,
-  IonLabel,
   IonToggle,
   onIonViewDidEnter,
   useIonRouter,
-  alertController,
   toastController,
 } from "@ionic/vue";
-import { rose, add } from "ionicons/icons";
+import { rose, add, sunny } from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 import { appDataKey } from "@/injectionKeys";
@@ -54,7 +52,11 @@ onMounted(() => {
 
   updateImages();
 
-  const addButtonTippy = tippy(addButton.value as HTMLDivElement, {
+  presentToast("hello world");
+
+  // 如有需要可接收到tippy的返回值，取得全权控制
+  // const addButtonTippy =
+  tippy(addButton.value as HTMLDivElement, {
     content: "按这里添加一个植物🌼",
     theme: "planthelper",
     showOnCreate: true,
@@ -159,69 +161,24 @@ function test() {
 }
 
 async function presentToast(
-  message: string,
-  position: "top" | "middle" | "bottom"
+  message = "WELCOME",
+  position: "top" | "middle" | "bottom" = "bottom"
 ) {
   const toast = await toastController.create({
     message: message,
-    duration: 1500,
+    // duration: 1500,
     position: position,
+    icon: sunny,
+    cssClass: "toast-flex-justify-content",
   });
 
   await toast.present();
-}
-
-async function deleteFile() {
-  const ionAlert = await alertController.create({
-    header: "delete",
-    subHeader: "becareful",
-    message: "are you sure?",
-    buttons: [
-      {
-        role: "cancel",
-        text: "no",
-      },
-      {
-        role: "confirm",
-        text: "yes",
-        handler: async () => {
-          try {
-            await Filesystem.deleteFile({
-              path: "userdata.json",
-              directory: Directory.Data,
-            });
-            console.log("HomePage - deleteFile - deleted");
-          } catch (error) {
-            let message;
-            if (error instanceof Error) message = error.message;
-            else message = String(error);
-            console.error(message);
-          }
-        },
-      },
-    ],
-  });
-  await ionAlert.present();
-}
-
-function ionRouterPush() {
-  ionRouter.push("/add");
-}
-
-function routerPush() {
-  router.push("/add");
 }
 
 function cardDetail(id: number) {
   // console.log(plant);
   // ionRouter.navigate("/detail", "forward", "push");
   router.push(`/detail/${id}`);
-}
-
-function imgDidLoad(e: Event, id: number) {
-  // console.log(e);
-  // console.log(id);
-  // plantImagesInfo[id].isLoading = false;
 }
 </script>
 
@@ -310,7 +267,6 @@ function imgDidLoad(e: Event, id: number) {
               <img
                 v-if="plantImagesInfo[plant.plantId]?.dataUrl"
                 :src="plantImagesInfo[plant.plantId]?.dataUrl"
-                @load="imgDidLoad($event, plant.plantId)"
               />
             </div>
             <div class="text-container ion-padding">
@@ -345,6 +301,16 @@ function imgDidLoad(e: Event, id: number) {
     </ion-content>
   </ion-page>
 </template>
+
+<style lang="scss">
+ion-toast.toast-flex-justify-content::part(container) {
+  justify-content: center;
+  background: red;
+}
+ion-toast.toast-flex-justify-content::part(message) {
+  text-align: center;
+}
+</style>
 
 <style scoped>
 :deep(.tippy-box[data-theme~="planthelper"]) {
