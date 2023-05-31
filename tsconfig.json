@@ -24,7 +24,8 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "env.d.ts"
+    "env.d.ts",
+    "components.d.ts"
   ],
   "exclude": ["node_modules"],
   "vueCompilerOptions": {

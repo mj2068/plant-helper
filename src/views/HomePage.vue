@@ -166,7 +166,7 @@ async function presentToast(
 ) {
   const toast = await toastController.create({
     message: message,
-    // duration: 1500,
+    duration: 1500,
     position: position,
     icon: sunny,
     cssClass: "toast-flex-justify-content",
@@ -207,17 +207,23 @@ function cardDetail(id: number) {
         </ion-toolbar>
       </ion-header>
       <div id="debug-control-container" class="debug test ion-no-margin">
-        <ion-toggle v-model="isShowDebugDiv" class="ion-margin-end"
-          >hahaha</ion-toggle
-        >
+        <ion-toggle v-model="isShowDebugDiv" class="ion-margin-end">
+          hahaha
+        </ion-toggle>
         <div v-if="isShowDebugDiv" class="debug test controls-container">
-          <ion-button class="debug test" @click="console.log(plantImagesInfo)"
-            >plantImage</ion-button
-          >
-          <ion-button class="debug test" @click="console.log(appData)"
-            >appData</ion-button
-          >
+          <ion-button class="debug test" @click="console.log(plantImagesInfo)">
+            plantImage
+          </ion-button>
+          <ion-button class="debug test" @click="console.log(appData)">
+            appData
+          </ion-button>
           <ion-button color="warning" @click.stop="test">test</ion-button>
+          <ion-button
+            color="warning"
+            @click.stop="ionRouter.navigate('/console', 'forward')"
+          >
+            console
+          </ion-button>
         </div>
       </div>
 
@@ -286,16 +292,10 @@ function cardDetail(id: number) {
           </div>
         </div>
 
-        <div
-          id="footer-container"
-          class="ion-padding"
-          style="justify-content: center; display: flex"
-        >
-          <ion-note style="align-self: flex-end"
-            ><a href="http://zizaimai.space" target="_blank"
-              >zizaimai.space</a
-            ></ion-note
-          >
+        <div id="footer-container" class="ion-padding">
+          <ion-note>
+            <a href="http://zizaimai.space" target="_blank">zizaimai.space</a>
+          </ion-note>
         </div>
       </div>
     </ion-content>
@@ -303,16 +303,17 @@ function cardDetail(id: number) {
 </template>
 
 <style lang="scss">
-ion-toast.toast-flex-justify-content::part(container) {
-  justify-content: center;
-  background: red;
-}
-ion-toast.toast-flex-justify-content::part(message) {
-  text-align: center;
-}
+// 试图居中toast内容，但是由于toast是shadow dom，且没有expose关键的那个container
+// ion-toast.toast-flex-justify-content {
+//   color: red;
+//   &::part(container) {
+//     justify-content: center;
+//   }
+// }
 </style>
 
 <style scoped>
+/* style only for tippy */
 :deep(.tippy-box[data-theme~="planthelper"]) {
   background-color: tomato;
   color: yellow;
@@ -333,7 +334,9 @@ ion-toast.toast-flex-justify-content::part(message) {
 :deep(.tippy-box[data-theme~="planthelper"]) > .tippy-svg-arrow {
   fill: tomato;
 }
+</style>
 
+<style scoped>
 div#debug-control-container {
   position: fixed;
   display: flex;

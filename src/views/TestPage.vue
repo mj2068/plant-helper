@@ -58,12 +58,15 @@ ion-page
       ion-item(v-for="(value, key, index) in data?.lives[0]", :key="index")
         ion-label {{ key }}
         ion-text(slot="end") {{ value }}
-    div(style="display: flex", v-else)
+    div(v-else, style="display: flex")
       ion-spinner 
   ion-footer
     ion-toolbar
-      //- #footer.ion-justify-content-center(style="display: flex") 
+      .ion-justify-content-center
         h4 zizaimai
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="sass">
+.ion-justify-content-center
+  display: flex
+</style>
