@@ -21,16 +21,16 @@
               <MoreMenuPopover></MoreMenuPopover>
             </ion-popover>
           </ion-button>
-          <ion-button v-on:click="test">TEST</ion-button>
+          <ion-button @click="test">TEST</ion-button>
         </ion-buttons>
         <ion-title>{{ plant?.plantName }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content class="ion-padding">
-      <div id="plant-found-container" class="container" v-if="plant != null">
+      <div v-if="plant != null" id="plant-found-container" class="container">
         <div v-if="plantImageDataUrl" id="image-container">
-          <ion-card button @click="openImage" class="">
+          <ion-card button class="" @click="openImage">
             <img :src="plantImageDataUrl" alt="植物图片" />
             <ion-button
               id="delete-image-button"
@@ -43,9 +43,9 @@
           </ion-card>
         </div>
         <div v-else id="no-image-container">
-          <ion-card button v-on:click="addImage">
+          <ion-card button @click="addImage">
             <div>
-              <ion-button fill="clear" v-on:click.stop="addImage"
+              <ion-button fill="clear" @click.stop="addImage"
                 ><ion-icon slot="start" :icon="addCircleOutline"></ion-icon>
                 添加图片
               </ion-button>
@@ -55,11 +55,11 @@
 
         <ion-list>
           <!-- 植物名称 -->
-          <ion-item lines="full" id="item-plant-name" button>
+          <ion-item id="item-plant-name" lines="full" button>
             <ion-text slot="start" class="label-column">植物名称</ion-text>
             <ion-text
-              slot="end"
               id="plant-name"
+              slot="end"
               class="content-column ion-text-end"
               >{{ plant.plantName }}</ion-text
             >
@@ -72,7 +72,7 @@
             trigger="item-plant-name"
             @ionModalWillPresent="onEditPlantNameModalWillPresent"
             @ionModalDidPresent="onEditPlantNameModalDidPresent"
-            v-on:willDismiss="onEditPlantNameModalWillDismiss"
+            @willDismiss="onEditPlantNameModalWillDismiss"
           >
             <ion-header>
               <ion-toolbar>
@@ -101,7 +101,7 @@
           </ion-modal>
 
           <!-- 植物描述 -->
-          <ion-item lines="full" id="item-plant-description" button>
+          <ion-item id="item-plant-description" lines="full" button>
             <ion-text slot="start" class="label-column">植物描述</ion-text>
             <ion-text
               id="plant-desc"
@@ -119,7 +119,7 @@
             trigger="item-plant-description"
             @ionModalWillPresent="onEditPlantDescriptionModalWillPresent"
             @ionModalDidPresent="onEditPlantDescriptionModalDidPresent"
-            v-on:willDismiss="onEditPlantDescriptionModalWillDismiss"
+            @willDismiss="onEditPlantDescriptionModalWillDismiss"
           >
             <ion-header>
               <ion-toolbar>
@@ -173,10 +173,10 @@
             @click="openColorModal"
           >
             <ion-text slot="start" class="">卡片颜色</ion-text>
-            <ion-button class="button-plant-color" fill="outline" slot="end">
+            <ion-button slot="end" class="button-plant-color" fill="outline">
               <ion-icon
-                class="icon-color"
                 slot="icon-only"
+                class="icon-color"
                 :icon="plantColor ? ellipse : ban"
                 :style="{ color: plantColor }"
               ></ion-icon>
@@ -194,7 +194,7 @@
       </div>
 
       <!-- 此div用于在找不到该id的plant的这种特殊情况下给用户一个提示 -->
-      <div id="plant-null-container" class="container" v-else>
+      <div v-else id="plant-null-container" class="container">
         <h2>
           未找到该植物。<i>（id：{{ id }}）</i>
         </h2>

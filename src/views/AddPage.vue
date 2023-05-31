@@ -134,10 +134,6 @@ export default defineComponent({
     console.log("AddPage - ionViewDidEnter");
   },
 
-  mounted() {
-    console.log("AddPage - mounted");
-  },
-
   data() {
     return {
       star,
@@ -151,6 +147,10 @@ export default defineComponent({
   },
 
   computed: {},
+
+  mounted() {
+    console.log("AddPage - mounted");
+  },
 
   methods: {
     // convert a path url to base64 data
@@ -244,9 +244,6 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-ion-content {
-}
-
 #content-container {
   // background-color: lightblue;
   height: 100%;

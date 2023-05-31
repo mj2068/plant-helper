@@ -35,6 +35,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "Console",
     component: () => import("@/views/ConsolePage.vue"),
   },
+  {
+    path: "/graph",
+    name: "Graph",
+    component: () => import("@/views/GraphPage.vue"),
+  },
 ];
 
 const router = createRouter({

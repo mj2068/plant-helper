@@ -12,8 +12,10 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonRouter,
 } from "@ionic/vue";
-import { airplane } from "ionicons/icons";
+import { terminal } from "ionicons/icons";
+import Chart from "chart.js/auto";
 
 export default defineComponent({
   components: {
@@ -31,8 +33,14 @@ export default defineComponent({
   },
   data() {
     return {
-      airplane,
+      ionRouter: useIonRouter(),
+      terminal,
     };
+  },
+  mounted() {
+    console.log("ConsolePage - mounted");
+
+    console.log(this.$refs.chart);
   },
 });
 </script>
@@ -41,13 +49,23 @@ export default defineComponent({
 IonPage
   IonHeader
     IonToolbar
+      IonIcon.ion-margin-start(slot="start", :icon="terminal", size="large")
       IonTitle(slot="start") console
-      IonButtons(slot="end")
-        IonButton home
+      IonButtons.ion-margin-end(slot="end")
+        IonButton(@click="ionRouter.navigate('/home', 'root')") home
 
   IonContent
-    IonList
-      IonItem(v-for="(i, x) in 10", :key="x")
-        IonLabel(slot="end") {{ i }}
-        IonLabel {{ i * 100 }}
+    #content-container.ion-padding
+      IonButton(expand="full") start
+      #chart-container(ref="chart")
 </template>
+
+<style scoped lang="sass">
+#content-container
+  background-color: pink
+  height: 500px
+
+  #chart-container
+    background-color: lightgreen
+    height: 300px
+</style>

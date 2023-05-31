@@ -224,6 +224,12 @@ function cardDetail(id: number) {
           >
             console
           </ion-button>
+          <ion-button
+            color="warning"
+            @click.stop="ionRouter.navigate('/graph', 'forward')"
+          >
+            graph
+          </ion-button>
         </div>
       </div>
 
@@ -371,6 +377,8 @@ ion-header ion-toolbar ion-icon {
 
 #content-container {
   position: relative;
+  min-height: 100%;
+  padding-bottom: 100px;
 }
 
 #content-container::before {
@@ -540,10 +548,13 @@ ion-header ion-toolbar ion-icon {
 }
 
 #footer-container {
+  position: absolute;
+  bottom: 0;
   height: 50px;
+  width: 100%;
   background-color: antiquewhite;
-  position: relative;
   margin-top: 40px;
   opacity: 0.6;
+  display: flex;
 }
 </style>
