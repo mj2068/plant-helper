@@ -57,7 +57,7 @@ export default defineComponent({
 
     this.console.log(this);
 
-    this.chart = new Chart(this.$refs.chartCanvas as ChartItem, {
+    this.chart = new Chart(this.$refs["chart-canvas"] as ChartItem, {
       type: "bar",
       data: {
         labels: Array.from({ length: 10 }, (_, i) => i),
@@ -86,14 +86,13 @@ export default defineComponent({
 
       if (!this.chart) return;
 
-      const data = Array.from({ length: 2 }, () => this.getRandomInteger());
+      const data = Array.from({ length: 100 }, () => this.getRandomInteger());
       // console.log(data);
       const count = Array.from({ length: 10 }, () => 0);
       data.forEach((i) => count[i]++);
       this.chart.data.datasets[0].data = count;
       this.chart.update();
     },
-
     getRandomInteger(min = 0, max = 9): number {
       min = Math.ceil(min);
       max = Math.floor(max);
@@ -139,6 +138,10 @@ export default defineComponent({
       this.chart.data.datasets[0].data = this.count;
       this.chart.update();
     },
+    changeChartContainer() {
+      (this.$refs["chart-canvas-container"] as HTMLDivElement).style.width =
+        "50%";
+    },
   },
 });
 </script>
@@ -157,8 +160,8 @@ IonPage
       .flex-container.flex-column
         ion-text count each roll
       #chart-container
-        #chart-canvas-container(ref="chartCanvasContainer")
-          canvas#chart-canvas(ref="chartCanvas")
+        #chart-canvas-container(ref="chart-canvas-container")
+          canvas#chart-canvas(ref="chart-canvas")
       ion-item
         ion-label data number
         p {{ data.length }}
@@ -189,6 +192,8 @@ IonPage
       ion-button(@click="roll10") roll 10
       ion-button(@click="roll100") roll 100
       ion-button(color="warning", @click="clearData") clear
+      br
+      ion-button(@click="changeChartContainer") change chart width
 </template>
 
 <style scoped lang="sass">
@@ -214,7 +219,7 @@ IonPage
       flex-grow: 1
       flex-shrink: 0
       position: relative
-      width: 100%
+      width: 150%
       height: 350px
 
   ion-item
