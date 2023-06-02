@@ -36,33 +36,41 @@ export default defineComponent({
     IonInput,
     IonTextarea,
   },
+  setup() {
+    console.log("ConsolePage - setup()");
+
+    return { chart: null } as { chart: Chart | null };
+  },
   data() {
-    console.log("ConsolePage - data()");
+    console.log("ConsolePage - data");
 
     return {
       console: window.console,
       ionRouter: useIonRouter(),
       terminal,
-      max: 10,
-      min: 0,
+      inputMax: 10,
+      inputMin: 0,
+      data: [] as number[],
     };
   },
   mounted() {
     console.log("ConsolePage - mounted");
 
-    this.chart = new Chart(this.$refs.chart as ChartItem, {
-      type: "line",
+    this.console.log(this);
+
+    this.chart = new Chart(this.$refs.chartCanvas as ChartItem, {
+      type: "bar",
       data: {
-        // labels: ["Red", "Blue", "Yellow"],
+        labels: Array.from({ length: 10 }, (_, i) => i),
         datasets: [
           {
-            label: "# of Votes",
+            label: "# of appearance",
             data: [] as number[],
           },
         ],
       },
       options: {
-        // maintainAspectRatio: true,
+        maintainAspectRatio: false,
         // aspectRatio: 1,
         // scales: {
         //   y: {
@@ -75,19 +83,26 @@ export default defineComponent({
   methods: {
     start() {
       console.log("ConsolePage - start");
+      // console.log(this);
 
-      console.log(this.chart);
+      if (!this.chart) return;
 
-      this.chart.data.datasets[0].data.push(this.getRandomInterger(0, 100));
+      const data = Array.from({ length: 20 }, () =>
+        this.getRandomInterger(0, 9)
+      );
+      console.log(data);
+      const count = Array.from({ length: 10 }, () => 0);
+      data.forEach((i) => count[i]++);
+      this.chart.data.datasets[0].data = count;
 
       this.chart.update();
     },
 
-    getRandomInterger(min = 0, max = 1): number {
-      return (
-        Math.round(Math.random() * (Math.floor(max) - Math.floor(min))) +
-        Math.floor(min)
-      );
+    getRandomInterger(min = 0, max = 9): number {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     },
   },
 });
@@ -106,48 +121,52 @@ IonPage
     #content-container.ion-padding
       #chart-container
         #chart-canvas-container
-          canvas#chart-canvas(ref="chart")
-
-      IonCard
-        IonCardContent
-          IonTextarea(:auto-grow="true", placeholder="are you ready")
-      IonList
-        IonItem(style="background-color: red")
-          IonInput(
-            v-model="min",
-            type="number",
-            :max="max - 1",
-            style="background-color: pink"
-          ) 
-          IonInput(
-            v-model="max",
-            type="number",
-            :min="min + 1",
-            style="background-color: lightgreen"
-          )
-          IonButton(
-            size="default",
-            fill="clear",
-            color="secondary",
-            @click="console.log(getRandomInterger(min, max))"
-          ) give
+          canvas#chart-canvas(ref="chartCanvas")
+      IonItem.ion-margin-top(style="background-color: red")
+        IonLabel(slot="start") min
+        IonInput(
+          slot="start",
+          v-model="inputMin",
+          style="--background: lightgrey",
+          type="number",
+          :max="inputMax - 1"
+        ) 
+        IonLabel(slot="start") max
+        IonInput(
+          slot="start",
+          v-model="inputMax",
+          style="--background: lightgrey",
+          type="number",
+          :min="inputMin + 1"
+        )
+        IonButton(
+          solt="end",
+          size="default",
+          color="secondary",
+          @click="console.log(getRandomInterger(inputMin, inputMax))"
+        ) give
       IonButton(@click="start") start
 </template>
 
 <style scoped lang="sass">
 #content-container
-  background-color: pink
-  height: 500px
-  width: 100%
+  // background-color: lightblue
+  min-height: 100%
 
   #chart-container
     background-color: lightgreen
-    // height: 300px
     width: 100%
-    // overflow: scroll
+    display: flex
+    justify-content: center
+
+    height: 400px
+    overflow: scroll
 
     #chart-canvas-container
+      background-color: rgba(230, 200, 220, 1)
+      flex-grow: 1
+      flex-shrink: 0
       position: relative
-      // width: 2000px
-      // height: 100%
+      width: 100%
+      height: 300px
 </style>
