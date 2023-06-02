@@ -31,14 +31,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("@/views/TestPage.vue"),
   },
   {
-    path: "/console",
-    name: "Console",
-    component: () => import("@/views/ConsolePage.vue"),
-  },
-  {
     path: "/graph",
     name: "Graph",
     component: () => import("@/views/GraphPage.vue"),
+  },
+  {
+    path: "/console",
+    name: "Console",
+    component: () => import("@/views/ConsolePage.vue"),
   },
 ];
 
