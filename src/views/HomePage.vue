@@ -251,8 +251,8 @@ function cardDetail(id: number) {
             <img class="right" src="@/../resources/group-decor2.png" alt="" />
           </div>
         </div>
-        <div id="plants-container" class="ion-padding">
-          <div class="control">
+        <div id="plants-container" class="ion-padding-start ion-padding-end">
+          <div class="control ion-margin-bottom">
             <div
               :ref="(el) => (addButton = el as HTMLDivElement)"
               class="add-button-container"
@@ -269,7 +269,7 @@ function cardDetail(id: number) {
           <div
             v-for="(plant, index) in appData.appConf.plantList"
             :key="index"
-            class="plant-container ion-activatable"
+            class="plant-container ion-activatable ion-margin-bottom"
             :style="{ backgroundColor: plant.plantColor }"
             @click="cardDetail(plant.plantId)"
           >
@@ -371,7 +371,7 @@ div#debug-control-container div.controls-container ion-button {
 }
 
 ion-header ion-toolbar ion-icon {
-  color: rgb(214, 32, 144);
+  color: tomato;
   font-size: 32px;
 }
 
@@ -462,6 +462,7 @@ ion-header ion-toolbar ion-icon {
 }
 
 #plants-container {
+  --ion-padding: 32px;
   position: relative;
 }
 
@@ -495,7 +496,7 @@ ion-header ion-toolbar ion-icon {
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
     rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
-  margin: 20px 5% 20px;
+  /* margin: 20px 5% 20px; */
   overflow: hidden;
   /* height: 200px; */
   /* max-height: 150px; */
@@ -504,6 +505,8 @@ ion-header ion-toolbar ion-icon {
 
   /* ion-ripple用absolute来定位ripple效果位置，所以需要容器relative */
   position: relative;
+
+  width: 100%;
 }
 
 #plants-container .plant-container .custom-ripple {
@@ -542,7 +545,8 @@ ion-header ion-toolbar ion-icon {
 }
 
 #plants-container .plant-container div.text-container {
-  /* width: 70%; */
+  --ion-padding: 16px;
+  width: 70%;
   margin-left: 30%;
   /* margin-right: 5%; */
 }
