@@ -14,10 +14,16 @@ import {
   IonToolbar,
   useIonRouter,
   IonText,
+  IonRange,
 } from "@ionic/vue";
 import { barChart } from "ionicons/icons";
 import Chart from "chart.js/auto";
 import type { ChartItem } from "chart.js/auto";
+import {
+  IonRangeCustomEvent,
+  RangeCustomEvent,
+  RangeChangeEventDetail,
+} from "@ionic/core";
 
 export default defineComponent({
   components: {
@@ -33,6 +39,7 @@ export default defineComponent({
     IonLabel,
     IonInput,
     IonText,
+    IonRange,
   },
   setup() {
     console.log("ConsolePage - setup()");
@@ -49,18 +56,18 @@ export default defineComponent({
       inputMax: 10,
       inputMin: 0,
       data: [] as number[],
-      count: Array.from({ length: 10 }, () => 0),
+      count: Array.from({ length: 100 }, () => 0),
     };
   },
   mounted() {
     console.log("ConsolePage - mounted");
 
-    this.console.log(this);
+    // this.console.log(this);
 
     this.chart = new Chart(this.$refs["chart-canvas"] as ChartItem, {
       type: "bar",
       data: {
-        labels: Array.from({ length: 10 }, (_, i) => i),
+        labels: Array.from({ length: 100 }, (_, i) => i),
         datasets: [
           {
             label: "# of appearance",
@@ -101,7 +108,7 @@ export default defineComponent({
     },
 
     addData() {
-      const r = this.getRandomInteger();
+      const r = this.getRandomInteger(0, 99);
       this.count[r]++;
       this.data.push(r);
       this.updateChart();
@@ -109,26 +116,30 @@ export default defineComponent({
     roll10() {
       if (!this.chart) return;
 
+      const arr = [];
       for (let i = 0; i < 10; i++) {
-        const r = this.getRandomInteger();
+        const r = this.getRandomInteger(0, 99);
+        arr.push(r);
         this.count[r]++;
-        this.data.push(r);
-        this.updateChart();
       }
+      this.data.push(...arr);
+      this.updateChart();
     },
     roll100() {
       if (!this.chart) return;
 
+      const arr = [];
       for (let i = 0; i < 100; i++) {
-        const r = this.getRandomInteger();
+        const r = this.getRandomInteger(0, 99);
+        arr.push(r);
         this.count[r]++;
-        this.data.push(r);
-        this.updateChart();
       }
+      this.data.push(...arr);
+      this.updateChart();
     },
     clearData() {
       this.data = [];
-      this.count = Array.from({ length: 10 }, () => 0);
+      this.count = Array.from({ length: 100 }, () => 0);
       this.updateChart();
     },
     updateChart() {
@@ -141,6 +152,14 @@ export default defineComponent({
     changeChartContainer() {
       (this.$refs["chart-canvas-container"] as HTMLDivElement).style.width =
         "50%";
+    },
+    onSlide(e: IonRangeCustomEvent<RangeChangeEventDetail>) {
+      console.log(e.detail.value);
+      const v = e.detail.value as number;
+
+      (
+        this.$refs["chart-canvas-container"] as HTMLDivElement
+      ).style.width = `${v}%`;
     },
   },
 });
@@ -157,11 +176,21 @@ IonPage
 
   IonContent
     #content-container.ion-padding
-      .flex-container.flex-column
-        ion-text count each roll
-      #chart-container
+      //- title
+      .flex-container
+        ion-text count random number
+      #chart-container.flex-container
         #chart-canvas-container(ref="chart-canvas-container")
           canvas#chart-canvas(ref="chart-canvas")
+      //- chart scale range slider container
+      .flex-container.ion-justify-content-center
+        IonRange(
+          style="flex: 0 1 40%",
+          :value="100",
+          :min="50",
+          :max="400",
+          @ion-change="onSlide"
+        )
       ion-item
         ion-label data number
         p {{ data.length }}
@@ -199,8 +228,10 @@ IonPage
 <style scoped lang="sass">
 .flex-container
   display: flex
+
 .flex-column
   flex-direction: column
+
 #content-container
   // background-color: lightblue
   min-height: 100%
@@ -208,19 +239,20 @@ IonPage
   #chart-container
     // background-color: lightgreen
     width: 100%
-    display: flex
-    justify-content: center
-
     // height: 400px
     overflow: scroll
 
     #chart-canvas-container
-      // background-color: rgba(230, 200, 220, 1)
-      flex-grow: 1
-      flex-shrink: 0
       position: relative
-      width: 150%
+      width: 100%
       height: 350px
+      margin: auto
+      flex: 0 0 auto
+      // flex-grow: 1
+      // flex-shrink: 0
+      // flex-basis: auto
+
+      // background-color: rgba(230, 200, 220, 1)
 
   ion-item
     ion-label
