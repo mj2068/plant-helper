@@ -10,6 +10,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ColorModal: typeof import('./src/components/ColorModal.vue')['default']
+    CommonToolbar: typeof import('./src/components/CommonToolbar.vue')['default']
     GlowButton: typeof import('./src/components/GlowButton.vue')['default']
     ImageModal: typeof import('./src/components/ImageModal.vue')['default']
     IonApp: typeof import('@ionic/vue')['IonApp']
