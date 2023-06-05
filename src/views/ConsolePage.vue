@@ -18,5 +18,5 @@ export default {
 
 <template lang="pug">
 IonPage
-  CommonToolbar(title="console", :icon="terminal")
+  CommonToolbar(title="console")
 </template>

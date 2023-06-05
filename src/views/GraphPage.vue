@@ -4,7 +4,6 @@ import {
   IonPage,
   IonButton,
   IonContent,
-  IonInput,
   IonItem,
   IonLabel,
   useIonRouter,
@@ -28,7 +27,6 @@ export default defineComponent({
     IonButton,
     IonItem,
     IonLabel,
-    IonInput,
     IonText,
     IonRange,
     CommonToolbar,
@@ -65,7 +63,7 @@ export default defineComponent({
         // labels: ["a", "b", "c", "d", "e"],
         datasets: [
           {
-            label: "randomness💥",
+            label: "组1",
             data: [
               // { x: 3, y: 10 },
               // { x: 1, y: 5 },
@@ -105,43 +103,18 @@ export default defineComponent({
       this.updateChart();
     },
 
-    addData() {
-      if (!this.chart) return;
-
-      const upperRange = 9;
-      const lowerRange = 0;
-
-      this.chartData = [];
-      for (let index = 0; index <= upperRange; index++) {
-        this.chartData.push({ x: index.toString(), y: 0 });
-      }
-
-      const howManyTimes = 100;
-
-      for (let i = 0; i < howManyTimes; i++) {
-        const n = this.getRandomInteger(lowerRange, upperRange);
-        this.chartData.forEach((element) => {
-          if (element.x === n.toString()) {
-            element.y++;
-          }
-        });
-      }
-
-      this.chart.data.datasets[0].data = this.chartData;
-      this.chart.update();
-    },
     updateChart() {
       if (!this.chart) return;
 
-      const a = Array.from({ length: 10 }, (_, i) => ({
+      const chartData = Array.from({ length: 10 }, (_, i) => ({
         x: i.toString(),
         y: 0,
       }));
       this.rollData.forEach((element) => {
-        a[element].y++;
+        chartData[element].y++;
       });
 
-      this.chart.data.datasets[0].data = a;
+      this.chart.data.datasets[0].data = chartData;
       this.chart.update();
     },
     clearData() {
@@ -156,8 +129,8 @@ export default defineComponent({
       }
 
       this.autoTimerId = window.setInterval(() => {
-        this.roll(20);
-      }, 50);
+        this.roll(10);
+      }, 100);
       console.log("interval id: " + this.autoTimerId);
     },
     stop() {
@@ -180,25 +153,18 @@ export default defineComponent({
 
 <template lang="pug">
 IonPage
-  CommonToolbar(:icon="barChart", :title="'graph'")
-  //- IonHeader
-  //-   IonToolbar
-  //-     IonIcon.ion-margin-start(slot="start", :icon="barChart", size="large")
-  //-     IonTitle(slot="start") graph
-  //-     IonButtons.ion-margin-end(slot="end")
-  //-       IonButton(@click="ionRouter.navigate('/home', 'root')") home
-
+  CommonToolbar(:icon="barChart", :title="'图表'")
   IonContent
     #content-container.ion-padding
       //- title
       .flex-container
-        ion-text count random number
+        ion-text 随机数
       #chart-container.flex-container
         #chart-canvas-container(ref="chart-canvas-container")
           canvas#chart-canvas(ref="chartCanvas")
       //- chart scale range slider container
       .flex-container.ion-justify-content-center
-        IonRange(
+        IonRange.ion-no-padding(
           style="flex: 0 1 60%",
           :value="100",
           :min="100",
@@ -209,30 +175,9 @@ IonPage
         )
       ion-list.ion-margin-bottom(lines="full")
         ion-item
-          ion-label total
+          ion-label 总数
           p {{ rollData.length }}
-        IonItem.ion-margin-top
-          IonLabel(slot="start") min:
-          IonInput(
-            slot="start",
-            v-model="inputMin",
-            type="number",
-            :max="inputMax - 1"
-          ) 
-          IonLabel(slot="start") max:
-          IonInput(
-            slot="start",
-            v-model="inputMax",
-            type="number",
-            :min="inputMin + 1"
-          )
-          IonButton(
-            solt="end",
-            size="default",
-            color="secondary",
-            @click="console.log(getRandomInteger(inputMin, inputMax))"
-          ) gimme
-      .flex-wrap.flex-container
+      .control.flex-wrap.flex-container
         IonButton(@click="roll()") roll 1
         IonButton(@click="roll(10)") roll 10
         IonButton(@click="roll(100)") roll 100
@@ -277,4 +222,7 @@ IonPage
     ion-input
       --background: lightgrey
       margin-right: 4px
+
+  .control ion-button:nth-child(-n+3)
+    flex: 1 1 32%
 </style>

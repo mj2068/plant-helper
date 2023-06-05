@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import {
+  IonBackButton,
   IonButton,
   IonButtons,
   IonHeader,
@@ -19,8 +20,12 @@ const props = defineProps<{
 <template lang="pug">
 IonHeader
   IonToolbar
-    IonIcon.ion-margin-start(slot="start", :icon="props.icon", size="large")
+    IonBackButton(slot="start", default-href="/home")
+    IonIcon.ion-margin-start(
+      slot="secondary",
+      :icon="props.icon",
+      size="large"
+    )
     IonTitle(slot="start") {{ title }}
     IonButtons.ion-margin-end(slot="end")
-      IonButton(@click="ionRouter.navigate('/home', 'root')") home
 </template>

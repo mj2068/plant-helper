@@ -218,16 +218,10 @@ function cardDetail(id: number) {
             appData
           </ion-button>
           <ion-button color="warning" @click.stop="test">test</ion-button>
-          <ion-button
-            color="warning"
-            @click.stop="ionRouter.navigate('/console', 'forward')"
-          >
+          <ion-button color="warning" @click.stop="ionRouter.push('/console')">
             console
           </ion-button>
-          <ion-button
-            color="warning"
-            @click.stop="ionRouter.navigate('/graph', 'forward')"
-          >
+          <ion-button color="warning" @click.stop="ionRouter.push('/graph')">
             graph
           </ion-button>
         </div>
