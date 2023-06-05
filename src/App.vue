@@ -9,7 +9,6 @@ import { defineComponent, onMounted, provide, reactive } from "vue";
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";
 import type {
-  Plant,
   addPlant,
   AppConf,
   deletePlantById,

@@ -3,51 +3,45 @@ import { defineComponent } from "vue";
 import {
   IonPage,
   IonButton,
-  IonButtons,
   IonContent,
-  IonHeader,
-  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
-  IonTitle,
-  IonToolbar,
   useIonRouter,
   IonText,
   IonRange,
 } from "@ionic/vue";
 import { barChart } from "ionicons/icons";
 import Chart from "chart.js/auto";
-import type { ChartItem } from "chart.js/auto";
-import {
-  IonRangeCustomEvent,
-  RangeCustomEvent,
-  RangeChangeEventDetail,
-} from "@ionic/core";
+import { IonRangeCustomEvent, RangeChangeEventDetail } from "@ionic/core";
+import CommonToolbar from "@/components/CommonToolbar.vue";
+
+interface DataShape {
+  x: string;
+  y: number;
+}
 
 export default defineComponent({
   components: {
     IonPage,
-    IonHeader,
     IonContent,
     IonButton,
-    IonToolbar,
-    IonButtons,
-    IonIcon,
-    IonTitle,
     IonItem,
     IonLabel,
     IonInput,
     IonText,
     IonRange,
+    CommonToolbar,
   },
   setup() {
-    console.log("ConsolePage - setup()");
+    console.log("GraphPage - setup");
 
-    return { chart: null } as { chart: null | Chart };
+    return { chart: null } as {
+      chart: null | Chart<"bar", DataShape[]>;
+    };
   },
   data() {
-    console.log("ConsolePage - data");
+    console.log("GraphPage - data");
 
     return {
       console: window.console,
@@ -55,51 +49,48 @@ export default defineComponent({
       barChart,
       inputMax: 10,
       inputMin: 0,
-      data: [] as number[],
-      count: Array.from({ length: 100 }, () => 0),
+      rollData: [] as number[],
+      chartData: [] as DataShape[],
+      autoTimerId: null as null | number,
     };
   },
   mounted() {
-    console.log("ConsolePage - mounted");
+    console.log("GraphPage - mounted");
 
     // this.console.log(this);
 
-    this.chart = new Chart(this.$refs["chart-canvas"] as ChartItem, {
+    this.chart = new Chart(this.$refs["chartCanvas"] as HTMLCanvasElement, {
       type: "bar",
       data: {
-        labels: Array.from({ length: 100 }, (_, i) => i),
+        // labels: ["a", "b", "c", "d", "e"],
         datasets: [
           {
-            label: "# of appearance",
-            data: [] as number[],
+            label: "randomness💥",
+            data: [
+              // { x: 3, y: 10 },
+              // { x: 1, y: 5 },
+              // { x: "5", y: 20 },
+              // { x: "3", y: 25 },
+            ],
+            // parsing: false,
+            // parsing: {
+            // xAxisKey: "x",
+            // yAxisKey: "y",
+            // },
           },
         ],
       },
       options: {
         maintainAspectRatio: false,
-        // aspectRatio: 1,
-        // scales: {
-        //   y: {
-        //     beginAtZero: true,
-        //   },
-        // },
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
       },
     });
   },
   methods: {
-    start() {
-      console.log("ConsolePage - start");
-      // console.log(this);
-
-      if (!this.chart) return;
-
-      const data = Array.from({ length: 100 }, () => this.getRandomInteger());
-      // console.log(data);
-      const count = Array.from({ length: 10 }, () => 0);
-      data.forEach((i) => count[i]++);
-      this.chart.data.datasets[0].data = count;
-      this.chart.update();
-    },
     getRandomInteger(min = 0, max = 9): number {
       min = Math.ceil(min);
       max = Math.floor(max);
@@ -107,54 +98,76 @@ export default defineComponent({
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
 
+    roll(t = 1): void {
+      for (let i = 0; i < t; i++) {
+        this.rollData.push(this.getRandomInteger());
+      }
+      this.updateChart();
+    },
+
     addData() {
-      const r = this.getRandomInteger(0, 99);
-      this.count[r]++;
-      this.data.push(r);
-      this.updateChart();
-    },
-    roll10() {
       if (!this.chart) return;
 
-      const arr = [];
-      for (let i = 0; i < 10; i++) {
-        const r = this.getRandomInteger(0, 99);
-        arr.push(r);
-        this.count[r]++;
-      }
-      this.data.push(...arr);
-      this.updateChart();
-    },
-    roll100() {
-      if (!this.chart) return;
+      const upperRange = 9;
+      const lowerRange = 0;
 
-      const arr = [];
-      for (let i = 0; i < 100; i++) {
-        const r = this.getRandomInteger(0, 99);
-        arr.push(r);
-        this.count[r]++;
+      this.chartData = [];
+      for (let index = 0; index <= upperRange; index++) {
+        this.chartData.push({ x: index.toString(), y: 0 });
       }
-      this.data.push(...arr);
-      this.updateChart();
-    },
-    clearData() {
-      this.data = [];
-      this.count = Array.from({ length: 100 }, () => 0);
-      this.updateChart();
-    },
-    updateChart() {
-      if (!this.chart) {
-        return;
+
+      const howManyTimes = 100;
+
+      for (let i = 0; i < howManyTimes; i++) {
+        const n = this.getRandomInteger(lowerRange, upperRange);
+        this.chartData.forEach((element) => {
+          if (element.x === n.toString()) {
+            element.y++;
+          }
+        });
       }
-      this.chart.data.datasets[0].data = this.count;
+
+      this.chart.data.datasets[0].data = this.chartData;
       this.chart.update();
     },
-    changeChartContainer() {
-      (this.$refs["chart-canvas-container"] as HTMLDivElement).style.width =
-        "50%";
+    updateChart() {
+      if (!this.chart) return;
+
+      const a = Array.from({ length: 10 }, (_, i) => ({
+        x: i.toString(),
+        y: 0,
+      }));
+      this.rollData.forEach((element) => {
+        a[element].y++;
+      });
+
+      this.chart.data.datasets[0].data = a;
+      this.chart.update();
+    },
+    clearData() {
+      this.rollData = [];
+      this.updateChart();
+    },
+
+    auto() {
+      if (null !== this.autoTimerId) {
+        clearInterval(this.autoTimerId);
+        this.autoTimerId = null;
+      }
+
+      this.autoTimerId = window.setInterval(() => {
+        this.roll(20);
+      }, 50);
+      console.log("interval id: " + this.autoTimerId);
+    },
+    stop() {
+      if (null !== this.autoTimerId) {
+        clearInterval(this.autoTimerId);
+        this.autoTimerId = null;
+      }
     },
     onSlide(e: IonRangeCustomEvent<RangeChangeEventDetail>) {
-      console.log(e.detail.value);
+      // console.log(e.detail.value);
       const v = e.detail.value as number;
 
       (
@@ -167,12 +180,13 @@ export default defineComponent({
 
 <template lang="pug">
 IonPage
-  IonHeader
-    IonToolbar
-      IonIcon.ion-margin-start(slot="start", :icon="barChart", size="large")
-      IonTitle(slot="start") graph
-      IonButtons.ion-margin-end(slot="end")
-        IonButton(@click="ionRouter.navigate('/home', 'root')") home
+  CommonToolbar(:icon="barChart", :title="'graph'")
+  //- IonHeader
+  //-   IonToolbar
+  //-     IonIcon.ion-margin-start(slot="start", :icon="barChart", size="large")
+  //-     IonTitle(slot="start") graph
+  //-     IonButtons.ion-margin-end(slot="end")
+  //-       IonButton(@click="ionRouter.navigate('/home', 'root')") home
 
   IonContent
     #content-container.ion-padding
@@ -181,56 +195,59 @@ IonPage
         ion-text count random number
       #chart-container.flex-container
         #chart-canvas-container(ref="chart-canvas-container")
-          canvas#chart-canvas(ref="chart-canvas")
+          canvas#chart-canvas(ref="chartCanvas")
       //- chart scale range slider container
       .flex-container.ion-justify-content-center
         IonRange(
-          style="flex: 0 1 40%",
+          style="flex: 0 1 60%",
           :value="100",
-          :min="50",
+          :min="100",
           :max="400",
+          :pin="true",
+          :pin-formatter="(v) => v + '%'",
           @ion-change="onSlide"
         )
-      ion-item
-        ion-label data number
-        p {{ data.length }}
-      IonItem.ion-margin-top
-        IonLabel(slot="start") min:
-        IonInput(
-          slot="start",
-          v-model="inputMin",
-          type="number",
-          :max="inputMax - 1"
-        ) 
-        IonLabel(slot="start") max:
-        IonInput(
-          slot="start",
-          v-model="inputMax",
-          type="number",
-          :min="inputMin + 1"
-        )
-        IonButton(
-          solt="end",
-          size="default",
-          color="secondary",
-          @click="console.log(getRandomInteger(inputMin, inputMax))"
-        ) gimme
-
-      IonButton(@click="start") start
-      IonButton(@click="addData") roll 1
-      ion-button(@click="roll10") roll 10
-      ion-button(@click="roll100") roll 100
-      ion-button(color="warning", @click="clearData") clear
-      br
-      ion-button(@click="changeChartContainer") change chart width
+      ion-list.ion-margin-bottom(lines="full")
+        ion-item
+          ion-label total
+          p {{ rollData.length }}
+        IonItem.ion-margin-top
+          IonLabel(slot="start") min:
+          IonInput(
+            slot="start",
+            v-model="inputMin",
+            type="number",
+            :max="inputMax - 1"
+          ) 
+          IonLabel(slot="start") max:
+          IonInput(
+            slot="start",
+            v-model="inputMax",
+            type="number",
+            :min="inputMin + 1"
+          )
+          IonButton(
+            solt="end",
+            size="default",
+            color="secondary",
+            @click="console.log(getRandomInteger(inputMin, inputMax))"
+          ) gimme
+      .flex-wrap.flex-container
+        IonButton(@click="roll()") roll 1
+        IonButton(@click="roll(10)") roll 10
+        IonButton(@click="roll(100)") roll 100
+        ion-button(color="success", @click="auto") auto
+        ion-button(color="warning", @click="stop") stop
+        ion-button(color="danger", @click="clearData") clear
 </template>
 
 <style scoped lang="sass">
 .flex-container
   display: flex
-
-.flex-column
+.flex-container.flex-column
   flex-direction: column
+.flex-container.flex-wrap
+  flex-wrap: wrap
 
 #content-container
   // background-color: lightblue
@@ -245,7 +262,7 @@ IonPage
     #chart-canvas-container
       position: relative
       width: 100%
-      height: 350px
+      height: 300px
       margin: auto
       flex: 0 0 auto
       // flex-grow: 1
