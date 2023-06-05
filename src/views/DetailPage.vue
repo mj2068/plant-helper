@@ -180,12 +180,9 @@
             <ion-icon slot="end" :icon="chevronForward"></ion-icon>
           </ion-item>
         </ion-list>
-
-        <div id="controls">
-          <!-- <ion-button color="danger" v-on:click="deletePlant">
-            删除
-            <ion-icon slot="start" :icon="trashSharp"></ion-icon>
-          </ion-button> -->
+        <div class="ion-padding">
+          <ion-label>历史温度</ion-label>
+          <LineChart :data="temperatureData" style="height: 220px"></LineChart>
         </div>
       </div>
 
@@ -245,6 +242,7 @@ import ImageModal from "@/components/ImageModal.vue";
 import ColorModal from "@/components/ColorModal.vue";
 import MoreMenuPopover from "@/components/MoreMenuPopover.vue";
 import { appDataKey, appConfigUtilsKey } from "@/injectionKeys";
+import LineChart from "@/components/LineChart.vue";
 
 const console = window.console;
 
@@ -257,6 +255,16 @@ const { getNormal } = useDateTime();
 
 const { id } = route.params as { id: string };
 console.log("DetailPage - <setup> id: " + id);
+
+const temperatureData = [
+  { x: "0529", y: -1 },
+  { x: "0601", y: 8 },
+  { x: "0602", y: 15 },
+  { x: "0606", y: 22 },
+  { x: "0608", y: 18 },
+  { x: "0609", y: 25 },
+  { x: "0613", y: 32 },
+];
 
 // inject到本组件App根组件provide好的config和相关管理config的函数
 // const { appData, deletePlantById, updateConfigFile } = inject("appData") as {
@@ -521,7 +529,7 @@ ion-content {
         // width: 100%;
         // height: 100%;
         display: block;
-        max-height: 300px;
+        max-height: 200px;
         object-fit: contain;
       }
 
@@ -597,17 +605,6 @@ ion-content {
     }
     ion-item#item-plant-color ion-button.button-plant-color ion-icon {
       font-size: 32px;
-    }
-  }
-
-  div[id="controls"] {
-    display: flex;
-    justify-content: space-between;
-    // background-color: moccasin;
-
-    ion-button[color="danger"] {
-      // 这里margin-left设为auto配合flex容器的space-between让该元素右对齐
-      margin-left: auto;
     }
   }
 

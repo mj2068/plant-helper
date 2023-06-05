@@ -58,7 +58,7 @@ ion-page
     ion-list(v-if="isDataLoaded", lines="full")
       ion-item(v-for="(value, key, index) in data?.lives[0]", :key="index")
         ion-label {{ key }}
-        ion-text(slot="end") {{ value }}
+        ion-label(slot="end") {{ value }}
     div(v-else, style="display: flex")
       ion-spinner 
   ion-footer

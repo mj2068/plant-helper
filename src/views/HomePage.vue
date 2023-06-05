@@ -52,8 +52,6 @@ onMounted(() => {
 
   updateImages();
 
-  presentToast("hello world");
-
   // 如有需要可接收到tippy的返回值，取得全权控制
   // const addButtonTippy =
   tippy(addButton.value as HTMLDivElement, {
@@ -71,6 +69,8 @@ onMounted(() => {
     plugins: [sticky],
   });
 });
+
+onIonViewDidEnter(() => presentToast("欢迎"));
 
 // 监视appData，其发生改变后
 // 此处的第一个实参是个函数，是有讲究的。原因参考vue文档
@@ -158,7 +158,7 @@ async function presentToast(
 ) {
   const toast = await toastController.create({
     message: message,
-    duration: 1500,
+    duration: 500,
     position: position,
     icon: sunny,
     cssClass: "toast-flex-justify-content",

@@ -153,12 +153,12 @@ export default defineComponent({
 
 <template lang="pug">
 IonPage
-  CommonToolbar(:icon="barChart", :title="'图表'")
+  CommonToolbar(:title="'图表'")
   IonContent
     #content-container.ion-padding
       //- title
       .flex-container
-        ion-text 随机数
+        ion-label 随机数
       #chart-container.flex-container
         #chart-canvas-container(ref="chart-canvas-container")
           canvas#chart-canvas(ref="chartCanvas")
