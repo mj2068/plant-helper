@@ -3,12 +3,9 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button></ion-back-button>
+          <ion-back-button :default-href="'/home'"></ion-back-button>
         </ion-buttons>
         <ion-buttons slot="primary">
-          <ion-button @click="ionRouter.navigate('/home', 'root')">
-            首页
-          </ion-button>
           <ion-button id="more-menu-button">
             <ion-icon slot="icon-only" :icon="ellipsisVertical"></ion-icon>
             <ion-popover
@@ -21,7 +18,6 @@
               <MoreMenuPopover></MoreMenuPopover>
             </ion-popover>
           </ion-button>
-          <ion-button @click="test">TEST</ion-button>
         </ion-buttons>
         <ion-title>{{ plant?.plantName }}</ion-title>
       </ion-toolbar>
@@ -506,10 +502,6 @@ function onMoreMenuDeleteWillDismiss(
   if ("delete" === event.detail.role) {
     deletePlant();
   }
-}
-
-function test() {
-  console.log("DetailPage - test");
 }
 </script>
 

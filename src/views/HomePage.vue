@@ -72,14 +72,6 @@ onMounted(() => {
   });
 });
 
-onUnmounted(() => {
-  console.log("HomePage - onUnmounted");
-});
-
-onIonViewDidEnter(() => {
-  console.log("HomePage - onIonViewDidEnter");
-});
-
 // 监视appData，其发生改变后
 // 此处的第一个实参是个函数，是有讲究的。原因参考vue文档
 watch(
@@ -193,7 +185,7 @@ function cardDetail(id: number) {
         ></ion-icon>
         <ion-title>养花小助手</ion-title>
         <ion-buttons slot="end">
-          <ion-button @click="ionRouter.navigate('home', 'root')"
+          <ion-button @click="ionRouter.navigate('/home', 'root')"
             >refresh</ion-button
           >
         </ion-buttons>
@@ -432,7 +424,6 @@ ion-header ion-toolbar ion-icon {
   left: 15px;
   transform: rotate(5deg);
   animation: sway 6s ease-in-out forwards infinite;
-  animation-delay: 5s;
   transform-origin: 50% 0;
 }
 

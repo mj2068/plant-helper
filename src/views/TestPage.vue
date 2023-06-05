@@ -15,6 +15,7 @@ import {
   IonNote,
   IonSpinner,
   useIonRouter,
+  IonBackButton,
 } from "@ionic/vue";
 import { inject, ref, onMounted } from "vue";
 import { appDataKey } from "@/injectionKeys";
@@ -48,10 +49,10 @@ onMounted(() => {
 ion-page
   ion-header
     ion-toolbar
+      IonBackButton(slot="start", :default-href="'/home'")
       ion-title(slot="start") 测试页
       ion-buttons(slot="end")
-        ion-button(@click="console.log(data)") test
-        ion-button(@click="ionRouter.navigate('/home', 'root')") 首页
+        ion-button(@click="console.log(data)") log data
 
   ion-content.ion-padding
     ion-list(v-if="isDataLoaded", lines="full")

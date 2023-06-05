@@ -1,6 +1,7 @@
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { Capacitor } from "@capacitor/core";
 import { Directory, Filesystem } from "@capacitor/filesystem";
+import { isPlatform } from "@ionic/core";
 
 export function usePhotoManger() {
   const getPhoto = () => {
@@ -23,12 +24,21 @@ export function usePhotoManger() {
   };
 
   const getSrcFromPath = (path: string, dir: Directory) => {
-    return Filesystem.getUri({
-      path: path,
-      directory: dir,
-    })
-      .then((result) => Capacitor.convertFileSrc(result.uri))
-      .catch((error) => console.error(error));
+    if (isPlatform("hybrid")) {
+      return Filesystem.getUri({
+        path: path,
+        directory: dir,
+      })
+        .then((result) => Capacitor.convertFileSrc(result.uri))
+        .catch((error) => console.error(error));
+    } else {
+      return Filesystem.readFile({
+        path: path,
+        directory: dir,
+      })
+        .then((result) => "data:image/jpeg;base64," + result.data)
+        .catch((error) => console.error(error));
+    }
   };
 
   return { getPhoto, getSrcFromPath, savePhoto };
