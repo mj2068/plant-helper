@@ -10,6 +10,7 @@ export default {
   },
   data() {
     return {
+      console,
       terminal,
     };
   },
@@ -18,5 +19,8 @@ export default {
 
 <template lang="pug">
 IonPage
-  CommonToolbar(title="console")
+  CommonToolbar(
+    title="console",
+    :buttons="[{ name: 'test', fn: () => console.log('现在是Console页面') }]"
+  )
 </template>
