@@ -243,9 +243,9 @@ function cardDetail(id: number) {
             position: relative;
             display: flex;
             justify-content: center;
-            width: 90%;
-            height: 200px;
-            margin: 22px 5% 60px;
+            width: 85%;
+            height: 220px;
+            margin: 22px 7.5% 60px;
           "
         >
           <LineChart
@@ -259,7 +259,7 @@ function cardDetail(id: number) {
               { x: '六', y: 33 },
               { x: '日', y: 31 },
             ]"
-            :options="{ zooming: false, roundBorder: true }"
+            :options="{ title: '温度', zooming: false, roundBorder: false }"
           ></LineChart>
         </div>
         <div id="plants-container" class="ion-padding-start ion-padding-end">

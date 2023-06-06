@@ -14,6 +14,7 @@ interface Props {
   options?: {
     // 当前的简化设计关闭了图例（legend）的显示，图例不显示label是图例的子组件，也不显示。
     // label?: string;
+    title?: string;
     zooming?: boolean;
     roundBorder?: boolean;
   };
@@ -98,6 +99,10 @@ defineExpose({
 .flex-container.flex-column.ion-padding(
   :class="{ 'round-border': options.roundBorder }"
 )
+  #title-container.flex-container.ion-justify-content-center(
+    v-if="options.title"
+  )
+    IonText {{ options.title }}
   #scrollable-container
     #canvas-container(ref="canvasContainer")
       canvas(ref="chartCanvas")
