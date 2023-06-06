@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted, onUnmounted, inject, watch } from "vue";
+import { reactive, ref, onMounted, inject, watch } from "vue";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
   IonPage,

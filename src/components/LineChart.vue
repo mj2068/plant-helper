@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import Chart from "chart.js/auto";
 import { onMounted, ref } from "vue";
+import { IonRange } from "@ionic/vue";
+import Chart from "chart.js/auto";
 
 // 传入的单条数据
 interface DataShape {
@@ -28,6 +29,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const chartCanvas = ref<HTMLCanvasElement | null>(null);
+
+const canvasContainer = ref<HTMLDivElement | null>(null);
 
 let chart: Chart<"line", { x: string; y: number }[]> | null = null;
 
@@ -64,15 +67,43 @@ onMounted(() => {
     },
   });
 });
+
+const updateChart = (data: DataShape[]) => {
+  if (!chart) return;
+
+  chart.data.datasets[0].data = data;
+  chart.update();
+};
+
+const onRangeChange = (e: CustomEvent) => {
+  if (!canvasContainer.value) return;
+
+  canvasContainer.value.style.width = `${e.detail.value}%`;
+};
+
+defineExpose({
+  updateChart,
+});
 </script>
 
 <template lang="pug">
-#canvas-container(ref="canvasContainer")
-  canvas(ref="chartCanvas")
+.flex-container.flex-column
+  #scrollable-container
+    #canvas-container(ref="canvasContainer")
+      canvas(ref="chartCanvas")
+  #range-container(v-if="options.zooming")
+    IonRange(:value="100", :min="100", :max="400", @ion-change="onRangeChange")
+      //- IonText(slot="start") 100%
+      //- IonText(slot="end") 400%
 </template>
 
-<style lang="scss">
-#canvas-container {
-  background-color: rgba(175, 197, 204, 0.13);
+<style scoped lang="scss">
+#scrollable-container {
+  overflow: scroll;
+  flex: auto;
+  #canvas-container {
+    position: relative;
+    height: 100%;
+  }
 }
 </style>

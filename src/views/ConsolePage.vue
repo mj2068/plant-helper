@@ -26,6 +26,19 @@ export default {
       ],
     };
   },
+  methods: {
+    updateChart() {
+      (this.$refs.chart1 as InstanceType<typeof LineChart>).updateChart([
+        { x: "1", y: Math.random() * 40 - 5 },
+        { x: "2", y: Math.random() * 40 - 5 },
+        { x: "3", y: Math.random() * 40 - 5 },
+        { x: "4", y: Math.random() * 40 - 5 },
+        { x: "5", y: Math.random() * 40 - 5 },
+        { x: "6", y: Math.random() * 40 - 5 },
+        { x: "7", y: Math.random() * 40 - 5 },
+      ]);
+    },
+  },
 };
 </script>
 
@@ -36,5 +49,26 @@ IonPage
     :buttons="[{ name: 'test', fn: () => console.log('这里是Console页面') }]"
   )
   IonContent.ion-padding(style="background-color: pink")
-    LineChart(:data="data", style="width: 300px; height: 300px")
+    .flex-container.ion-justify-content-center
+      LineChart.line-chart(
+        ref="chart1",
+        :data="data",
+        :options="{ zooming: false }"
+      )
+    IonButton(@click="updateChart") update
 </template>
+
+<style scoped lang="scss">
+@import "@/theme/utils.scss";
+
+.flex-container {
+  height: 300px;
+  // background-color: pink;
+
+  .line-chart {
+    // flex: 1 0 auto;
+    width: 100%;
+    height: 100%;
+  }
+}
+</style>

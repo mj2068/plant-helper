@@ -25,10 +25,6 @@ export default defineComponent({
     },
   },
 
-  setup(a, b) {
-    console.log(a, b);
-  },
-
   data() {
     return {
       button: ref<Element | null>(null),

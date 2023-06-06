@@ -7,7 +7,6 @@ import {
   IonItem,
   IonLabel,
   useIonRouter,
-  IonText,
   IonRange,
 } from "@ionic/vue";
 import { barChart } from "ionicons/icons";
@@ -27,7 +26,6 @@ export default defineComponent({
     IonButton,
     IonItem,
     IonLabel,
-    IonText,
     IonRange,
     CommonToolbar,
   },
@@ -141,7 +139,7 @@ export default defineComponent({
     },
     onSlide(e: IonRangeCustomEvent<RangeChangeEventDetail>) {
       // console.log(e.detail.value);
-      const v = e.detail.value as number;
+      const v = e.detail.value;
 
       (
         this.$refs["chart-canvas-container"] as HTMLDivElement
