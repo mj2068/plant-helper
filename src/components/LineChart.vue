@@ -12,8 +12,10 @@ interface DataShape {
 interface Props {
   data: DataShape[];
   options?: {
-    label?: string;
+    // 当前的简化设计关闭了图例（legend）的显示，图例不显示label是图例的子组件，也不显示。
+    // label?: string;
     zooming?: boolean;
+    roundBorder?: boolean;
   };
 }
 
@@ -25,6 +27,7 @@ console.log("BarChart - <setup>");
 const props = withDefaults(defineProps<Props>(), {
   options: () => ({
     zooming: false,
+    roundBorder: false,
   }),
 });
 
@@ -44,7 +47,7 @@ onMounted(() => {
     data: {
       datasets: [
         {
-          label: props.options.label || "",
+          label: "",
           data: props.data,
           tension: 0.3,
         },
@@ -63,8 +66,13 @@ onMounted(() => {
         legend: {
           display: false,
         },
+        colors: {
+          enabled: true,
+          // enabled: false,
+        },
       },
     },
+    plugins: [],
   });
 });
 
@@ -87,7 +95,9 @@ defineExpose({
 </script>
 
 <template lang="pug">
-.flex-container.flex-column
+.flex-container.flex-column.ion-padding(
+  :class="{ 'round-border': options.roundBorder }"
+)
   #scrollable-container
     #canvas-container(ref="canvasContainer")
       canvas(ref="chartCanvas")
@@ -98,12 +108,20 @@ defineExpose({
 </template>
 
 <style scoped lang="scss">
-#scrollable-container {
-  overflow: scroll;
-  flex: auto;
-  #canvas-container {
-    position: relative;
-    height: 100%;
+@import "@/theme/utils.scss";
+.flex-container.flex-column {
+  &.round-border {
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
+      rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+  }
+  #scrollable-container {
+    overflow: scroll;
+    flex: auto;
+    #canvas-container {
+      position: relative;
+      height: 100%;
+    }
   }
 }
 </style>

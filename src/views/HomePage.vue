@@ -220,7 +220,7 @@ function cardDetail(id: number) {
       </div>
 
       <div id="content-container">
-        <div id="decor-container" class="">
+        <div id="decor-container">
           <div class="left">
             <img
               class="left"
@@ -236,6 +236,31 @@ function cardDetail(id: number) {
           <div class="right">
             <img class="right" src="@/../resources/group-decor2.png" alt="" />
           </div>
+        </div>
+        <div
+          id="temperature-chart"
+          style="
+            position: relative;
+            display: flex;
+            justify-content: center;
+            width: 90%;
+            height: 200px;
+            margin: 22px 5% 60px;
+          "
+        >
+          <LineChart
+            style="width: 100%; height: 100%; background-color: #fffa"
+            :data="[
+              { x: '一', y: 16 },
+              { x: '二', y: 18 },
+              { x: '三', y: 19 },
+              { x: '四', y: 24 },
+              { x: '五', y: 27 },
+              { x: '六', y: 33 },
+              { x: '日', y: 31 },
+            ]"
+            :options="{ zooming: false, roundBorder: true }"
+          ></LineChart>
         </div>
         <div id="plants-container" class="ion-padding-start ion-padding-end">
           <div class="control ion-margin-bottom">
@@ -341,7 +366,7 @@ div#debug-control-container {
 
   /* background-color: red; */
 
-  z-index: 1;
+  z-index: 5;
 
   /* display: none; */
 }
@@ -388,6 +413,8 @@ ion-header ion-toolbar ion-icon {
   width: 100%;
   height: 100px;
   /* overflow: hidden; */
+
+  z-index: 1;
 }
 
 @keyframes sway {

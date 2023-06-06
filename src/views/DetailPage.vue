@@ -588,7 +588,7 @@ ion-content {
       }
 
       ion-text.content-column {
-        width: 80%;
+        width: 70%;
       }
 
       ion-text#plant-desc {

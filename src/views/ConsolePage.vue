@@ -53,7 +53,7 @@ IonPage
       LineChart.line-chart(
         ref="chart1",
         :data="data",
-        :options="{ zooming: false }"
+        :options="{ zooming: true }"
       )
     IonButton(@click="updateChart") update
 </template>
@@ -62,12 +62,12 @@ IonPage
 @import "@/theme/utils.scss";
 
 .flex-container {
-  height: 300px;
+  height: 250px;
   // background-color: pink;
 
   .line-chart {
     // flex: 1 0 auto;
-    width: 100%;
+    width: 80%;
     height: 100%;
   }
 }
