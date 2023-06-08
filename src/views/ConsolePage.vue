@@ -26,6 +26,9 @@ export default {
       ],
     };
   },
+  mounted() {
+    console.log("ConsolePage - mounted");
+  },
   methods: {
     updateChart() {
       (this.$refs.chart1 as InstanceType<typeof LineChart>).updateChart([

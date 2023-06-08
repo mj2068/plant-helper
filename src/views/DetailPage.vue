@@ -180,9 +180,58 @@
             <ion-icon slot="end" :icon="chevronForward"></ion-icon>
           </ion-item>
         </ion-list>
-        <div class="ion-padding">
-          <ion-label>历史温度</ion-label>
-          <LineChart :data="temperatureData" style="height: 220px"></LineChart>
+
+        <!-- 传感器内容 -->
+        <div id="hardware-content-container" class="ion-margin-top">
+          <div v-if="isBoundSensor" class="charts-container">
+            <div
+              class="humidity chart-container ion-padding ion-justify-content-center"
+            >
+              <LineChart
+                class="humidity line-chart"
+                :options="{
+                  title: '土壤湿度记录',
+                  lineColor: 'skyblue',
+                }"
+                :data="soilHumidityData"
+              ></LineChart>
+            </div>
+            <div
+              class="fertility chart-container ion-padding ion-justify-content-center"
+            >
+              <LineChart
+                class="fertility line-chart"
+                :options="{
+                  title: '土壤肥力记录',
+                  lineColor: 'orange',
+                }"
+                :data="soilFertilityData"
+              ></LineChart>
+            </div>
+            <div style="display: flex" class="ion-justify-content-center">
+              <ion-text color="medium"
+                ><i>已绑定IoT硬件(id: 0x0000)</i></ion-text
+              >
+            </div>
+          </div>
+          <ion-button
+            v-if="isBoundSensor"
+            expand="block"
+            color="danger"
+            @click="isBoundSensor = !isBoundSensor"
+          >
+            <ion-icon :icon="trash" class="ion-margin-end"></ion-icon>
+            解除绑定
+          </ion-button>
+          <ion-button
+            v-else
+            expand="block"
+            color="success"
+            @click="isBoundSensor = !isBoundSensor"
+          >
+            <ion-icon :icon="hardwareChip" class="ion-margin-end"></ion-icon>
+            绑定硬件
+          </ion-button>
         </div>
       </div>
 
@@ -227,6 +276,8 @@ import {
   addCircleOutline,
   ellipse,
   ban,
+  hardwareChip,
+  trash,
 } from "ionicons/icons";
 import { onMounted, ref, inject, computed } from "vue";
 import { Capacitor } from "@capacitor/core";
@@ -256,14 +307,24 @@ const { getNormal } = useDateTime();
 const { id } = route.params as { id: string };
 console.log("DetailPage - <setup> id: " + id);
 
-const temperatureData = [
-  { x: "0529", y: -1 },
-  { x: "0601", y: 8 },
-  { x: "0602", y: 15 },
-  { x: "0606", y: 22 },
-  { x: "0608", y: 18 },
-  { x: "0609", y: 25 },
-  { x: "0613", y: 32 },
+const soilFertilityData = [
+  { x: "0529", y: 19 },
+  { x: "0601", y: 22 },
+  { x: "0602", y: 23 },
+  { x: "0606", y: 25 },
+  { x: "0608", y: 25 },
+  { x: "0609", y: 24 },
+  { x: "0613", y: 26 },
+];
+
+const soilHumidityData = [
+  { x: "0529", y: 0.8 },
+  { x: "0601", y: 0.87 },
+  { x: "0602", y: 0.78 },
+  { x: "0606", y: 0.98 },
+  { x: "0608", y: 0.96 },
+  { x: "0609", y: 0.99 },
+  { x: "0613", y: 0.97 },
 ];
 
 // inject到本组件App根组件provide好的config和相关管理config的函数
@@ -284,6 +345,9 @@ const { getPhoto, getSrcFromPath, savePhoto } = usePhotoManger();
 
 // 用于img的src
 const plantImageDataUrl = ref("");
+
+// 是否绑定突然传感器
+const isBoundSensor = ref(true);
 
 // url会带着id param，此computed会根据这个id去config数组里找相应id的plant，无则null
 const plant = computed(() => {
@@ -608,6 +672,28 @@ ion-content {
     }
   }
 
+  #hardware-content-container {
+    .charts-container .chart-container {
+      display: flex;
+
+      .line-chart {
+        width: 90%;
+        height: 200px;
+        padding: 8px 16px;
+        border-radius: 4px;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
+          rgba(0, 0, 0, 0.14) 0px 2px 2px 0px,
+          rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+        &.humidity {
+          background: rgb(230, 248, 252);
+        }
+        &.fertility {
+          background: rgb(248, 248, 240);
+        }
+      }
+    }
+  }
+
   #plant-null-container {
     display: flex;
     justify-content: center;
@@ -615,6 +701,7 @@ ion-content {
 }
 </style>
 
+<!-- 植物名称和植物描述两个弹出model的全局style -->
 <style lang="scss">
 :root {
   ion-modal#edit-plant-name-modal {

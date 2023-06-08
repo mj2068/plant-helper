@@ -15,8 +15,8 @@ interface Props {
     // 当前的简化设计关闭了图例（legend）的显示，图例不显示label是图例的子组件，也不显示。
     // label?: string;
     title?: string;
+    lineColor?: string;
     zooming?: boolean;
-    roundBorder?: boolean;
   };
 }
 
@@ -28,7 +28,6 @@ console.log("BarChart - <setup>");
 const props = withDefaults(defineProps<Props>(), {
   options: () => ({
     zooming: false,
-    roundBorder: false,
   }),
 });
 
@@ -48,8 +47,11 @@ onMounted(() => {
     data: {
       datasets: [
         {
+          // provided
           label: "",
           data: props.data,
+          borderColor: props.options.lineColor,
+          // fixed
           tension: 0.3,
         },
       ],
@@ -59,8 +61,8 @@ onMounted(() => {
       scales: {
         y: {
           // beginAtZero: true,
-          suggestedMin: 10,
-          suggestedMax: 30,
+          // suggestedMin: 10,
+          // suggestedMax: 30,
         },
       },
       plugins: {
@@ -96,9 +98,7 @@ defineExpose({
 </script>
 
 <template lang="pug">
-.flex-container.flex-column.ion-padding(
-  :class="{ 'round-border': options.roundBorder }"
-)
+.flex-container.flex-column
   #title-container.flex-container.ion-justify-content-center(
     v-if="options.title"
   )
@@ -115,11 +115,6 @@ defineExpose({
 <style scoped lang="scss">
 @import "@/theme/utils.scss";
 .flex-container.flex-column {
-  &.round-border {
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
-      rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
-  }
   #scrollable-container {
     overflow: scroll;
     flex: auto;

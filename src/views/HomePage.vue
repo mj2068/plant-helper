@@ -45,7 +45,7 @@ const appData = inject(appDataKey) as { appConf: AppConf };
 
 const addButton = ref<HTMLDivElement | null>(null);
 
-const isShowDebugDiv = ref(true);
+const isShowDebugDiv = ref(false);
 
 onMounted(() => {
   console.log("HomePage - onMounted");
@@ -158,7 +158,7 @@ async function presentToast(
 ) {
   const toast = await toastController.create({
     message: message,
-    duration: 500,
+    duration: 1000,
     position: position,
     icon: sunny,
     cssClass: "toast-flex-justify-content",
@@ -238,28 +238,21 @@ function cardDetail(id: number) {
           </div>
         </div>
         <div
-          id="temperature-chart"
-          style="
-            position: relative;
-            display: flex;
-            justify-content: center;
-            width: 85%;
-            height: 220px;
-            margin: 22px 7.5% 60px;
-          "
+          id="temperature-chart-container"
+          class="ion-justify-content-center ion-padding-start ion-padding-end"
         >
           <LineChart
-            style="width: 100%; height: 100%; background-color: #fffa"
+            id="temperature-chart"
             :data="[
+              { x: '日', y: 20 },
               { x: '一', y: 16 },
               { x: '二', y: 18 },
-              { x: '三', y: 19 },
-              { x: '四', y: 24 },
-              { x: '五', y: 27 },
-              { x: '六', y: 33 },
-              { x: '日', y: 31 },
+              { x: '三', y: 23 },
+              { x: '四', y: 27 },
+              { x: '五', y: 28 },
+              { x: '六', y: 31 },
             ]"
-            :options="{ title: '温度', zooming: false, roundBorder: false }"
+            :options="{ title: '温度回溯' }"
           ></LineChart>
         </div>
         <div id="plants-container" class="ion-padding-start ion-padding-end">
@@ -319,14 +312,13 @@ function cardDetail(id: number) {
   </ion-page>
 </template>
 
-<style lang="scss">
+<style lang="sass">
 // 试图居中toast内容，但是由于toast是shadow dom，且没有expose关键的那个container
-// ion-toast.toast-flex-justify-content {
-//   color: red;
-//   &::part(container) {
-//     justify-content: center;
-//   }
-// }
+// ion-toast.toast-flex-justify-content
+//   color: red
+//   &::part(container)
+//     // justify-content: center
+//   &::part(message)
 </style>
 
 <style scoped>
@@ -359,16 +351,11 @@ div#debug-control-container {
   display: flex;
   flex-direction: column;
   align-items: end;
-
-  right: 0;
-  opacity: 0.6;
+  right: 8px;
+  opacity: 0.7;
   text-align: right;
 
-  /* background-color: red; */
-
   z-index: 5;
-
-  /* display: none; */
 }
 
 div#debug-control-container div.controls-container {
@@ -457,10 +444,10 @@ ion-header ion-toolbar ion-icon {
 #content-container #decor-container div.right {
   position: absolute;
   right: -16px;
-  width: 38%;
-  height: 105%;
-  margin-top: 12px;
-  box-shadow: 0px 12px 24px -24px #7a5122;
+  width: 100%;
+  height: 125%;
+  /* margin-top: 12px; */
+  /* box-shadow: 0px 12px 24px -24px #7a5122; */
 }
 
 #content-container #decor-container div.right img.right {
@@ -468,14 +455,31 @@ ion-header ion-toolbar ion-icon {
   height: 100%;
   right: 48px;
   position: absolute;
-  top: 0;
+  top: 10px;
   opacity: 0.8;
   object-fit: contain;
 }
 
-#plants-container {
-  --ion-padding: 32px;
+#temperature-chart-container {
   position: relative;
+  display: flex;
+  margin: 24px auto 24px;
+  --ion-padding: 32px;
+}
+
+#temperature-chart-container #temperature-chart {
+  max-width: 450px;
+  height: 200px;
+  padding: 8px 16px 8px;
+  background-color: #fffa;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
+    rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+}
+
+#plants-container {
+  position: relative;
+  --ion-padding: 32px;
 }
 
 #plants-container .control {
