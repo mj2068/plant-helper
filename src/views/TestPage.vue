@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Directory, Filesystem } from "@capacitor/filesystem";
 import {
   IonPage,
   IonHeader,
@@ -11,22 +12,14 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonText,
-  IonNote,
   IonSpinner,
-  useIonRouter,
   IonBackButton,
 } from "@ionic/vue";
-import { inject, ref, onMounted } from "vue";
-import { appDataKey } from "@/injectionKeys";
+import { ref, onMounted } from "vue";
 
 const console = window.console;
 
 console.log("TestPage - setup");
-
-const ionRouter = useIonRouter();
-
-const appData = inject(appDataKey);
 
 const data = ref();
 const isDataLoaded = ref(false);
@@ -43,6 +36,12 @@ onMounted(() => {
     })
     .catch((err) => console.error(err));
 });
+
+function deleteFile() {
+  Filesystem.stat({
+    path: "",
+  }).then((r) => console.log(r));
+}
 </script>
 
 <template lang="pug">
@@ -61,10 +60,12 @@ ion-page
         ion-label(slot="end") {{ value }}
     div(v-else, style="display: flex")
       ion-spinner 
+    IonButton(@click="deleteFile()")
+
   ion-footer
     ion-toolbar
       .ion-justify-content-center
-        h4 zizaimai
+        h6 zizaimai
 </template>
 
 <style scoped lang="sass">
