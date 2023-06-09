@@ -136,6 +136,7 @@ export default defineComponent({
 
   data() {
     return {
+      console,
       star,
       addCircle,
       trashSharp,
@@ -246,7 +247,7 @@ export default defineComponent({
 <style scoped lang="scss">
 #content-container {
   // background-color: lightblue;
-  height: 100%;
+  min-height: 100%;
   position: relative;
 
   &::before {
@@ -333,18 +334,19 @@ export default defineComponent({
 
   #bottom-decor-container {
     position: absolute;
+    top: 450px;
     width: 100%;
     height: 120px;
-    top: 400px;
-    // background-color: #8883;
+
+    // background-color: #0808;
     z-index: 0;
 
     img.left {
+      display: block;
       height: 100%;
-      position: absolute;
-      left: 2%;
-      opacity: 0.8;
-      object-fit: contain;
+      position: relative;
+      left: 3%;
+      opacity: 0.7;
     }
   }
 }

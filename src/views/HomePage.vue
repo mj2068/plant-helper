@@ -468,8 +468,9 @@ ion-header ion-toolbar ion-icon {
 }
 
 #temperature-chart-container #temperature-chart {
+  width: 100%;
   max-width: 450px;
-  height: 200px;
+  max-height: 200px;
   padding: 8px 16px 8px;
   background-color: #fffa;
   border-radius: 4px;
@@ -568,13 +569,17 @@ ion-header ion-toolbar ion-icon {
 }
 
 #footer-container {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
   position: absolute;
   bottom: 0;
-  height: 50px;
   width: 100%;
+  /* height: 25px; */
   background-color: antiquewhite;
   margin-top: 40px;
   opacity: 0.6;
-  display: flex;
+  --ion-padding: 6px;
 }
 </style>

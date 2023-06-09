@@ -103,7 +103,9 @@ defineExpose({
     v-if="options.title"
   )
     IonText {{ options.title }}
-  #scrollable-container
+  #scrollable-container(
+    :style="{ overflowX: props.options.zooming ? 'scroll' : 'auto' }"
+  )
     #canvas-container(ref="canvasContainer")
       canvas(ref="chartCanvas")
   #range-container(v-if="options.zooming")
@@ -116,7 +118,7 @@ defineExpose({
 @import "@/theme/utils.scss";
 .flex-container.flex-column {
   #scrollable-container {
-    overflow: scroll;
+    overflow: auto;
     flex: auto;
     #canvas-container {
       position: relative;
