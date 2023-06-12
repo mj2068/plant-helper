@@ -60,10 +60,10 @@ export default defineComponent({
       console.log("App - deletePlantById");
       console.log(id);
 
-      // 用findIndex方法找到需要删除的元素
+      // 用find找到需要删除的元素
       const plantToDelete = appData.appConf.plantList.find((p, index) => {
         if (p.plantId === id) {
-          console.log("found the plant to delete, splicing it, and it's: ");
+          console.log("found the plant to delete, splicing, and it's: ");
           console.log(p);
           appData.appConf.plantList.splice(index, 1);
           return true;
@@ -71,7 +71,7 @@ export default defineComponent({
           return false;
         }
       });
-      // 因为在不能异步，所以删除操作需要独立出来
+      // 因为find里面在不能异步，所以删除图片文件操作需要独立出来
       if (plantToDelete) {
         if (plantToDelete.plantImageFilename) {
           Filesystem.deleteFile({
@@ -79,6 +79,8 @@ export default defineComponent({
             directory: Directory.Data,
           }).catch((e) => console.error(e));
         } else console.log("no image file");
+        // 更新配置文件
+        updateConfigFile();
       } else {
         console.log("didn't find the plant to delete, id: " + plantToDelete);
       }

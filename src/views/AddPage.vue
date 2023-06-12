@@ -52,8 +52,8 @@
               <ion-label>植物名称</ion-label>
               <ion-input
                 id="plant-name"
-                placeholder="请输入植物名称"
                 v-model="plantName"
+                placeholder="请输入植物名称"
               ></ion-input>
             </ion-item>
             <ion-item>
