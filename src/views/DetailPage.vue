@@ -341,7 +341,7 @@ const appData = inject(appDataKey) as { appConf: AppConf };
 const { deletePlantById, updateConfigFile } = inject(appConfigUtilsKey)!;
 
 const { presentConfirmCancelAlert } = useIonAlert();
-const { getPhoto, getSrcFromPath, savePhoto } = usePhotoManger();
+const { getPhoto, getSrcFromPath, savePhoto, deletePhoto } = usePhotoManger();
 
 // 用于img的src
 const plantImageDataUrl = ref("");
@@ -399,6 +399,7 @@ function deletePlant() {
   });
 }
 
+// 图像右下角小垃圾桶按钮函数
 function deleteImage() {
   console.log("AddPage - deleteImage");
   presentConfirmCancelAlert({
@@ -409,6 +410,8 @@ function deleteImage() {
     if ("confirm" === result.role) {
       plantImageDataUrl.value = "";
       if (plant.value) {
+        // 删除图片文件并更新配置文件
+        deletePhoto(plant.value.plantImageFilename);
         plant.value.plantImageFilename = "";
         updateConfigFile();
       }
@@ -423,9 +426,9 @@ function addImage() {
   getPhoto()
     // 处理选取图片结果，并将其保存成文件，返回保存结果
     .then((photoResult) => {
-      if (photoResult.dataUrl) {
+      if (photoResult.base64String) {
         const filename = getDateTime().dateTime + ".jpeg";
-        savePhoto(filename, photoResult.dataUrl).then((uriResult) => {
+        savePhoto(filename, photoResult.base64String).then((uriResult) => {
           if (plant.value) {
             // 保存完将返回的文件名存到plant里，并更新配置json
             plant.value.plantImageFilename = filename;
