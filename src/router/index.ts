@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "@ionic/vue-router";
 import AddPage from "../views/AddPage.vue";
 import HomePage from "../views/HomePage.vue";
 import DetailPage from "@/views/DetailPage.vue";
+import ClassifyPage from "@/views/ClassifyPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -39,6 +40,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/console",
     name: "Console",
     component: () => import("@/views/ConsolePage.vue"),
+  },
+  {
+    path: "/classify",
+    name: "Classify",
+    component: ClassifyPage,
   },
 ];
 

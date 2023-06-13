@@ -216,6 +216,9 @@ function cardDetail(id: number) {
           <ion-button color="warning" @click.stop="ionRouter.push('/graph')">
             graph
           </ion-button>
+          <ion-button color="warning" @click.stop="ionRouter.push('/classify')">
+            classify
+          </ion-button>
         </div>
       </div>
 
