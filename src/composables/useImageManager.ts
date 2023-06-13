@@ -6,7 +6,7 @@ import { isPlatform } from "@ionic/core";
 export function usePhotoManger() {
   const getPhoto = () => {
     return Camera.getPhoto({
-      resultType: CameraResultType.DataUrl,
+      resultType: CameraResultType.Base64,
       quality: 100,
       promptLabelHeader: "图片来源",
       promptLabelPhoto: "相册",
@@ -18,6 +18,13 @@ export function usePhotoManger() {
   const savePhoto = (filename: string, dataUrl: string) => {
     return Filesystem.writeFile({
       data: dataUrl,
+      path: "images/" + filename,
+      directory: Directory.Data,
+    });
+  };
+
+  const deletePhoto = (filename: string) => {
+    return Filesystem.deleteFile({
       path: "images/" + filename,
       directory: Directory.Data,
     });
@@ -41,5 +48,5 @@ export function usePhotoManger() {
     }
   };
 
-  return { getPhoto, getSrcFromPath, savePhoto };
+  return { getPhoto, getSrcFromPath, savePhoto, deletePhoto };
 }
