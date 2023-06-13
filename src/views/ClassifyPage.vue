@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CommonToolbar from "@/components/CommonToolbar.vue";
-import { IonContent, IonPage, IonSpinner } from "@ionic/vue";
+import { IonButton, IonContent, IonPage, IonSpinner } from "@ionic/vue";
 import { onMounted, ref } from "vue";
 
 const console = window.console;
@@ -8,20 +8,22 @@ const console = window.console;
 console.log("ClassifyPage - setup");
 
 // 202306121754
-let bdAT =
-  "24.c70b1aa77f5bdc64daa23b902a4a6872.2592000.1689148955.282335-34583509";
-const bdPlantUrl = "https://aip.baidubce.com/rest/2.0/image-classify/v1/plant";
+let baiduAPIAccessToken = "";
+const plantClassifyUrl =
+  "https://aip.baidubce.com/rest/2.0/image-classify/v1/plant";
 
 const imageUrl = ref(
   "https://img.pconline.com.cn/images/upload/upc/tx/photoblog/1510/19/c4/14135050_14135050_1445220434828.jpg"
 );
 
-const plantName = ref("-");
+const plantName = ref("");
 
-const isClassifying = ref(false);
+const isBusy = ref(false);
 
 onMounted(() => {
   console.log("ClassifyPage - onMounted");
+
+  updateAccessToken();
 });
 
 function convertToBase64(url: string) {
@@ -48,17 +50,21 @@ function convertToBase64(url: string) {
   });
 }
 
-function fetchAPI() {
+function updateAccessToken() {
+  isBusy.value = true;
+  console.log("正在获取token...");
   fetch("http://zizaimai.space/api")
     .then((response) => response.json())
     .then((parsedJson) => {
       console.log(parsedJson);
-      bdAT = parsedJson.access_token;
-    });
+      baiduAPIAccessToken = parsedJson.access_token;
+    })
+    .catch((e) => console.log(e))
+    .finally(() => (isBusy.value = false));
 }
 
 function classify() {
-  if (!bdAT) return;
+  if (!baiduAPIAccessToken) return;
 
   console.log(imageUrl.value);
 
@@ -68,11 +74,11 @@ function classify() {
   const body = new URLSearchParams();
   // url方式请求，如果imgae字段存在url字段会被忽略
   // body.append("url", imageUrl.value);
-  // 需要百科数据append此可选项即可
-  // body.append("baike_num", "1");
+  // 添加如下此可选项可获取百科信息
+  body.append("baike_num", "1");
   convertToBase64(imageUrl.value)
     // 收到convertToBase64的结果，内容是去掉编码头的纯图像base64数据
-    .then((base64DataPrefixless: string) => {
+    .then((base64DataPrefixless) => {
       // console.log(base64DataPrefixless);
       body.append("image", base64DataPrefixless);
     })
@@ -80,9 +86,9 @@ function classify() {
     .then(() => {
       console.log("开始识别请求...");
 
-      isClassifying.value = true;
+      isBusy.value = true;
 
-      return fetch(bdPlantUrl + "?access_token=" + bdAT, {
+      return fetch(plantClassifyUrl + "?access_token=" + baiduAPIAccessToken, {
         method: "POST",
         headers: headers,
         body: body,
@@ -102,10 +108,12 @@ function classify() {
     .catch(function (e) {
       console.error("识别出错！");
       console.error(e);
+      plantName.value = "识别出错！请重试。";
+      updateAccessToken();
     })
     .finally(() => {
       console.log("识别结束！");
-      isClassifying.value = false;
+      isBusy.value = false;
     });
 }
 </script>
@@ -115,8 +123,9 @@ IonPage
   CommonToolbar(:title="'植物识别'")
   IonContent
     .ion-padding
-      IonButton(:disabled="true", @click="fetchAPI()") 1️⃣ get access token
-      IonButton(@click="classify()") 2️⃣ classify
+      IonButton(expand="block", :disabled="isBusy", @click="classify()")
+        template(v-if="!isBusy") 识别
+        IonSpinner(v-else)
       IonTextarea(
         v-model="imageUrl",
         :auto-grow="true",
@@ -124,8 +133,7 @@ IonPage
       )
       IonImg(:src="imageUrl")
       .ion-justify-content-center.ion-align-items-center
-        IonSpinner(v-if="isClassifying")
-        IonText(v-else)
+        IonText
           h4 {{ plantName }}
 </template>
 
