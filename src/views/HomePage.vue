@@ -84,6 +84,7 @@ watch(
   { deep: true }
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getPlantById(id: number): Plant | undefined {
   return appData.appConf.plantList.find((plant) => id === plant.plantId);
 }

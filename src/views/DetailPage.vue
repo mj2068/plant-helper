@@ -287,7 +287,7 @@ import { Modal } from "@ionic/core/dist/types/components/modal/modal";
 import { Input } from "@ionic/core/dist/types/components/input/input";
 import { getDateTime } from "@/composables/utils";
 import { useIonAlert } from "@/composables/ionAlert";
-import { usePhotoManger } from "@/composables/useImageManager";
+import { usePhotoManager } from "@/composables/useImageManager";
 import { useDateTime } from "@/composables/utils";
 import ImageModal from "@/components/ImageModal.vue";
 import ColorModal from "@/components/ColorModal.vue";
@@ -341,7 +341,7 @@ const appData = inject(appDataKey) as { appConf: AppConf };
 const { deletePlantById, updateConfigFile } = inject(appConfigUtilsKey)!;
 
 const { presentConfirmCancelAlert } = useIonAlert();
-const { getPhoto, getSrcFromPath, savePhoto, deletePhoto } = usePhotoManger();
+const { getPhoto, getSrcFromPath, savePhoto, deletePhoto } = usePhotoManager();
 
 // 用于img的src
 const plantImageDataUrl = ref("");
