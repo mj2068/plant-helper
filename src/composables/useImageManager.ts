@@ -1,18 +1,25 @@
-import { Camera, CameraResultType } from "@capacitor/camera";
+import {
+  Camera,
+  CameraResultType,
+  CameraSource,
+  ImageOptions,
+} from "@capacitor/camera";
 import { Capacitor } from "@capacitor/core";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import { isPlatform } from "@ionic/core";
 
-export function usePhotoManger() {
-  const getPhoto = () => {
-    return Camera.getPhoto({
+export function usePhotoManager() {
+  const getPhoto = (source?: CameraSource) => {
+    const options: ImageOptions = {
       resultType: CameraResultType.Base64,
       quality: 100,
       promptLabelHeader: "图片来源",
       promptLabelPhoto: "相册",
       promptLabelPicture: "拍照",
       promptLabelCancel: "取消",
-    });
+      source,
+    };
+    return Camera.getPhoto(options);
   };
 
   const savePhoto = (filename: string, dataUrl: string) => {
