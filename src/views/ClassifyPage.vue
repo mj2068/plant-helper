@@ -153,8 +153,6 @@ function classify() {
           classifyResult.value.desc = baike_info.description;
           classifyResult.value.imageURL = baike_info.image_url;
           classifyResult.value.baikeURL = baike_info.baike_url;
-
-          fetch(baike_info.image_url, { redirect: "follow" }).then(console.log);
         }
       }
     })

@@ -18,7 +18,15 @@ import {
   useIonRouter,
   toastController,
 } from "@ionic/vue";
-import { rose, add, sunny } from "ionicons/icons";
+import {
+  rose,
+  add,
+  sunny,
+  scanOutline,
+  search,
+  searchOutline,
+  extensionPuzzleOutline,
+} from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 import { appDataKey } from "@/injectionKeys";
@@ -68,9 +76,11 @@ onMounted(() => {
     sticky: true,
     plugins: [sticky],
   });
+
+  presentToast("welcome");
 });
 
-onIonViewDidEnter(() => presentToast("欢迎"));
+onIonViewDidEnter(() => console.log("HomePage - onIonViewDidEnter"));
 
 // 监视appData，其发生改变后
 // 此处的第一个实参是个函数，是有讲究的。原因参考vue文档
@@ -217,9 +227,6 @@ function cardDetail(id: number) {
           <ion-button color="warning" @click.stop="ionRouter.push('/graph')">
             graph
           </ion-button>
-          <ion-button color="warning" @click.stop="ionRouter.push('/classify')">
-            classify
-          </ion-button>
         </div>
       </div>
 
@@ -241,23 +248,47 @@ function cardDetail(id: number) {
             <img class="right" src="@/../resources/group-decor2.png" alt="" />
           </div>
         </div>
-        <div
-          id="temperature-chart-container"
-          class="ion-justify-content-center ion-padding-start ion-padding-end"
-        >
-          <LineChart
-            id="temperature-chart"
-            :data="[
-              { x: '日', y: 20 },
-              { x: '一', y: 16 },
-              { x: '二', y: 18 },
-              { x: '三', y: 23 },
-              { x: '四', y: 27 },
-              { x: '五', y: 28 },
-              { x: '六', y: 31 },
-            ]"
-            :options="{ title: '温度回溯' }"
-          ></LineChart>
+        <div id="extensions-container">
+          <div
+            id="temperature-chart-container"
+            class="ion-justify-content-center"
+          >
+            <LineChart
+              id="temperature-chart"
+              :data="[
+                { x: '日', y: 20 },
+                { x: '一', y: 16 },
+                { x: '二', y: 18 },
+                { x: '三', y: 23 },
+                { x: '四', y: 27 },
+                { x: '五', y: 28 },
+                { x: '六', y: 31 },
+              ]"
+              :options="{ title: '温度回溯' }"
+            ></LineChart>
+          </div>
+          <div id="other-icons-container" class="">
+            <div class="icon-button">
+              <div
+                class="icon-container icon-scan ion-activatable"
+                @click="ionRouter.push('/classify')"
+              >
+                <ion-icon id="icon-scan" :icon="scanOutline"></ion-icon>
+                <ion-ripple-effect></ion-ripple-effect>
+              </div>
+              <ion-text>植物识别</ion-text>
+            </div>
+            <div class="icon-button">
+              <div class="icon-container icon-search ion-activatable">
+                <ion-icon
+                  id="icon-search"
+                  :icon="extensionPuzzleOutline"
+                ></ion-icon>
+                <ion-ripple-effect></ion-ripple-effect>
+              </div>
+              <ion-text>-</ion-text>
+            </div>
+          </div>
         </div>
         <div id="plants-container" class="ion-padding-start ion-padding-end">
           <div class="control ion-margin-bottom">
@@ -464,22 +495,82 @@ ion-header ion-toolbar ion-icon {
   object-fit: contain;
 }
 
-#temperature-chart-container {
+#extensions-container {
   position: relative;
+
   display: flex;
-  margin: 24px auto 24px;
-  --ion-padding: 32px;
+  justify-content: center;
+  width: 90%;
+  height: 180px;
+  margin: 24px auto 32px;
+}
+
+#temperature-chart-container {
+  flex: 0 1 450px;
+  height: 100%;
+  position: relative;
+  margin-right: 20px;
 }
 
 #temperature-chart-container #temperature-chart {
   width: 100%;
+  height: 100%;
   max-width: 450px;
-  max-height: 200px;
   padding: 8px 16px 8px;
   background-color: #fffa;
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
     rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+}
+
+#other-icons-container {
+  flex: 0 0 90px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#other-icons-container div.icon-button {
+  flex: 0 0 50%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#other-icons-container div.icon-button div.icon-container {
+  flex: 0 0 auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
+    rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+#other-icons-container div.icon-button div.icon-container.icon-scan {
+  background: orange;
+}
+
+#other-icons-container div.icon-button div.icon-container.icon-search {
+  background: var(--ion-color-medium);
+}
+
+#other-icons-container div.icon-button ion-icon {
+  font-size: 48px;
+  color: var(--ion-color-light);
+  --ionicon-stroke-width: 48px;
+}
+
+#other-icons-container div.icon-button ion-text {
+  /* flex: 1 1 20%; */
 }
 
 #plants-container {
