@@ -2,24 +2,33 @@
 import CommonToolbar from "@/components/CommonToolbar.vue";
 import {
   IonButton,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
   IonContent,
   IonIcon,
+  IonInput,
+  IonItem,
+  IonList,
+  IonListHeader,
   IonPage,
-  IonSpinner,
+  IonTextarea,
+  IonThumbnail,
   loadingController,
 } from "@ionic/vue";
 import { onMounted, ref, computed } from "vue";
 import { usePhotoManager } from "@/composables/useImageManager";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { CameraSource } from "@capacitor/camera";
 import Compressor from "compressorjs";
-import { camera, images } from "ionicons/icons";
+import { camera, images, scan } from "ionicons/icons";
 
 const console = window.console;
 
 console.log("ClassifyPage - setup");
 
 const { getPhoto } = usePhotoManager();
+
+const getAccessTokenURL = "http://zizaimai.space/api";
 
 // 202306121754
 const baiduAPIAccessToken = ref("");
@@ -30,6 +39,8 @@ const plantClassifyUrl = computed(
     baiduAPIAccessToken.value
 );
 
+const imageDataURL = ref("");
+
 const imageBase64Data = computed(() => {
   if (imageDataURL.value) return imageDataURL.value.split(",")[1];
   return "";
@@ -37,16 +48,16 @@ const imageBase64Data = computed(() => {
 const imageSize = computed(() => {
   return base64ToSize(imageBase64Data.value);
 });
-function base64ToSize(base64String: string): number {
-  const bytes = Math.ceil(base64String.length / 4) * 3;
-  return bytes / 1024 ** 2;
-}
-
-const imageDataURL = ref("");
-
-const plantName = ref("");
 
 const isClassifying = ref(false);
+
+const classifyResult = ref<{
+  score?: number;
+  name?: string;
+  desc?: string;
+  baikeURL?: string;
+  imageURL?: string;
+}>({});
 
 onMounted(() => {
   console.log("ClassifyPage - onMounted");
@@ -80,23 +91,24 @@ function updateAccessToken() {
   showLoading("与服务器通信中...");
   isClassifying.value = true;
   console.log("正在获取token...");
-  fetch("http://zizaimai.space/api")
+  fetch(getAccessTokenURL)
     .then((response) => response.json())
     .then((parsedJson) => {
       console.log(parsedJson);
       baiduAPIAccessToken.value = parsedJson.access_token;
     })
     .catch((e) => {
-      plantName.value = "获取token出错！";
       console.log(e);
     })
     .finally(() => {
-      loadingController.dismiss();
+      setTimeout(() => {
+        loadingController.dismiss();
+      }, 700);
       isClassifying.value = false;
     });
 }
 
-function classifyUrl() {
+function classify() {
   if (!baiduAPIAccessToken.value) return;
 
   // console.log(imageUrl.value);
@@ -104,22 +116,24 @@ function classifyUrl() {
   const headers = new Headers({
     "Content-Type": "application/x-www-form-urlencoded",
   });
-  const body = new URLSearchParams();
+  const bodyParams = new URLSearchParams();
   // url方式请求，如果imgae字段存在url字段会被忽略
   // body.append("url", imageUrl.value);
-  // 添加如下此可选项可获取百科信息
-  // body.append("baike_num", "1");
-  body.append("image", imageBase64Data.value);
+  bodyParams.append("image", imageBase64Data.value);
+  // 以下可选param控制是否返回百科信息
+  bodyParams.append("baike_num", "1");
+
   // 识别api所需内容准备完毕，发起fetch
   console.log("开始识别请求...");
 
-  plantName.value = "";
+  showLoading("正在请求服务器识别...");
+
   isClassifying.value = true;
 
   fetch(plantClassifyUrl.value, {
     method: "POST",
     headers: headers,
-    body: body,
+    body: bodyParams,
   })
     // 处理fetch结果，此处将结果转成json并promise返回
     .then((response) => response.json())
@@ -129,48 +143,71 @@ function classifyUrl() {
       if (jsonResult.error_msg) throw new Error(jsonResult.error_msg);
 
       console.log(jsonResult);
-      plantName.value = jsonResult.result[0].name;
+      if (jsonResult.result[0]) {
+        // 处理收到的识别成功数据
+        const { name, score, baike_info } = jsonResult.result[0];
+        classifyResult.value.name = name;
+        classifyResult.value.score = score;
+
+        if (baike_info) {
+          classifyResult.value.desc = baike_info.description;
+          classifyResult.value.imageURL = baike_info.image_url;
+          classifyResult.value.baikeURL = baike_info.baike_url;
+
+          fetch(baike_info.image_url, { redirect: "follow" }).then(console.log);
+        }
+      }
     })
     .catch(function (e) {
       console.error("识别出错！");
       console.error(e);
-      plantName.value = "识别出错！请重试。";
+
+      // 输入识别请求出错，尝试自动更新一次token
       updateAccessToken();
     })
     .finally(() => {
       console.log("识别结束！");
       isClassifying.value = false;
+      loadingController.dismiss();
     });
 }
 
 function getPlantPhoto(source?: CameraSource) {
-  getPhoto(source).then((photo) => {
-    if (!photo.base64String) return;
+  getPhoto(source)
+    .then((photo) => {
+      if (!photo.base64String) return;
 
-    // 显示loading，禁止用户操作
-    showLoading("正在压缩图片...");
+      showLoading("正在压缩图片...");
 
-    console.log(
-      "pre-compression size: " + base64ToSize(photo.base64String) + "MB"
-    );
-    urlToBlob("data:image/jpeg;base64," + photo.base64String).then((blob) => {
-      new Compressor(blob, {
-        quality: 0.6,
-        success: (blob) => {
-          console.log(blob);
-          convertBlobToBase64(blob).then((base64Data) => {
-            if (!base64Data) return;
+      console.log(
+        "pre-compression size: " + base64ToSize(photo.base64String) + " MB"
+      );
 
-            console.log(
-              "post-compression size: " + base64ToSize(base64Data) + "MB"
-            );
-            imageDataURL.value = base64Data;
-            loadingController.dismiss();
+      urlToBlob("data:image/jpeg;base64," + photo.base64String)
+        .then((blob) => {
+          new Compressor(blob, {
+            quality: 0.6,
+            success: (blob) => {
+              console.log(blob);
+              convertBlobToBase64(blob).then((base64Data) => {
+                if (!base64Data) return;
+
+                console.log(
+                  "post-compression size: " + base64ToSize(base64Data) + " MB"
+                );
+                imageDataURL.value = base64Data;
+                loadingController.dismiss();
+              });
+            },
           });
-        },
-      });
-    });
-  });
+        })
+        .catch((e) => {
+          console.error(e);
+          loadingController.dismiss();
+        })
+        .finally(() => console.log("获取图片结束:"));
+    })
+    .catch((e) => console.error(e));
 }
 
 async function showLoading(message?: string) {
@@ -180,6 +217,11 @@ async function showLoading(message?: string) {
 
   loading.present();
 }
+
+function base64ToSize(base64String: string): number {
+  const bytes = Math.ceil(base64String.length / 4) * 3;
+  return bytes / 1024 ** 2;
+}
 </script>
 
 <template lang="pug">
@@ -187,11 +229,6 @@ IonPage
   CommonToolbar(:title="'植物识别'")
   IonContent
     #main-container.ion-padding
-      //- IonTextarea(
-      //-   v-model="imageUrl",
-      //-   :auto-grow="true",
-      //-   @ion-change="plantName = '-'"
-      //- )
       #no-image-container.light-box-shadow.ion-margin-bottom(
         v-if="imageDataURL === ''"
       )
@@ -210,7 +247,7 @@ IonPage
           IonIcon(slot="start", size="large", :icon="images")
           IonText 相册
       #image-container.ion-align-items-center.ion-margin-bottom(v-else)
-        .image-card.ion-margin-bottom
+        .image-card.light-box-shadow
           img(:src="imageDataURL")
         //- IonNote(v-if="imageSize > 0")
         //-   | 图像尺寸：{{ imageSize.toFixed(1) + " MB" }}
@@ -218,14 +255,47 @@ IonPage
       IonButton(
         color="success",
         expand="block",
-        :disabled="imageBase64Data === ''",
-        @click="classifyUrl()"
-      )
-        template(v-if="!isClassifying") 识别
-        IonSpinner(v-else)
-      .ion-justify-content-center.ion-align-items-center
-        IonText
-          h4 {{ plantName }}
+        :disabled="imageDataURL === '' || isClassifying",
+        @click="classify()"
+      ) 识别
+        IonIcon(slot="start", :icon="scan")
+      #result-container(v-if="classifyResult.name")
+        IonList
+          IonItem
+            strong(slot="start")
+              IonInput(:readonly="true", :value="classifyResult?.name")
+            IonText(slot="end", color="medium") 得分&nbsp;
+            IonBadge.ion-no-margin(
+              slot="end",
+              :color="classifyResult.score ? (classifyResult.score > 0.8 ? 'success' : classifyResult.score > 0.65 ? 'warning' : 'danger') : 'secondary'"
+            ) {{ classifyResult.score?.toPrecision(2) }}
+          IonItem
+            IonLabel(position="floating") 描述
+            IonTextarea(
+              :readonly="true",
+              :auto-grow="true",
+              :value="classifyResult?.desc"
+            )
+          IonItem(lines="full")
+            IonLabel 链接：
+              a(:href="classifyResult.baikeURL", target="_blank") {{ classifyResult.baikeURL }}
+        //- IonList
+        //-   IonItem
+        //-     IonThumbnail(slot="start")
+        //-       img(:src="classifyResult.imageURL")
+        //-     IonLabel
+        //-       IonInput(:value="classifyResult?.name")
+        //-       IonTextarea(:value="classifyResult?.desc")
+
+        //- IonCard
+        //-   IonCardHeader
+        //-     IonCardTitle
+        //-       ion-input(:value="classifyResult?.name")
+        //-   IonCardContent
+        //-     IonTextarea(:value="classifyResult?.desc", :readonly="true")
+        //- ion-img(
+        //-   src="https://bkimg.cdn.bcebos.com/pic/7dd98d1001e93901213f623cf2ba43e736d12f2e3820"
+        //- )
 </template>
 
 <style scoped lang="scss">
@@ -233,7 +303,7 @@ IonPage
 
 $image-content-height: 350px;
 
-.ion-justify-content-center.ion-align-items-center {
+.ion-justify-content-center {
   display: flex;
 }
 
@@ -246,37 +316,21 @@ $image-content-height: 350px;
     justify-content: center;
     align-items: center;
     height: $image-content-height;
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
-
-    // background: lightgreen;
   }
 
   #image-container {
     display: flex;
     flex-direction: column;
 
-    // background: lightblue;
-
     .image-card {
-      // width: 200px;
-
-      // height: 300px;
-      // max-height: 400px;
-      // flex: 0 1 auto;
-      // align-self: center;
-      border-radius: 8px;
+      border-radius: 4px;
+      margin-bottom: 4px;
       overflow: hidden;
-      box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
-        rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
-
-      background: pink;
-      // margin-bottom: 4px;
 
       img {
         display: block;
-        // width: 100%;
-        // height: 100%;
         max-height: $image-content-height;
         object-fit: contain;
       }
@@ -284,6 +338,12 @@ $image-content-height: 350px;
 
     ion-button {
       align-self: stretch;
+    }
+  }
+
+  #result-container {
+    ion-card {
+      max-height: 400px;
     }
   }
 }
