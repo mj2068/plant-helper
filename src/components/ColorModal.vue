@@ -1,16 +1,9 @@
 <script lang="ts" setup>
 import {
-  IonHeader,
-  IonTitle,
-  IonContent,
   IonGrid,
   IonCol,
   IonRow,
-  IonList,
-  IonItem,
-  IonLabel,
   IonIcon,
-  IonButtons,
   IonButton,
   IonSegment,
   IonSegmentButton,
@@ -29,22 +22,22 @@ const currentColor = ref("");
 const colorMode = ref("preset");
 
 const colors = [
-  "#CB40B7",
-  "#0FC05C",
-  "#473ACD",
-  "#7441AD",
-  "#44076D",
-  "#D28C6F",
-  "#0B5694",
-  "#E4C962",
-  "#3D257A",
-  "#16F734",
-  "#3041CD",
-  "#42D3AD",
-  "#BC2283",
-  "#C9ABA5",
-  "#A22A3D",
-  "#A8EFAD",
+  "#d7dace",
+  "#ffe9b3",
+  "#ffdc74",
+  "#ffc176",
+  "#d8e2dc",
+  "#ffe5d9",
+  "#ffcad4",
+  "#f4acb7",
+  "#ccd5ae",
+  "#e9edc9",
+  "#fefae0",
+  "#faedcd",
+  "#eccbd9",
+  "#e1eff6",
+  "#97d2fb",
+  "#83bcff",
 ];
 
 function generateColorString(): string {
@@ -78,25 +71,25 @@ function selectAndDismiss(index: number) {
     <IonSegment :value="colorMode" class="ion-margin-bottom">
       <IonSegmentButton
         value="preset"
-        @click="colorMode = 'preset'"
         class="ion-no-margin"
+        @click="colorMode = 'preset'"
         >预设</IonSegmentButton
       >
       <IonSegmentButton
         value="custom"
-        @click="colorMode = 'custom'"
         class="ion-no-margin"
+        @click="colorMode = 'custom'"
         >自定义</IonSegmentButton
       >
     </IonSegment>
 
     <div v-if="colorMode === 'preset'" id="preset-container">
       <ion-grid>
-        <ion-row v-for="(y, index) in 4" :key="index">
-          <ion-col v-for="(x, index) in 4" :key="index">
+        <ion-row v-for="(y, m) in 4" :key="m">
+          <ion-col v-for="(x, n) in 4" :key="n">
             <ion-button
               :fill="
-              // 这里的数学计算是为了用上面的row和col的index计算出当前是哪个颜色
+                // 这里的数学计算是为了用上面的row和col的index计算出当前是哪个颜色
                 colors[(y - 1) * 4 + x - 1] === currentColor
                   ? 'outline'
                   : 'clear'
@@ -105,8 +98,8 @@ function selectAndDismiss(index: number) {
               @click="selectAndDismiss((y - 1) * 4 + x - 1)"
             >
               <ion-icon
-                :icon="ellipse"
                 slot="icon-only"
+                :icon="ellipse"
                 :style="{ color: colors[(y - 1) * 4 + x - 1] }"
               ></ion-icon>
             </ion-button>

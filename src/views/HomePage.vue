@@ -211,7 +211,6 @@ function cardDetail(id: number) {
       </ion-header>
       <div id="debug-control-container" class="debug test ion-no-margin">
         <ion-toggle v-model="isShowDebugDiv" class="ion-margin-end">
-          hahaha
         </ion-toggle>
         <div v-if="isShowDebugDiv" class="debug test controls-container">
           <ion-button class="debug test" @click="console.log(plantImagesInfo)">
@@ -280,13 +279,10 @@ function cardDetail(id: number) {
             </div>
             <div class="icon-button">
               <div class="icon-container icon-search ion-activatable">
-                <ion-icon
-                  id="icon-search"
-                  :icon="extensionPuzzleOutline"
-                ></ion-icon>
+                <ion-icon id="icon-search" :icon="searchOutline"></ion-icon>
                 <ion-ripple-effect></ion-ripple-effect>
               </div>
-              <ion-text>-</ion-text>
+              <ion-text>植物查询</ion-text>
             </div>
           </div>
         </div>
@@ -560,7 +556,7 @@ ion-header ion-toolbar ion-icon {
 }
 
 #other-icons-container div.icon-button div.icon-container.icon-search {
-  background: var(--ion-color-medium);
+  background: var(--ion-color-secondary);
 }
 
 #other-icons-container div.icon-button ion-icon {
