@@ -137,25 +137,31 @@ function goUp() {
   readdir();
 }
 
-function deleteFile(filename: string, itemIndex: number) {
-  console.log("deleteFile: " + filename);
+function deleteFile(file: FileInfo, itemIndex: number) {
+  console.log("deleteFile: " + file.name);
 
   presentConfirmCancelAlert({
-    header: "确认删除么？",
+    header:
+      "确认删除" +
+      ("directory" === file.type ? " 文件夹 " : " 文件 ") +
+      file.name +
+      " 么？",
     message: "（不可恢复）",
   }).then((choice) => {
     if ("confirm" === choice.role) {
       Filesystem.deleteFile({
-        path: currentPath.value + filename,
+        path: currentPath.value + file.name,
         directory: selectedDir.value === "ROOT" ? undefined : selectedDir.value,
       })
         .then(() => {
           console.log("deleteFile - .then");
           readdir();
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          console.error(e);
+          (fileItems.value[itemIndex].$el as typeof IonItemSliding).close();
+        });
     } else {
-      console.log(fileItems);
       (fileItems.value[itemIndex].$el as typeof IonItemSliding).close();
     }
   });
@@ -220,7 +226,7 @@ IonPage
               IonText {{ e.name }}
               IonText(slot="end") {{ (e.size / 1024).toFixed(1) }} KB
           IonItemOptions
-            IonItemOption(color="danger", @click="deleteFile(e.name, index)")
+            IonItemOption(color="danger", @click="deleteFile(e, index)")
               IonIcon(:icon="trash", size="large")
           IonItemOptions(side="start", @ion-swipe="console.log(e)")
             IonItemOption(expandable, @click="console.log(e)") info
