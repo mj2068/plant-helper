@@ -18,15 +18,7 @@ import {
   useIonRouter,
   toastController,
 } from "@ionic/vue";
-import {
-  rose,
-  add,
-  sunny,
-  scanOutline,
-  search,
-  searchOutline,
-  extensionPuzzleOutline,
-} from "ionicons/icons";
+import { rose, add, sunny, scanOutline, searchOutline } from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 import { appDataKey } from "@/injectionKeys";
@@ -225,6 +217,9 @@ function cardDetail(id: number) {
           </ion-button>
           <ion-button color="warning" @click.stop="ionRouter.push('/graph')">
             graph
+          </ion-button>
+          <ion-button color="warning" @click.stop="ionRouter.push('/files')">
+            files
           </ion-button>
         </div>
       </div>

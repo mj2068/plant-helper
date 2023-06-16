@@ -4,6 +4,7 @@ import AddPage from "../views/AddPage.vue";
 import HomePage from "../views/HomePage.vue";
 import DetailPage from "@/views/DetailPage.vue";
 import ClassifyPage from "@/views/ClassifyPage.vue";
+import FilesPage from "@/views/FilesPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -45,6 +46,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/classify",
     name: "Classify",
     component: ClassifyPage,
+  },
+  {
+    path: "/files",
+    name: "Files",
+    component: FilesPage,
   },
 ];
 
