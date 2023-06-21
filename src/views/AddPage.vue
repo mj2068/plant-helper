@@ -6,9 +6,6 @@
           <ion-back-button></ion-back-button>
         </ion-buttons>
         <ion-buttons slot="primary">
-          <ion-button @click="ionRouter.navigate('/home', 'root')">
-            首页
-          </ion-button>
           <ion-button @click="save">保存</ion-button>
         </ion-buttons>
         <ion-title>添加植物</ion-title>
@@ -251,19 +248,18 @@ export default defineComponent({
   position: relative;
 
   &::before {
-    /* background: url(@/../resources/7652324.jpg) 0% 0% / cover rgba(0, 0, 0, 0.3); */
     content: " ";
     display: block;
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
-    opacity: 0.15;
-    background-image: url(@/../resources/7652324.jpg);
-    background-repeat: repeat-y;
-    /* background-position: 50%; */
-    background-size: contain;
+    min-height: 100%;
+    opacity: 0.2;
+    background-image: url(@/../resources/seamless1.jpg);
+    background-repeat: repeat;
+    background-position: 50% 0%;
+    // background-size: contain;
   }
 
   #container {

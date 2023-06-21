@@ -293,7 +293,8 @@ function cardDetail(id: number) {
                 color="white"
                 bgcolor="orange"
                 @click="ionRouter.push('/add')"
-              ></GlowButton>
+              >
+              </GlowButton>
             </div>
           </div>
           <div
@@ -413,12 +414,12 @@ ion-header ion-toolbar ion-icon {
   left: 0;
   top: 0;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   opacity: 0.2;
-  background-image: url(@/../resources/7652324.jpg);
+  background-image: url(@/../resources/seamless1.jpg);
   background-repeat: repeat;
   background-position: 50% 0%;
-  background-size: contain;
+  /* background-size: contain; */
 }
 
 #content-container #decor-container {
@@ -434,9 +435,11 @@ ion-header ion-toolbar ion-icon {
   0% {
     transform: rotate(5deg);
   }
+
   50% {
     transform: rotate(-5deg);
   }
+
   100% {
     transform: rotate(5deg);
   }
@@ -508,7 +511,8 @@ ion-header ion-toolbar ion-icon {
   height: 100%;
   max-width: 450px;
   padding: 8px 16px 8px;
-  background-color: #fffa;
+  background-color: #fff;
+  /* opacity: 0.8; */
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
     rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
