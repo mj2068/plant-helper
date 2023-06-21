@@ -416,7 +416,7 @@ ion-header ion-toolbar ion-icon {
   height: 100%;
   opacity: 0.2;
   background-image: url(@/../resources/7652324.jpg);
-  background-repeat: repeat-y;
+  background-repeat: repeat;
   background-position: 50% 0%;
   background-size: contain;
 }

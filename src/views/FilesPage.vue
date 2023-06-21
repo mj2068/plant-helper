@@ -20,8 +20,8 @@ import {
   IonText,
 } from "@ionic/vue";
 import { arrowForward, arrowUp, trash } from "ionicons/icons";
-import type { FileInfo } from "@capacitor/filesystem";
 import { useIonAlert } from "@/composables/ionAlert";
+import type { FileInfo } from "@capacitor/filesystem";
 
 const console = window.console;
 
@@ -288,3 +288,6 @@ ion-content {
   }
 }
 </style>
+
+
+
