@@ -5,6 +5,7 @@ export interface Plant {
   plantDescription: string;
   plantImageFilename: string;
   plantColor?: string;
+  isBoundSensor?: boolean;
 }
 
 export interface AppConf {

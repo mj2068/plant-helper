@@ -275,25 +275,8 @@ IonPage
               :value="classifyResult?.desc"
             )
           IonItem(lines="full")
-            IonLabel 链接：
+            IonLabel 百科链接：
               a(:href="classifyResult.baikeURL", target="_blank") {{ classifyResult.baikeURL }}
-        //- IonList
-        //-   IonItem
-        //-     IonThumbnail(slot="start")
-        //-       img(:src="classifyResult.imageURL")
-        //-     IonLabel
-        //-       IonInput(:value="classifyResult?.name")
-        //-       IonTextarea(:value="classifyResult?.desc")
-
-        //- IonCard
-        //-   IonCardHeader
-        //-     IonCardTitle
-        //-       ion-input(:value="classifyResult?.name")
-        //-   IonCardContent
-        //-     IonTextarea(:value="classifyResult?.desc", :readonly="true")
-        //- ion-img(
-        //-   src="https://bkimg.cdn.bcebos.com/pic/7dd98d1001e93901213f623cf2ba43e736d12f2e3820"
-        //- )
 </template>
 
 <style scoped lang="scss">

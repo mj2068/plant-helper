@@ -187,7 +187,7 @@
 
           <!-- 传感器内容 -->
           <div id="hardware-content-container" class="ion-margin-top">
-            <div v-if="isBoundSensor" class="charts-container">
+            <div v-if="plant.isBoundSensor" class="charts-container">
               <div
                 class="humidity chart-container ion-padding ion-justify-content-center"
               >
@@ -219,10 +219,10 @@
               </div>
             </div>
             <ion-button
-              v-if="isBoundSensor"
+              v-if="plant.isBoundSensor"
               expand="block"
               color="danger"
-              @click="isBoundSensor = !isBoundSensor"
+              @click="toggleBoundSensor()"
             >
               <ion-icon :icon="trash" class="ion-margin-end"></ion-icon>
               解除绑定
@@ -231,7 +231,7 @@
               v-else
               expand="block"
               color="success"
-              @click="isBoundSensor = !isBoundSensor"
+              @click="toggleBoundSensor()"
             >
               <ion-icon :icon="hardwareChip" class="ion-margin-end"></ion-icon>
               绑定硬件
@@ -350,9 +350,6 @@ const { getPhoto, getSrcFromPath, savePhoto, deletePhoto } = usePhotoManager();
 
 // 用于img的src
 const plantImageDataUrl = ref("");
-
-// 是否绑定突然传感器
-const isBoundSensor = ref(true);
 
 // url会带着id param，此computed会根据这个id去config数组里找相应id的plant，无则null
 const plant = computed(() => {
@@ -583,11 +580,19 @@ function onMoreMenuDeleteWillDismiss(
     deletePlant();
   }
 }
+
+function toggleBoundSensor() {
+  if (plant.value) {
+    plant.value.isBoundSensor = !plant.value.isBoundSensor;
+    updateConfigFile();
+  }
+}
 </script>
 
 <style scoped lang="scss">
 ion-content {
   #content-container {
+    min-height: 100%;
     position: relative;
 
     &::before {
