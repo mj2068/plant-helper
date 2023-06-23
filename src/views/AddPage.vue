@@ -1,16 +1,6 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button></ion-back-button>
-        </ion-buttons>
-        <ion-buttons slot="primary">
-          <ion-button @click="save">保存</ion-button>
-        </ion-buttons>
-        <ion-title>添加植物</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <CommonToolbar title="添加植物"></CommonToolbar>
 
     <ion-content>
       <div id="content-container">
@@ -98,6 +88,7 @@ import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { getDateTime } from "@/composables/utils";
 import { appDataKey, appConfigUtilsKey } from "@/injectionKeys";
+import CommonToolbar from "@/components/CommonToolbar.vue";
 
 export default defineComponent({
   components: {
@@ -116,6 +107,7 @@ export default defineComponent({
     IonItem,
     IonTextarea,
     IonIcon,
+    CommonToolbar,
   },
 
   setup() {
