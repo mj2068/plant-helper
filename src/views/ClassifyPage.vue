@@ -259,24 +259,25 @@ IonPage
         IonIcon(slot="start", :icon="scan")
       #result-container(v-if="classifyResult.name")
         IonList
-          IonItem
+          IonItem#classify-result-name
             strong(slot="start")
               IonInput(:readonly="true", :value="classifyResult?.name")
-            IonText(slot="end", color="medium") 得分&nbsp;
+            IonText(slot="end", color="medium") 准确度&nbsp;
             IonBadge.ion-no-margin(
               slot="end",
               :color="classifyResult.score ? (classifyResult.score > 0.8 ? 'success' : classifyResult.score > 0.65 ? 'warning' : 'danger') : 'secondary'"
             ) {{ classifyResult.score?.toPrecision(2) }}
-          IonItem
-            IonLabel(position="floating") 描述
-            IonTextarea(
-              :readonly="true",
-              :auto-grow="true",
-              :value="classifyResult?.desc"
-            )
-          IonItem(lines="full")
-            IonLabel 百科链接：
-              a(:href="classifyResult.baikeURL", target="_blank") {{ classifyResult.baikeURL }}
+          template(v-if="classifyResult.desc")
+            IonItem
+              IonLabel(position="floating") 描述
+              IonTextarea(
+                :readonly="true",
+                :auto-grow="true",
+                :value="classifyResult?.desc"
+              )
+            IonItem(lines="full")
+              IonLabel 百科链接：
+                a(:href="classifyResult.baikeURL", target="_blank") {{ classifyResult.baikeURL }}
 </template>
 
 <style scoped lang="scss">
@@ -290,8 +291,21 @@ $image-content-height: 350px;
 
 #main-container {
   min-height: 100%;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    min-height: 100%;
+    opacity: 0.2;
+    background: url(@/../resources/seamless1.jpg) repeat 50% 0%;
+  }
 
   #no-image-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -299,9 +313,11 @@ $image-content-height: 350px;
     height: $image-content-height;
     border-radius: 4px;
     overflow: hidden;
+    background: white;
   }
 
   #image-container {
+    position: relative;
     display: flex;
     flex-direction: column;
 
@@ -323,8 +339,8 @@ $image-content-height: 350px;
   }
 
   #result-container {
-    ion-card {
-      max-height: 400px;
+    #classify-result-name strong {
+      width: 50%;
     }
   }
 }
