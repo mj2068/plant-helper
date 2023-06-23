@@ -183,8 +183,9 @@ function cardDetail(id: number) {
       <ion-toolbar>
         <ion-icon
           slot="start"
-          :icon="rose"
-          class="ion-padding-start"
+          src="@/../resources/g387.svg"
+          class="ion-margin-start"
+          style="font-size: 32px"
         ></ion-icon>
         <ion-title>养花小助手</ion-title>
         <ion-buttons slot="end">
