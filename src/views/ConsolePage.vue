@@ -3,6 +3,7 @@ import { IonContent, IonPage } from "@ionic/vue";
 import CommonToolbar from "@/components/CommonToolbar.vue";
 import { terminal } from "ionicons/icons";
 import LineChart from "@/components/LineChart.vue";
+import { SplashScreen } from "@capacitor/splash-screen";
 
 export default {
   components: {
@@ -41,6 +42,12 @@ export default {
         { x: "7", y: Math.random() * 40 - 5 },
       ]);
     },
+    async showSplash() {
+      await SplashScreen.show({
+        showDuration: 2000,
+        autoHide: true,
+      });
+    },
   },
 };
 </script>
@@ -59,6 +66,7 @@ IonPage
         :options="{ zooming: true }"
       )
     IonButton(@click="updateChart") update
+    IonButton(@click="showSplash") splash
 </template>
 
 <style scoped lang="scss">

@@ -235,14 +235,14 @@ IonPage
           size="large",
           @click="getPlantPhoto(CameraSource.Camera)"
         )
-          IonIcon(slot="start", size="large", :icon="camera")
+          Img(slot="start", size="large", :icon="camera")
           IonText 拍照
         ion-button(
           size="large",
           fill="clear",
           @click="getPlantPhoto(CameraSource.Photos)"
         )
-          IonIcon(slot="start", size="large", :icon="images")
+          Img(slot="start", size="large", :icon="images")
           IonText 相册
       #image-container.ion-align-items-center.ion-margin-bottom(v-else)
         .image-card.light-box-shadow
@@ -256,7 +256,7 @@ IonPage
         :disabled="imageDataURL === '' || isClassifying",
         @click="classify()"
       ) 识别
-        IonIcon(slot="start", :icon="scan")
+        Img(slot="start", :icon="scan")
       #result-container(v-if="classifyResult.name")
         IonList
           IonItem#classify-result-name
@@ -301,7 +301,7 @@ $image-content-height: 350px;
     width: 100%;
     min-height: 100%;
     opacity: 0.2;
-    background: url(@/../resources/seamless1.jpg) repeat 50% 0%;
+    background: url(@/assets/seamless1.jpg) repeat 50% 0%;
   }
 
   #no-image-container {

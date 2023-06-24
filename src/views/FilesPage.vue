@@ -203,11 +203,11 @@ IonPage
           )
           IonNote(slot="error") {{ pathErrorMessage }}
           IonButton(fill="clear", @click="readdir()")
-            IonIcon(slot="icon-only", :icon="arrowForward")
+            Img(slot="icon-only", :icon="arrowForward")
 
       #breadcrumbs-container
         IonButton(fill="clear", @click="goUp()")
-          IonIcon(slot="icon-only", :icon="arrowUp")
+          Img(slot="icon-only", :icon="arrowUp")
         IonBreadcrumbs
           IonBreadcrumb(v-for="(e, i) in validPath.split('/')", :key="i") {{ e }}
 
@@ -227,7 +227,7 @@ IonPage
               IonText(slot="end") {{ (e.size / 1024).toFixed(1) }} KB
           IonItemOptions
             IonItemOption(color="danger", @click="deleteFile(e, index)")
-              IonIcon(:icon="trash", size="large")
+              Img(:icon="trash", size="large")
           IonItemOptions(side="start", @ion-swipe="console.log(e)")
             IonItemOption(expandable, @click="console.log(e)") info
       IonInput(v-model="newDirName", placeholder="input a name")

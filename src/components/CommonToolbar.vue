@@ -18,11 +18,7 @@ const props = defineProps<{
 IonHeader
   IonToolbar
     IonBackButton(slot="start", default-href="/home")
-    IonIcon.ion-margin-start(
-      slot="secondary",
-      :icon="props.icon",
-      size="large"
-    )
+    img.ion-margin-start(slot="secondary", :icon="props.icon", size="large")
     IonTitle(slot="start") {{ title }}
     IonButtons.ion-margin-end(slot="end")
       IonButton(v-for="(button, i) in buttons", :key="i", @click="button.fn") {{ button.name }}

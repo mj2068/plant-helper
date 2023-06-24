@@ -56,7 +56,7 @@
           <!-- <ion-button @click="test">test</ion-button> -->
         </div>
         <div id="bottom-decor-container">
-          <img class="left" src="@/../resources/group1.png" alt="" />
+          <img class="left" src="@/assets/group-decor1.png" alt="" />
         </div>
       </div>
     </ion-content>
@@ -248,7 +248,7 @@ export default defineComponent({
     width: 100%;
     min-height: 100%;
     opacity: 0.2;
-    background-image: url(@/../resources/seamless1.jpg);
+    background-image: url(@/assets/seamless1.jpg);
     background-repeat: repeat;
     background-position: 50% 0%;
     // background-size: contain;

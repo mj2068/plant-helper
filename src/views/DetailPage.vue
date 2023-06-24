@@ -604,7 +604,7 @@ ion-content {
       width: 100%;
       min-height: 100%;
       opacity: 0.2;
-      background-image: url(@/../resources/seamless1.jpg);
+      background-image: url(@/assets/seamless1.jpg);
       background-repeat: repeat;
       background-position: 50% 0%;
     }

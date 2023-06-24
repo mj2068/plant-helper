@@ -7,11 +7,11 @@ import { IonicResolver } from "unplugin-vue-components/resolvers";
 export default defineConfig({
   plugins: [
     vue({
-      template: {
-        compilerOptions: {
-          // isCustomElement: (tag) => tag.startsWith("swiper"),
-        },
-      },
+      // template: {
+      //   compilerOptions: {
+      //     isCustomElement: (tag) => tag.startsWith("swiper"),
+      //   },
+      // },
     }),
     components({
       resolvers: [IonicResolver()],

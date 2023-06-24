@@ -18,7 +18,7 @@ import {
   useIonRouter,
   toastController,
 } from "@ionic/vue";
-import { rose, add, sunny, scanOutline, searchOutline } from "ionicons/icons";
+import { add, sunny, scanOutline, searchOutline } from "ionicons/icons";
 import { useRouter } from "vue-router";
 import type { AppConf, Plant } from "@/types";
 import { appDataKey } from "@/injectionKeys";
@@ -181,13 +181,10 @@ function cardDetail(id: number) {
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-icon
-          slot="start"
-          src="@/../resources/g387.svg"
-          class="ion-margin-start"
-          style="font-size: 32px"
-        ></ion-icon>
-        <ion-title>养花小助手</ion-title>
+        <div id="icon-container" slot="start" class="ion-margin-start">
+          <img src="@/assets/icon-512.svg" />
+        </div>
+        <ion-title>植物小助手</ion-title>
         <ion-buttons slot="end">
           <ion-button @click="ionRouter.navigate('/home', 'root')"
             >refresh</ion-button
@@ -224,23 +221,14 @@ function cardDetail(id: number) {
           </ion-button>
         </div>
       </div>
-
       <div id="content-container">
         <div id="decor-container">
           <div class="left">
-            <img
-              class="left"
-              src="@/../resources/hang-yellow-pot-vine.svg"
-              alt=""
-            />
-            <img
-              class="left2"
-              src="@/../resources/hang-pink-pot-vine.svg"
-              alt=""
-            />
+            <img class="left" src="@/assets/hang-yellow-pot-vine.svg" alt="" />
+            <img class="left2" src="@/assets/hang-pink-pot-vine.svg" alt="" />
           </div>
           <div class="right">
-            <img class="right" src="@/../resources/group-decor2.png" alt="" />
+            <img class="right" src="@/assets/group-decor2.png" alt="" />
           </div>
         </div>
         <div id="extensions-container">
@@ -374,6 +362,16 @@ function cardDetail(id: number) {
 </style>
 
 <style scoped>
+ion-header ion-toolbar #icon-container {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+ion-header ion-toolbar #icon-container img {
+  width: 32px;
+  display: block;
+}
+
 div#debug-control-container {
   position: fixed;
   display: flex;
@@ -408,7 +406,6 @@ ion-header ion-toolbar ion-icon {
 }
 
 #content-container::before {
-  /* background: url(@/../resources/7652324.jpg) 0% 0% / cover rgba(0, 0, 0, 0.3); */
   content: " ";
   display: block;
   position: absolute;
@@ -417,7 +414,7 @@ ion-header ion-toolbar ion-icon {
   width: 100%;
   min-height: 100%;
   opacity: 0.2;
-  background-image: url(@/../resources/seamless1.jpg);
+  background-image: url(@/assets/seamless1.jpg);
   background-repeat: repeat;
   background-position: 50% 0%;
   /* background-size: contain; */
