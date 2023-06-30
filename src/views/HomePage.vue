@@ -45,7 +45,7 @@ const appData = inject(appDataKey) as { appConf: AppConf };
 
 const addButton = ref<HTMLDivElement | null>(null);
 
-const isShowDebugDiv = ref(false);
+const isShowDebugDiv = ref(true);
 
 onMounted(() => {
   console.log("HomePage - onMounted");
@@ -185,11 +185,7 @@ function cardDetail(id: number) {
           <img src="@/assets/icon-512.svg" />
         </div>
         <ion-title>植物小助手</ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="ionRouter.navigate('/home', 'root')"
-            >refresh</ion-button
-          >
-        </ion-buttons>
+        <ion-buttons slot="end"> </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -199,7 +195,11 @@ function cardDetail(id: number) {
           <ion-title size="large">Blank</ion-title>
         </ion-toolbar>
       </ion-header>
-      <div id="debug-control-container" class="debug test ion-no-margin">
+      <div
+        id="debug-control-container"
+        class="debug test ion-no-margin"
+        :class="isShowDebugDiv ? 'enabled' : ''"
+      >
         <ion-toggle v-model="isShowDebugDiv" class="ion-margin-end">
         </ion-toggle>
         <div v-if="isShowDebugDiv" class="debug test controls-container">
@@ -239,13 +239,13 @@ function cardDetail(id: number) {
             <LineChart
               id="temperature-chart"
               :data="[
+                { x: '四', y: 27 },
+                { x: '五', y: 28 },
+                { x: '六', y: 31 },
                 { x: '日', y: 20 },
                 { x: '一', y: 16 },
                 { x: '二', y: 18 },
                 { x: '三', y: 23 },
-                { x: '四', y: 27 },
-                { x: '五', y: 28 },
-                { x: '六', y: 31 },
               ]"
               :options="{ title: '温度回溯' }"
             ></LineChart>
@@ -320,7 +320,7 @@ function cardDetail(id: number) {
 
         <div id="footer-container" class="ion-padding">
           <ion-note>
-            <a href="http://zizaimai.space" target="_blank">zizaimai.space</a>
+            <a href="http://zizaimai.space" target="_blank">植物小助手</a>
           </ion-note>
         </div>
       </div>
@@ -378,10 +378,14 @@ div#debug-control-container {
   flex-direction: column;
   align-items: end;
   right: 8px;
-  opacity: 0.7;
+  opacity: 0;
   text-align: right;
 
   z-index: 5;
+}
+
+div#debug-control-container.enabled {
+  opacity: 0.7;
 }
 
 div#debug-control-container div.controls-container {

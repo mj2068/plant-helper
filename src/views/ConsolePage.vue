@@ -56,7 +56,7 @@ export default {
 IonPage
   CommonToolbar(
     title="console",
-    :buttons="[{ name: 'test', fn: () => console.log('这里是Console页面') }]"
+    :buttons="[{ name: 'test', onClick: () => console.log('这里是Console页面') }]"
   )
   IonContent.ion-padding(style="background-color: pink")
     .flex-container.ion-justify-content-center

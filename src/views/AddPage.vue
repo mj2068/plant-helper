@@ -1,6 +1,9 @@
 <template>
   <ion-page>
-    <CommonToolbar title="添加植物"></CommonToolbar>
+    <CommonToolbar
+      title="添加植物"
+      :buttons="[{ name: '保存', onClick: save }]"
+    ></CommonToolbar>
 
     <ion-content>
       <div id="content-container">
@@ -83,7 +86,7 @@ import {
   IonIcon,
   useIonRouter,
 } from "@ionic/vue";
-import { star, addCircle, trashSharp } from "ionicons/icons";
+import { star, addCircle, trashSharp, save } from "ionicons/icons";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { getDateTime } from "@/composables/utils";
